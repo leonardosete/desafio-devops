@@ -1,0 +1,17 @@
+name: Create Infra - GCP
+on:
+  push:
+    branches: [develop, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # env:
+    #   SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+    #   SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+    steps:
+      - name: Checkout Actions
+        uses: actions/checkout@v3
+
+      - name: First Step
+        run: echo "Teste"
