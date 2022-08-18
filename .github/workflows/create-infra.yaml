@@ -5,6 +5,8 @@ on:
   push:
     branches: [develop, master]
 
+  workflow_dispatch:
+  
 jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
