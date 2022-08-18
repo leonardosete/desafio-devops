@@ -2,14 +2,20 @@ name: Create Infra - GCP
 on:
   push:
     branches: [master]
-
+env:
+  tf_actions_working_dir: "./infra-gcp/terraform/"
 jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
+    
     # Add "id-token" with the intended permissions.
     permissions:
       contents: 'read'
       id-token: 'write'
+
+    defaults:
+      run:
+        working-directory: ${{ env.tf_actions_working_dir }}
 
     steps:
       - name: Checkout Actions
