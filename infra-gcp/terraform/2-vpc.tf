@@ -5,6 +5,7 @@ resource "google_project_service" "compute" {
 
 resource "google_project_service" "container" {
   service = "container.googleapis.com"
+  disable_dependent_services = true
 }
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network
