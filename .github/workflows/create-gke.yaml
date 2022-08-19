@@ -45,9 +45,12 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
   
+      # - name: Enable Compute and Container APIs
+      #   run: gcloud services enable compute.googleapis.com container.googleapis.com
+  
       - name: Use gcloud CLI
         run: gcloud info
-  
+
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
