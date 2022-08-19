@@ -88,7 +88,9 @@ jobs:
           gcloud services disable container.googleapis.com
           gcloud services list --enabled |egrep "compute.googleapis.com|container.googleapis.com"
           terraform destroy -auto-approve 
+      
+      - name: Install Kubectl
+        run: gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
-      - name: Terraform Show
-        id: show
-        run: terraform show
+      - name: Run Kubectl
+        run: kubectl get nodes
