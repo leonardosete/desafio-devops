@@ -22,8 +22,8 @@ jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
     env:
-      # tf_actions_working_dir: "./infra-gcp/terraform/"
-      tf_actions_working_dir: "./terraform-gke/"
+      tf_actions_working_dir: "./infra-gcp/terraform/"
+      # tf_actions_working_dir: "./terraform-gke/"
     ## Add "id-token" with the intended permissions.
     permissions:
       contents: read
