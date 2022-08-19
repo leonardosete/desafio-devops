@@ -1,4 +1,4 @@
-name: Create Infra - GCP
+name: Create Rancher - GKE
 on:
   pull_request:
     branches: [develop, master]
@@ -12,12 +12,17 @@ on:
         default: false
         required: false
         type: boolean
+      should-apply:
+        description: 'Run terraform apply -auto-approve? (deixe vazio para false)'
+        default: false
+        required: false
+        type: boolean
   
 jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
     env:
-      tf_actions_working_dir: "./infra-gcp/terraform/"
+      tf_actions_working_dir: "./rancher-gke/"
     # Add "id-token" with the intended permissions.
     permissions:
       contents: read
@@ -67,12 +72,12 @@ jobs:
         continue-on-error: true
 
       - name: Terraform Apply
-        if: ${{ inputs.should-destroy == false }}
+        if: ${{ inputs.should-apply == true && inputs.should-destroy == false }}
         id: apply
         run: terraform apply -auto-approve
 
       - name: Terraform Destroy
-        if: ${{ inputs.should-destroy == true}}
+        if: ${{ inputs.should-destroy == true && inputs.should-apply == false }}
         id: destroy
         run: terraform destroy -auto-approve 
 

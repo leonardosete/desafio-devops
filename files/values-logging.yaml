@@ -1,0 +1,3 @@
+additionalLoggingSources:
+  rke:
+    enabled: true
