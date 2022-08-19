@@ -10,14 +10,6 @@ resource "local_file" "kubeconfig" {
   filename = "kubeconfig-${var.env_name}"
 }
 
-resource "google_project_service" "compute" {
-  service                    = "compute.googleapis.com"
-}
-
-resource "google_project_service" "container" {
-  service                    = "container.googleapis.com"
-  disable_dependent_services = true
-}
 module "gcp-network" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 4.0"
@@ -50,10 +42,6 @@ module "gke" {
   name                   = "${var.cluster_name}-${var.env_name}"
   regional               = true
   region                 = var.region
-  depends_on = [
-    google_project_service.compute,
-    google_project_service.container
-  ]
   network                = module.gcp-network.network_name
   subnetwork             = module.gcp-network.subnets_names[0]
   ip_range_pods          = var.ip_range_pods_name
