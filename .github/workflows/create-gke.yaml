@@ -43,6 +43,7 @@ jobs:
   
       ## TO RUN WITH GKE MODULE
       - name: Enable Compute and Container APIs
+        if: ${{ inputs.should-destroy == false }}
         run: |
           gcloud services enable compute.googleapis.com container.googleapis.com
           gcloud services list --enabled |egrep "compute.googleapis.com|container.googleapis.com"
@@ -90,9 +91,11 @@ jobs:
           terraform destroy -auto-approve 
       
       - name: Install Kubectl
+        if: ${{ inputs.should-destroy == false }}
         run: |
           gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
       - name: Run Kubectl
+        if: ${{ inputs.should-destroy == false }}
         run: kubectl get nodes

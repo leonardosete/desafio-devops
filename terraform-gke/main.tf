@@ -46,7 +46,7 @@ module "gke" {
   subnetwork             = module.gcp-network.subnets_names[0]
   ip_range_pods          = var.ip_range_pods_name
   ip_range_services      = var.ip_range_services_name
-  # release_channel        = var.release_channel 
+  release_channel        = var.release_channel
   node_pools = [
     {
       name                      = "node-pool"
