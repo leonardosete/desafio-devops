@@ -90,7 +90,9 @@ jobs:
           terraform destroy -auto-approve 
       
       - name: Install Kubectl
-        run: gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
+        run: |
+          gcloud components install gke-gcloud-auth-plugin --quiet
+          gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
       - name: Run Kubectl
         run: kubectl get nodes
