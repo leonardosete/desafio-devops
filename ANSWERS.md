@@ -3,6 +3,7 @@ Coloque aqui suas respostas, observações e o que mais achar necessário. Mais 
 
 ###
 https://antonputra.com/google/create-gke-cluster-using-terraform/
+https://github.com/antonputra/tutorials/tree/main/lessons/108
 https://www.youtube.com/watch?v=X_IK0GBbBTw&t=12s
 
 ### 
