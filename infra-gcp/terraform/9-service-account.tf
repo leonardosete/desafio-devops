@@ -14,5 +14,5 @@ resource "google_project_iam_member" "service-a" {
 resource "google_service_account_iam_member" "service-a" {
   service_account_id = google_service_account.service-a.id
   role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:xenon-axe-359616.svc.id.goog[staging/service-a]"
+  member             = "serviceAccount:xenon-axe-359616.svc.id.goog[prod/service-a]"
 }
