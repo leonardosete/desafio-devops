@@ -1,7 +1,7 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs
 provider "google" {
-  project = "xenon-axe-359616"
-  region  = "us-central1"
+  project = var.project_id
+  region  = var.region
 }
 
 # https://www.terraform.io/language/settings/backends/gcs

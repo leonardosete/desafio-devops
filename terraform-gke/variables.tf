@@ -1,5 +1,6 @@
 variable "project_id" {
-  description = "xenon-axe-359616"
+  description = "The project ID to host the cluster in"
+  default = "xenon-axe-359616"
 }
 variable "cluster_name" {
   description = "The name for the GKE cluster"
