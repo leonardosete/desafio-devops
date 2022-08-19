@@ -8,8 +8,10 @@ on:
   workflow_dispatch:
     inputs:
       should-destroy:
-        description: 'Run terraform destroy -auto-approve? (to run type: "true")'
+        description: 'Run terraform destroy -auto-approve? (desmarcado = false)'
+        default: false
         required: false
+        type: boolean
   
 jobs:
   create_gke_cluster:
