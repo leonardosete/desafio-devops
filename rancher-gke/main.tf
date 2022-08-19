@@ -79,7 +79,7 @@ resource "null_resource" "delay" {
 
 # Kubeconfig file
 resource "local_file" "kubeconfig" {
-  filename = "${path.module}/.kube/config"
+  filename = "./.kube/config"
   content = rancher2_cluster.cluster_gcp.kube_config
   file_permission = "0600"
 
@@ -114,7 +114,7 @@ resource "rancher2_app_v2" "syslog_gcp" {
   repo_name = "rancher-charts"
   chart_name = "rancher-logging"
   chart_version = var.logchart
-  values = templatefile("${path.module}/files/values-logging.yaml", {})
+  values = templatefile("./files/values-logging.yaml", {})
 
   depends_on = [rancher2_app_v2.syslog_crd_gcp,rancher2_cluster.cluster_gcp,google_compute_instance.vm_gcp]
 }
@@ -131,7 +131,7 @@ resource "rancher2_app_v2" "monitor_gcp" {
   repo_name = "rancher-charts"
   chart_name = "rancher-monitoring"
   chart_version = var.monchart
-  values = templatefile("${path.module}/files/values.yaml", {})
+  values = templatefile("./files/values.yaml", {})
 
   depends_on = [rancher2_app_v2.syslog_gcp,rancher2_cluster.cluster_gcp,google_compute_instance.vm_gcp]
 }
