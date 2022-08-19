@@ -9,6 +9,15 @@ resource "local_file" "kubeconfig" {
   content  = module.gke_auth.kubeconfig_raw
   filename = "kubeconfig-${var.env_name}"
 }
+
+resource "google_project_service" "compute" {
+  service                    = "compute.googleapis.com"
+}
+
+resource "google_project_service" "container" {
+  service                    = "container.googleapis.com"
+  disable_dependent_services = true
+}
 module "gcp-network" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 4.0"
