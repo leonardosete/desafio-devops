@@ -1,3 +1,11 @@
+
+
+provider "rancher2" {
+  api_url = var.rancher-url
+  token_key = var.rancher-token
+  insecure = true
+}
+
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs
 provider "google" {
   project = "xenon-axe-359616"
@@ -16,10 +24,4 @@ terraform {
       version = "~> 4.0"
     }
   }
-}
-
-provider "rancher2" {
-  api_url = var.rancher-url
-  token_key = var.rancher-token
-  insecure = true
 }
