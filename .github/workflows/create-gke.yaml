@@ -1,81 +1,86 @@
-# name: Create Infra - GCP
-# on:
-#   pull_request:
-#     branches: [develop, master]
-#   push:
-#     branches: [develop, master]
+name: Create Infra - GCP
+on:
+  pull_request:
+    branches: [develop, master]
+  push:
+    branches: [develop, master]
 
-#   workflow_dispatch:
-#     inputs:
-#       should-destroy:
-#         description: 'Run terraform destroy -auto-approve? (deixe vazio para false)'
-#         default: false
-#         required: false
-#         type: boolean
+  workflow_dispatch:
+    inputs:
+      should-destroy:
+        description: 'Run terraform destroy -auto-approve? (deixe vazio para false)'
+        default: false
+        required: false
+        type: boolean
+      should-apply:
+        description: 'Run terraform apply -auto-approve? (deixe vazio para false)'
+        default: false
+        required: false
+        type: boolean
   
-# jobs:
-#   create_gke_cluster:
-#     runs-on: ubuntu-latest
-#     env:
-#       tf_actions_working_dir: "./infra-gcp/terraform/"
-#     # Add "id-token" with the intended permissions.
-#     permissions:
-#       contents: read
-#       id-token: write
+jobs:
+  create_gke_cluster:
+    runs-on: ubuntu-latest
+    env:
+      tf_actions_working_dir: "./infra-gcp/terraform/"
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: read
+      id-token: write
 
-#     defaults:
-#       run:
-#         working-directory: ${{ env.tf_actions_working_dir }}
+    defaults:
+      run:
+        working-directory: ${{ env.tf_actions_working_dir }}
 
-#     steps:
-#       - name: Checkout Actions
-#         uses: actions/checkout@v3
+    steps:
+      - name: Checkout Actions
+        uses: actions/checkout@v3
 
-#       - id: auth
-#         name: Authenticate to Google Cloud
-#         uses: google-github-actions/auth@v0
-#         with:
-#           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-#       - name: Set up Cloud SDK
-#         uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
   
-#       - name: Use gcloud CLI
-#         run: gcloud info
+      - name: Use gcloud CLI
+        run: gcloud info
   
-#       - name: Install Terraform
-#         uses: hashicorp/setup-terraform@v2
-#         with:
-#           terraform_version: 1.2.7 ## Se não definida, usará default: latest
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.7 ## Se não definida, usará default: latest
 
-#       - name: Terraform fmt
-#         id: fmt
-#         run: terraform fmt -check
-#         continue-on-error: true
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
 
-#       - name: Terraform Init
-#         id: init
-#         run: terraform init
+      - name: Terraform Init
+        id: init
+        run: terraform init
 
-#       - name: Terraform Validate
-#         id: validate
-#         run: terraform validate 
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate 
 
-#       - name: Terraform Plan
-#         id: plan
-#         run: terraform plan 
-#         continue-on-error: true
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan 
+        continue-on-error: true
 
-#       - name: Terraform Apply
-#         if: ${{ inputs.should-destroy == false }}
-#         id: apply
-#         run: terraform apply -auto-approve
+      - name: Terraform Apply
+        if: ${{ inputs.should-apply == true && inputs.should-destroy == false }}
+        id: apply
+        run: terraform apply -auto-approve
 
-#       - name: Terraform Destroy
-#         if: ${{ inputs.should-destroy == true}}
-#         id: destroy
-#         run: terraform destroy -auto-approve 
+      - name: Terraform Destroy
+        if: ${{ inputs.should-destroy == true && inputs.should-apply == false }}
+        id: destroy
+        run: terraform destroy -auto-approve 
 
-#       - name: Terraform Show
-#         id: show
-#         run: terraform show
+      - name: Terraform Show
+        id: show
+        run: terraform show
