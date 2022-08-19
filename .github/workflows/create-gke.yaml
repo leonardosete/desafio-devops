@@ -49,10 +49,6 @@ jobs:
       - name: Enable Compute and Container APIs
         run: |
           gcloud services enable compute.googleapis.com container.googleapis.com
-          echo " "
-          echo "Waiting to enable compute and container APIs"
-          echo " "
-          sleep 60
           gcloud services list --enabled |egrep "compute.googleapis.com|container.googleapis.com"
   
       - name: Install Terraform
