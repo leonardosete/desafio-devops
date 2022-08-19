@@ -19,7 +19,7 @@ on:
         type: boolean
   
 jobs:
-  create_gke_cluster:
+  create_rancher_gke_cluster:
     runs-on: ubuntu-latest
     env:
       tf_actions_working_dir: "./rancher-gke/"
