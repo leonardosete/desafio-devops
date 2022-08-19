@@ -46,10 +46,10 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
   
-      - name: Enable Compute and Container APIs
-        run: |
-          gcloud services enable compute.googleapis.com container.googleapis.com
-          gcloud services list --enabled |egrep "compute.googleapis.com|container.googleapis.com"
+      # - name: Enable Compute and Container APIs
+      #   run: |
+      #     gcloud services enable compute.googleapis.com container.googleapis.com
+      #     gcloud services list --enabled |egrep "compute.googleapis.com|container.googleapis.com"
   
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
@@ -79,18 +79,10 @@ jobs:
         id: apply
         run: terraform apply -auto-approve
 
-      # - name: Terraform Destroy
-      #   if: ${{ inputs.should-destroy == true && inputs.should-apply == false }}
-      #   id: destroy
-      #   run: terraform destroy -auto-approve 
-
       - name: Terraform Destroy
         if: ${{ inputs.should-destroy == true && inputs.should-apply == false }}
         id: destroy
-        run: |
-          gcloud services disable container.googleapis.com
-          sleep 60
-          terraform destroy -auto-approve 
+        run: terraform destroy -auto-approve 
 
       - name: Terraform Show
         id: show
