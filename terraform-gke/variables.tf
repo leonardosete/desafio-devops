@@ -30,3 +30,8 @@ variable "ip_range_services_name" {
   description = "The secondary ip range to use for services"
   default     = "ip-range-services"
 }
+
+variable "release_channel" {
+  description = "The release channel type"
+  default     = "REGULAR"
+}
