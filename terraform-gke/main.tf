@@ -50,6 +50,10 @@ module "gke" {
   name                   = "${var.cluster_name}-${var.env_name}"
   regional               = true
   region                 = var.region
+  depends_on = [
+    google_project_service.compute,
+    google_project_service.container
+  ]
   network                = module.gcp-network.network_name
   subnetwork             = module.gcp-network.subnets_names[0]
   ip_range_pods          = var.ip_range_pods_name
