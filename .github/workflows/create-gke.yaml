@@ -10,7 +10,6 @@ on:
       should-destroy:
         description: 'Run terraform destroy -auto-approve? (to run type: "true")'
         required: false
-        type: string
   
 jobs:
   create_gke_cluster:
