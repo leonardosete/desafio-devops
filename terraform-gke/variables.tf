@@ -33,5 +33,5 @@ variable "ip_range_services_name" {
 
 variable "release_channel" {
   description = "The release channel type"
-  default     = REGULAR
+  default     = "REGULAR"
 }
