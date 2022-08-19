@@ -46,7 +46,7 @@ resource "google_compute_instance" "vm_gcp" {
   }
 
   metadata = {
-     ssh-keys = file("~/.ssh/rancher-gke.pub")
+     ssh-keys = "rancher:${file("~/.ssh/rancher-gke.pub")}"
   }
 
   metadata_startup_script = data.template_file.startup-script_data.rendered
