@@ -83,8 +83,8 @@ jobs:
         if: ${{ inputs.should-destroy == false }}
         run: |
           gcloud components install gke-gcloud-auth-plugin --quiet
-          gcloud container clusters get-credentials tembici-devops-sre-prod
-          
+          gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
+
       - name: Run Kubectl
         if: ${{ inputs.should-destroy == false }}
         run: kubectl get nodes
