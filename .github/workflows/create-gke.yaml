@@ -1,9 +1,7 @@
 name: Create Infra - GCP
 on:
-  pull_request:
-    branches: [develop, master]
   push:
-    branches: [develop, master]
+    branches: [master]
 
   workflow_dispatch:
     inputs:
@@ -76,24 +74,17 @@ jobs:
         id: apply
         run: terraform apply -auto-approve
 
-      # - name: Terraform Destroy
-      #   if: ${{ inputs.should-destroy == true }}
-      #   id: destroy
-      #   run: terraform destroy -auto-approve 
-
-      ## TO RUN WITH GKE MODULE
       - name: Terraform Destroy
         if: ${{ inputs.should-destroy == true }}
         id: destroy
-        run: |
-          terraform destroy -auto-approve 
+        run: terraform destroy -auto-approve 
       
       - name: Install Kubectl
         if: ${{ inputs.should-destroy == false }}
         run: |
           gcloud components install gke-gcloud-auth-plugin --quiet
-          gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
-
+          gcloud container clusters get-credentials tembici-devops-sre-prod
+          
       - name: Run Kubectl
         if: ${{ inputs.should-destroy == false }}
         run: kubectl get nodes
