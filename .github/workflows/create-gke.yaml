@@ -1,11 +1,7 @@
 name: Create Infra - GKE
 on:
   push:
-    # branches: [infra]
-    branches:
-      - 'release-**'
-      - 'hotfix-**'
-      - 'feature-**'
+    branches: [infra]
 
   workflow_dispatch:
     inputs:
