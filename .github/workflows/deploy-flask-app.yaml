@@ -39,6 +39,7 @@ jobs:
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
       - name: Create/Verify Namespace
+        if: ${{ inputs.should-deploy == true }}
         run: |
           kubectl get ns
           kubectl create ns ${APP_NAME}
