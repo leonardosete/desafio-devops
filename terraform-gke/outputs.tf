@@ -1,6 +1,6 @@
 output "cluster_name" {
   description = "Cluster name"
-  value       = module.gke.name
+  value       = module.gke_private-cluster.name
 }
 
 output "release_channel" {
