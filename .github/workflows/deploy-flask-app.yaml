@@ -17,8 +17,8 @@ on:
 jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
-    # env:
-    #   tf_actions_working_dir: "./infra-gcp/terraform/"
+    env:
+      APP_NAME: "tembici-flask-app"
 
     steps:
       - name: Checkout Actions
@@ -38,10 +38,7 @@ jobs:
           gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
-      - name: Check GKE Cluster
-        if: ${{ inputs.should-destroy == false }}
+      - name: Create/Verify Namespace
         run: |
-          gcloud container clusters list
-          echo " "
-          echo " "
-          kubectl get nodes
+          kubectl get ns
+          kubectl create ns ${APP_NAME}
