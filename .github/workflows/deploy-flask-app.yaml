@@ -56,7 +56,7 @@ jobs:
           image-sources: Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           image-tag-latest: true
-          gcp-cloud-storage-bucket: ${{ DOCKER_GCP_REGISTRY }}
+          gcp-cloud-storage-bucket: ${{ env.DOCKER_GCP_REGISTRY }}
 
       # - name: Verify if Namespace Exist
       #   run: |
