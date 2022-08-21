@@ -55,5 +55,7 @@ jobs:
       - name: Apply K8s files
         # if: ${{ inputs.should-deploy == true }}
         run: |
-          ls -lhart
+          cd k8s
           pwd
+          kubectl apply -f ingress.yaml -n $NAMESPACE
+        
