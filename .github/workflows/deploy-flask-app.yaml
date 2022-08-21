@@ -20,7 +20,7 @@ on:
         type: boolean
   
 jobs:
-  create_gke_cluster:
+  create_app:
     runs-on: ubuntu-latest
     env:
       NAMESPACE: "tembici-devops-apps"
@@ -63,10 +63,16 @@ jobs:
           echo "CHECK_NS=`kubectl get ns $NAMESPACE |grep $NAMESPACE |awk '{print $1}'`" >> $GITHUB_ENV
 
       - name: Create Namespace
-        if: ${{ env.CHECK_NS != env.NAMESPACE }}
+        if: ${{ env.CHECK_NS != env.NAMESPACE && inputs.delete-k8s == false }}
         continue-on-error: true
         run: |
           kubectl create ns $NAMESPACE
+
+      - name: Delete Namespace
+        if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
+        continue-on-error: true
+        run: |
+          kubectl delete ns $NAMESPACE
 
       - name: List All Namespaces
         run: |
@@ -78,8 +84,9 @@ jobs:
           cd k8s
           kubectl apply -f '*.yaml' -n $NAMESPACE
         
-      - name: Remove K8s Resources
-        if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
-        run: |
-          cd k8s
-          kubectl delete -f '*.yaml' -n $NAMESPACE
+      # - name: Remove K8s Resources
+      #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
+      #   run: |
+      #     cd k8s
+      #     kubectl delete -f '*.yaml' -n $NAMESPACE
+
