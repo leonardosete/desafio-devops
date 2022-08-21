@@ -1,14 +1,15 @@
-name: Deploy GKE App
+name: Deploy Flask App
 on:
-  # pull_request:
-  #   branches: [develop, master]
   push:
-    branches: [develop, master]
-
+    branches:
+      - 'release/**'
+      - 'hotfix/**'
+      - 'feature/**'
+  pull_request:
   workflow_dispatch:
     inputs:
-      should-destroy:
-        description: 'Run terraform destroy -auto-approve? (desmarcado = false)'
+      should-deploy:
+        description: 'Should deploy app? (desmarcado = false)'
         default: false
         required: false
         type: boolean
@@ -16,17 +17,8 @@ on:
 jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
-    env:
-      # tf_actions_working_dir: "./infra-gcp/terraform/"
-      tf_actions_working_dir: "./terraform-gke/"
-    ## Add "id-token" with the intended permissions.
-    permissions:
-      contents: read
-      id-token: write
-
-    defaults:
-      run:
-        working-directory: ${{ env.tf_actions_working_dir }}
+    # env:
+    #   tf_actions_working_dir: "./infra-gcp/terraform/"
 
     steps:
       - name: Checkout Actions
@@ -40,11 +32,16 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
-          
-      - name: Install Kubectl
+
+      - name: Get GKE Cluster Kubeconfig
         run: |
           gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
-      - name: Run Kubectl
-        run: kubectl get nodes
+      - name: Check GKE Cluster
+        if: ${{ inputs.should-destroy == false }}
+        run: |
+          gcloud container clusters list
+          echo " "
+          echo " "
+          kubectl get nodes
