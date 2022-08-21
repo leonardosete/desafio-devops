@@ -18,7 +18,7 @@ jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
     env:
-      APP_NAME: "tembici-flask-app-2"
+      NAMESPACE: "tembici-devops-apps"
 
     steps:
       - name: Checkout Actions
@@ -40,14 +40,19 @@ jobs:
 
       - name: Verify if Namespace Exist
         run: |
-          echo "NAMESPACE=`kubectl get ns $APP_NAME |grep $APP_NAME |awk '{print $1}'`" >> $GITHUB_ENV
+          echo "CHECK_NS=`kubectl get ns $NAMESPACE |grep $NAMESPACE |awk '{print $1}'`" >> $GITHUB_ENV
 
       - name: Create Namespace
-        if: ${{ env.NAMESPACE != env.APP_NAME }}
+        if: ${{ env.CHECK_NS != env.NAMESPACE }}
         continue-on-error: true
         run: |
-          kubectl create ns ${APP_NAME}
+          kubectl create ns $NAMESPACE
 
       - name: List All Namespaces
         run: |
           kubectl get ns
+
+      - name: Apply K8s files
+        # if: ${{ inputs.should-deploy == true }}
+        run: |
+          kubectl apply -f .k8s/ingress.yaml -n $NAMESPACE
