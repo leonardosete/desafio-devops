@@ -79,11 +79,13 @@ jobs:
         id: destroy
         run: terraform destroy -auto-approve 
       
-      - name: Install Kubectl
+      - name: Get GKE Cluster Kubeconfig
         if: ${{ inputs.should-destroy == false }}
         run: |
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
-      - name: Run Kubectl
+      - name: Check GKE Cluster
         if: ${{ inputs.should-destroy == false }}
-        run: kubectl get nodes
+        run: |
+          gcloud container clusters list
+          kubectl get nodes
