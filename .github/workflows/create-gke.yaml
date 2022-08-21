@@ -74,14 +74,6 @@ jobs:
         id: apply
         run: terraform apply -auto-approve
 
-        ## REMOVER DEPOIS
-      - name: Teste Kubeconfig
-        if: ${{ inputs.should-destroy == false }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: kubeconfig-prod
-          path: ./kubeconfig-prod
-
       - name: Terraform Destroy
         if: ${{ inputs.should-destroy == true }}
         id: destroy
