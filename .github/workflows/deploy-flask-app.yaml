@@ -38,15 +38,16 @@ jobs:
           gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
-      - name: Verify Namespace
+      - name: Verify if Namespace Exist
         run: |
           echo "NAMESPACE=`kubectl get ns $APP_NAME |grep $APP_NAME |awk '{print $1}'`" >> $GITHUB_ENV
-          echo $NAMESPACE
 
       - name: Create Namespace
-        if: ${{ env.NAMESPACE != 0 }}
+        if: ${{ env.NAMESPACE != env.APP_NAME }}
         continue-on-error: true
         run: |
           kubectl create ns ${APP_NAME}
-          kubectl get ns
 
+      - name: List All Namespaces
+        run: |
+          kubectl get ns
