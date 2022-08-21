@@ -53,9 +53,8 @@ jobs:
           kubectl get ns
 
       - name: Apply K8s files
-        if: ${{ inputs.should-deploy == true }}
+        # if: ${{ inputs.should-deploy == true }}
         run: |
           cd k8s
-          pwd
-          kubectl apply -f '*.yaml' -n $NAMESPACE
+          kubectl delete -f '*.yaml' -n $NAMESPACE
         
