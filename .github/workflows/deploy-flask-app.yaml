@@ -57,5 +57,5 @@ jobs:
         run: |
           cd k8s
           pwd
-          kubectl apply -f ingress.yaml -n $NAMESPACE
+          kubectl apply -f ingress.yaml -n ${{ env.NAMESPACE }}
         
