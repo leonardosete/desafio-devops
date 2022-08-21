@@ -36,7 +36,7 @@ module "gcp-network" {
   }
 }
 
-module "gke" {
+module "gke_private-cluster" {
   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
   project_id             = var.project_id
   name                   = "${var.cluster_name}-${var.env_name}"
@@ -46,9 +46,8 @@ module "gke" {
   subnetwork             = module.gcp-network.subnets_names[0]
   ip_range_pods          = var.ip_range_pods_name
   ip_range_services      = var.ip_range_services_name
-  release_channel {
-    channel = var.release_channel
-  }
+  release_channel        = "REGULAR"
+  
   node_pools = [
     {
       name                      = "node-pool"

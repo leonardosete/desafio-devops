@@ -69,23 +69,23 @@ jobs:
         run: terraform plan 
         continue-on-error: true
 
-      - name: Terraform Apply
-        if: ${{ inputs.should-destroy == false }}
-        id: apply
-        run: terraform apply -auto-approve
+      # - name: Terraform Apply
+      #   if: ${{ inputs.should-destroy == false }}
+      #   id: apply
+      #   run: terraform apply -auto-approve
 
-      - name: Terraform Destroy
-        if: ${{ inputs.should-destroy == true }}
-        id: destroy
-        run: terraform destroy -auto-approve 
+      # - name: Terraform Destroy
+      #   if: ${{ inputs.should-destroy == true }}
+      #   id: destroy
+      #   run: terraform destroy -auto-approve 
       
-      - name: Get GKE Cluster Kubeconfig
-        if: ${{ inputs.should-destroy == false }}
-        run: |
-          gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
+      # - name: Get GKE Cluster Kubeconfig
+      #   if: ${{ inputs.should-destroy == false }}
+      #   run: |
+      #     gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
-      - name: Check GKE Cluster
-        if: ${{ inputs.should-destroy == false }}
-        run: |
-          gcloud container clusters list
-          kubectl get nodes
+      # - name: Check GKE Cluster
+      #   if: ${{ inputs.should-destroy == false }}
+      #   run: |
+      #     gcloud container clusters list
+      #     kubectl get nodes
