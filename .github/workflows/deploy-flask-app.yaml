@@ -18,7 +18,7 @@ jobs:
   create_gke_cluster:
     runs-on: ubuntu-latest
     env:
-      APP_NAME: "tembici-flask-app"
+      APP_NAME: "tembici-flask-app-2"
 
     steps:
       - name: Checkout Actions
