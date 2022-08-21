@@ -39,10 +39,14 @@ jobs:
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
       - name: Verify Namespace
-        run: kubectl get ns ${APP_NAME}
+        run: |
+          echo "NAMESPACE=`kubectl get ns $APP_NAME |grep $APP_NAME |awk '{print $1}'`" >> $GITHUB_ENV
+          echo $NAMESPACE
 
       - name: Create Namespace
-        if: ${{ inputs.should-deploy == true && echo $? == 1 }}
+        if: ${{ env.NAMESPACE != 0 }}
         continue-on-error: true
-        run: kubectl create ns ${APP_NAME}
+        run: |
+          kubectl create ns ${APP_NAME}
+          kubectl get ns
 
