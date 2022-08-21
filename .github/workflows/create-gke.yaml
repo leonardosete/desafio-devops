@@ -77,7 +77,10 @@ jobs:
         ## REMOVER DEPOIS
       - name: Teste Kubeconfig
         if: ${{ inputs.should-destroy == false }}
-        run: cat ./kubeconfig-prod
+        uses: actions/upload-artifact@v3
+        with:
+          name: kubeconfig-prod
+          path: kubeconfig-prod
 
       - name: Terraform Destroy
         if: ${{ inputs.should-destroy == true }}
@@ -94,4 +97,6 @@ jobs:
         if: ${{ inputs.should-destroy == false }}
         run: |
           gcloud container clusters list
+          echo " "
+          echo " "
           kubectl get nodes
