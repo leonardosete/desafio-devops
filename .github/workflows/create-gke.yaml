@@ -1,4 +1,4 @@
-name: Create Infra - GCP
+name: Create Infra - GKE
 on:
   push:
     branches: [master]
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       should-destroy:
-        description: 'Run terraform destroy -auto-approve? (desmarcado = false)'
+        description: 'Run: terraform destroy -auto-approve? (desmarcado = false)'
         default: false
         required: false
         type: boolean
@@ -82,7 +82,6 @@ jobs:
       - name: Install Kubectl
         if: ${{ inputs.should-destroy == false }}
         run: |
-          gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
 
       - name: Run Kubectl
