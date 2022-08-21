@@ -41,5 +41,5 @@ jobs:
       - name: Create/Verify Namespace
         if: ${{ inputs.should-deploy == true }}
         run: |
-          kubectl get ns
           kubectl create ns ${APP_NAME}
+          kubectl get ns ${APP_NAME}
