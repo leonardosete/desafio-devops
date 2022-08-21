@@ -2,9 +2,9 @@ name: Deploy Flask App
 on:
   push:
     branches:
-      - 'release/**'
-      - 'hotfix/**'
-      - 'feature/**'
+      - 'release-**'
+      - 'hotfix-**'
+      - 'feature-**'
   pull_request:
   workflow_dispatch:
     inputs:
