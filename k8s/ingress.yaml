@@ -15,7 +15,7 @@ spec:
           service:
             name: hello-world-1
             port:
-              number: 60000
+              number: 50000
       - path: /v2
         pathType: ImplementationSpecific
         backend:

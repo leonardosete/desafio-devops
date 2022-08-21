@@ -13,6 +13,11 @@ on:
         default: false
         required: false
         type: boolean
+      delete-k8s:
+        description: 'Run: kubectl delete *.yaml? (desmarcado = false)'
+        default: false
+        required: false
+        type: boolean
   
 jobs:
   create_gke_cluster:
@@ -52,9 +57,14 @@ jobs:
         run: |
           kubectl get ns
 
-      - name: Apply K8s files
-        # if: ${{ inputs.should-deploy == true }}
+      - name: Apply/Create K8s Resources
+        if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
+        run: |
+          cd k8s
+          kubectl apply -f '*.yaml' -n $NAMESPACE
+        
+      - name: Remove K8s Resources
+        if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
         run: |
           cd k8s
           kubectl delete -f '*.yaml' -n $NAMESPACE
-        

@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: hello-world-1
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     greeting: hello
     version: one
   ports:
   - protocol: TCP
-    port: 60000
+    port: 50000
     targetPort: 50000
