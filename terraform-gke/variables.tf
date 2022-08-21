@@ -35,14 +35,3 @@ variable "release_channel" {
   description = "The release channel type"
   default     = "REGULAR"
 }
-
-## ARTIFACT REGISTRY REPOSITORY
-variable "repository_id" {
-  description = "Repository name"
-  default     = "tembici-docker-registry"
-}
-
-variable "format" {
-  description = "Type of registry: DOCKER, MAVEN, NPM, PYTHON, APT, YUM, GO"
-  default = "DOCKER"
-}
