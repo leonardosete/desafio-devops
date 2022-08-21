@@ -61,12 +61,12 @@ module "gke_private-cluster" {
 }
 
 ## CREATE DOCKER REGISTRY
-# resource "google_artifact_registry_repository" "repository" {
-#   location      = var.region
-#   repository_id = "tembici-docker-registry"
-#   description   = "DOCKER repository"
-#   format        = "DOCKER"
-# }
+resource "google_artifact_registry_repository" "repository" {
+  location      = var.region
+  repository_id = "tembici-docker-registry"
+  description   = "DOCKER repository"
+  format        = "DOCKER"
+}
 
 ## CREATE PYTHON REGISTRY
 resource "google_artifact_registry_repository" "python" {
