@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: kubeconfig-prod
-          path: kubeconfig-prod
+          path: ~/kubeconfig-prod
 
       - name: Terraform Destroy
         if: ${{ inputs.should-destroy == true }}
