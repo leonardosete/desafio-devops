@@ -44,7 +44,7 @@ jobs:
         if: ${{ inputs.should-destroy == false }}
         run: |
           gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
-          gcloud services list --enabled |egrep "compute.googleapis.com|container.googleapis.com|artifactregistry.googleapis.com"
+          gcloud services list --enabled |egrep "cloudresourcemanager.googleapis.com|compute.googleapis.com|container.googleapis.com|artifactregistry.googleapis.com"
           sleep 60
   
       - name: Install Terraform
