@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       delete-app:
-        description: 'Run: kubectl delete *.yaml? (desmarcado = false)'
+        description: 'Run: kubectl delete *.yaml? (unmarked = false)'
         default: false
         required: false
         type: boolean
