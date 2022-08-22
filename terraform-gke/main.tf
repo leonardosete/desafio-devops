@@ -1,16 +1,16 @@
-module "tembici-gke_auth" {
+module "gke_auth" {
   source = "terraform-google-modules/kubernetes-engine/google//modules/auth"
-  depends_on   = [module.tembici-gke_private-cluster]
+  depends_on   = [module.gke_private-cluster]
   project_id   = var.project_id
-  location     = module.tembici-gke_private-cluster.location
-  cluster_name = module.tembici-gke_private-cluster.name
+  location     = module.gke_private-cluster.location
+  cluster_name = module.gke_private-cluster.name
 }
 resource "local_file" "kubeconfig" {
-  content  = module.tembici-gke_auth.kubeconfig_raw
+  content  = module.gke_auth.kubeconfig_raw
   filename = "kubeconfig-${var.env_name}"
 }
 
-module "tembici-gcp-network" {
+module "gcp-network" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 4.0"
   project_id   = var.project_id
@@ -36,7 +36,7 @@ module "tembici-gcp-network" {
   }
 }
 
-module "tembici-gke_private-cluster" {
+module "gke_private-cluster" {
   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
   project_id             = var.project_id
   name                   = "${var.cluster_name}-${var.env_name}"
@@ -63,7 +63,7 @@ module "tembici-gke_private-cluster" {
 ## CREATE DOCKER REGISTRY
 resource "google_artifact_registry_repository" "repository" {
   location      = var.region
-  repository_id = "tembici-sre-docker-registry"
+  repository_id = "sre-docker-registry"
   description   = "DOCKER repository"
   format        = "DOCKER"
 }
@@ -71,7 +71,7 @@ resource "google_artifact_registry_repository" "repository" {
 ## CREATE PYTHON REGISTRY
 resource "google_artifact_registry_repository" "python" {
   location      = var.region
-  repository_id = "tembici-sre-python-registry"
+  repository_id = "sre-python-registry"
   description   = "PYTHON repository"
   format        = "PYTHON"
 }
