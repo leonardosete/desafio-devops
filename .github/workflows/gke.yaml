@@ -12,7 +12,7 @@ on:
         type: boolean
   
 jobs:
-  create_gke_cluster:
+  gke_cluster:
     runs-on: ubuntu-latest
     env:
       # tf_actions_working_dir: "./infra-gcp/terraform/"
@@ -43,7 +43,7 @@ jobs:
       - name: Enable Compute and Container APIs
         if: ${{ inputs.should-destroy == false }}
         run: |
-          gcloud services enable compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
+          gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
           gcloud services list --enabled |egrep "compute.googleapis.com|container.googleapis.com|artifactregistry.googleapis.com"
   
       - name: Install Terraform
