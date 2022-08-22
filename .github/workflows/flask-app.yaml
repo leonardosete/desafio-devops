@@ -23,17 +23,8 @@ jobs:
   manage_app:
     strategy:
       matrix:
-        k8s_env: [dev, hlg, prod]
-        include:
-          - ns_k8s: dev
-            namespace: "tembici-sre-apps-dev"
-            is_ns_dev: "tembici-sre-apps-dev"
-          - ns_k8s: hlg
-            namespace: "tembici-sre-apps-hlg"
-            is_ns_hlg: "tembici-sre-apps-hlg"
-          - ns_k8s: prod
-            namespace: "tembici-sre-apps-prod"
-            is_ns_prod: "tembici-sre-apps-prod"
+        k8s_env: [tembici-sre-apps-dev, tembici-sre-apps-hlg, tembici-sre-apps-prod]
+
     runs-on: ubuntu-latest
     env:
       NS_ENV: ${{ matrix.k8s_env }}
@@ -67,10 +58,8 @@ jobs:
         if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-k8s == false }}
         continue-on-error: true
         run: |
-          echo ${{ matrix.is_ns_dev }}
-          echo ${{ matrix.is_ns_hlg }}
-          echo ${{ matrix.is_ns_prod }}
-          
+          echo ${{ matrix.k8s_env }}
+
         # run: |
         #   kubectl create ns $NS_ENV
 
