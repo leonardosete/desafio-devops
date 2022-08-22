@@ -14,7 +14,7 @@ on:
         required: false
         type: boolean
       deploy-app-env:
-        description: 'Select a k8s namespace to deploy'
+        description: 'Select a k8s namespace to deploy/delete'
         required: true
         default: 'tembici-sre-apps-dev'
         type: choice
