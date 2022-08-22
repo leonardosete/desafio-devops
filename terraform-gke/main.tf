@@ -1,4 +1,4 @@
-module "gke_auth" {
+module "tembici-gke_auth" {
   source = "terraform-google-modules/kubernetes-engine/google//modules/auth"
   depends_on   = [module.tembici-gke_private-cluster]
   project_id   = var.project_id
@@ -10,7 +10,7 @@ resource "local_file" "kubeconfig" {
   filename = "kubeconfig-${var.env_name}"
 }
 
-module "gcp-network" {
+module "tembici-gcp-network" {
   source       = "terraform-google-modules/network/google"
   version      = "~> 4.0"
   project_id   = var.project_id
