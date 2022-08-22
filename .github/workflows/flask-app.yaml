@@ -19,24 +19,19 @@ on:
         default: 'tembici-sre-apps-dev'
         type: choice
         options:
-        - tembici-sre-apps-dev
+        - tembici-sre-apps-dev 
         - tembici-sre-apps-hlg
-        - tembici-sre-apps-prod
-  
+        - tembici-sre-apps-prod ## Add namespaces here if needed.
+
+env: ## Variables available in this workflow
+  NS_ENV: ${{ inputs.deploy-app-env }}
+  PROJECT_ID: "tembici-sre"
+  CLUSTER_NAME: "tembici-sre-cluster-prod"
+  REGION: "us-central1"
+
 jobs:
   manage_app:
-    # strategy:
-    #   matrix:
-    #     k8s_env: [tembici-sre-apps-dev, tembici-sre-apps-hlg, tembici-sre-apps-prod]
-    #   max-parallel: 1
     runs-on: ubuntu-latest
-    env:
-      # NS_ENV: ${{ matrix.k8s_env }}
-      NS_ENV: ${{ inputs.deploy-app-env }}
-      PROJECT_ID: "tembici-sre"
-      CLUSTER_NAME: "tembici-sre-cluster-prod"
-      REGION: "us-central1"
-
     steps:
       - name: Checkout Actions
         uses: actions/checkout@v3
@@ -52,42 +47,45 @@ jobs:
 
       - name: Get GKE Cluster Kubeconfig
         run: |
+          gcloud components update --quiet
           gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
       - name: Verify if Namespace Exist
+        if: ${{ inputs.delete-app == false }}
         run: |
           echo "CHECK_NS=`kubectl get ns $NS_ENV |grep $NS_ENV |awk '{print $1}'`" >> $GITHUB_ENV
 
       - name: Create Namespace
-        if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-k8s == false }}
+        if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-app == false }}
         continue-on-error: true
         run: |
           kubectl create ns ${{ inputs.deploy-app-env }}
 
       - name: List Namespace
+        if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-app == false }}
         run: |
           kubectl get ns ${{ inputs.deploy-app-env }}
 
-      ## BUILD >> BUSCAR IMAGEM BASE NO REGISTRY DOCKER
-      ## TEST
-      ## PUBLISH REGISTRY PYTHON ou APP
-      ## GERAR VERSIONAMENTO - COMO GERENCIAR ISSO???
+      ## CONFIGURAR REGISTRY PARA GUARDAR IMAGEM BASE
+      ## BUILD >> BUSCAR/PULL DA IMAGEM BASE NO REGISTRY DOCKER
+      ## TEST DO APP
+      ## PUBLISH DO APP >> ENVIAR PARA REGISTRY PYTHON ou APP
+      ## GERAR VERSIONAMENTO - GIT VERSION???
+      ## CONTROLAR RELEASES - DE QUAL FORMA (XLRELEASE)???
+      ## MONITORAÇÃO
+      ## LOGS
+      ## SEGURANÇA DA CONTA GCP - IAM/SERVICE ACCOUNTS?
+      ## SEGURANÇA DO CLUSTER GKE - RBAC???
 
       - name: Apply/Create K8s Resources
-        if: ${{ inputs.delete-k8s == false && inputs.deploy-app-env }}
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: |
           cd k8s
           kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
       - name: Remove K8s Resources
-        if: ${{ inputs.delete-k8s == true && inputs.deploy-app-env }}
+        if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
         run: |
           cd k8s
-          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
-
-      # - name: Delete Namespace
-      #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
-      #   continue-on-error: true
-      #   run: |
-      #     kubectl delete ns $NS_ENV
+          kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
