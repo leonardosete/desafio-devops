@@ -80,11 +80,11 @@ jobs:
           cd k8s
           kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
-      # - name: Remove K8s Resources
-      #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
-      #   run: |
-      #     cd k8s
-      #     kubectl delete -f '*.yaml' -n $NS_ENV
+      - name: Remove K8s Resources
+        if: ${{ inputs.delete-k8s == true && inputs.deploy-app-env }}
+        run: |
+          cd k8s
+          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
 
       # - name: Delete Namespace
       #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
