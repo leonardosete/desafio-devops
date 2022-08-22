@@ -58,14 +58,11 @@ jobs:
         if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-k8s == false }}
         continue-on-error: true
         run: |
-          echo ${{ matrix.k8s_env }}
+          kubectl create ns ${{ matrix.k8s_env }}
 
-        # run: |
-        #   kubectl create ns $NS_ENV
-
-      # - name: List All Namespaces
-      #   run: |
-      #     kubectl get ns
+      - name: List All Namespaces
+        run: |
+          kubectl get ns
 
       # - name: Apply/Create K8s Resources
       #   if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
