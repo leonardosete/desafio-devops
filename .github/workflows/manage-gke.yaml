@@ -70,12 +70,12 @@ jobs:
         continue-on-error: true
 
       - name: Terraform Apply
-        if: ${{ inputs.should-destroy == false && inputs.should-deploy == true }}
+        if: ${{ inputs.should-destroy == false }}
         id: apply
         run: terraform apply -auto-approve
 
       - name: Terraform Destroy
-        if: ${{ inputs.should-destroy == true && && inputs.should-deploy == false }}
+        if: ${{ inputs.should-destroy == true }}
         id: destroy
         run: terraform destroy -auto-approve 
       
