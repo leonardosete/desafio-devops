@@ -15,9 +15,11 @@ on:
 jobs:
   gke_cluster:
     runs-on: ubuntu-latest
-    env:
-      # tf_actions_working_dir: "./infra-gcp/terraform/"
-      tf_actions_working_dir: "./terraform-gke/"
+    env: ## Variables available in this workflow
+      TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
+      PROJECT_ID: "tembici-sre"
+      CLUSTER_NAME: "tembici-sre-cluster-prod"
+      REGION: "us-central1"
     ## Add "id-token" with the intended permissions.
     permissions:
       contents: read
@@ -25,7 +27,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ${{ env.tf_actions_working_dir }}
+        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     steps:
       - name: Checkout Actions
@@ -82,10 +84,10 @@ jobs:
         run: terraform destroy -auto-approve 
       
       - name: Get GKE Cluster Kubeconfig
-        if: ${{ inputs.should-destroy == false }}
         run: |
+          gcloud components update --quiet
           gcloud components install gke-gcloud-auth-plugin --quiet
-          gcloud container clusters get-credentials tembici-devops-sre-prod --region us-central1 --project xenon-axe-359616
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
       - name: Check GKE Cluster
         if: ${{ inputs.should-destroy == false }}
