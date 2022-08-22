@@ -33,9 +33,9 @@ jobs:
             namespace: "tembici-sre-apps-prod"
     runs-on: ubuntu-latest
     env:
-      NS_ENV: ${{ matrix.namespace }}
+      NS_ENV: ${{ matrix.k8s_env }}
       PROJECT_ID: "tembici-sre"
-      CLUSTER_NAME: "tembici-sre-cluster"
+      CLUSTER_NAME: "tembici-sre-cluster-prod"
       REGION: "us-central1"
 
     steps:
@@ -63,24 +63,25 @@ jobs:
       - name: Create Namespace
         if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-k8s == false }}
         continue-on-error: true
-        run: |
-          kubectl create ns $NS_ENV
+        run: echo ${{ matrix.namespace }}
+        # run: |
+        #   kubectl create ns $NS_ENV
 
-      - name: List All Namespaces
-        run: |
-          kubectl get ns
+      # - name: List All Namespaces
+      #   run: |
+      #     kubectl get ns
 
-      - name: Apply/Create K8s Resources
-        if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
-        run: |
-          cd k8s
-          kubectl apply -f '*.yaml' -n $NS_ENV
+      # - name: Apply/Create K8s Resources
+      #   if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
+      #   run: |
+      #     cd k8s
+      #     kubectl apply -f '*.yaml' -n $NS_ENV
         
-      - name: Remove K8s Resources
-        if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
-        run: |
-          cd k8s
-          kubectl delete -f '*.yaml' -n $NS_ENV
+      # - name: Remove K8s Resources
+      #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
+      #   run: |
+      #     cd k8s
+      #     kubectl delete -f '*.yaml' -n $NS_ENV
 
       # - name: Delete Namespace
       #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
