@@ -63,7 +63,7 @@ jobs:
           kubectl create ns ${{ inputs.deploy-app-env }}
 
       - name: List Namespace
-        if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-app == false }}
+        if: ${{ inputs.delete-app == false }}
         run: |
           kubectl get ns ${{ inputs.deploy-app-env }}
 
