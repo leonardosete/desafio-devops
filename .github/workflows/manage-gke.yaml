@@ -1,4 +1,4 @@
-name: Create Infra - GKE
+name: Manage Infra - GKE
 on:
   push:
     branches: [infra]

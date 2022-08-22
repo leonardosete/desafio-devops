@@ -1,4 +1,4 @@
-name: Deploy Flask App
+name: Manage Flask App
 on:
   push:
     branches:
@@ -20,7 +20,7 @@ on:
         type: boolean
   
 jobs:
-  create_app:
+  manage_app:
     runs-on: ubuntu-latest
     env:
       NAMESPACE: "tembici-devops-apps"
@@ -68,12 +68,6 @@ jobs:
         run: |
           kubectl create ns $NAMESPACE
 
-      - name: Delete Namespace
-        if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
-        continue-on-error: true
-        run: |
-          kubectl delete ns $NAMESPACE
-
       - name: List All Namespaces
         run: |
           kubectl get ns
@@ -84,9 +78,14 @@ jobs:
           cd k8s
           kubectl apply -f '*.yaml' -n $NAMESPACE
         
-      # - name: Remove K8s Resources
-      #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
-      #   run: |
-      #     cd k8s
-      #     kubectl delete -f '*.yaml' -n $NAMESPACE
+      - name: Remove K8s Resources
+        if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
+        run: |
+          cd k8s
+          kubectl delete -f '*.yaml' -n $NAMESPACE
 
+      # - name: Delete Namespace
+      #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
+      #   continue-on-error: true
+      #   run: |
+      #     kubectl delete ns $NAMESPACE
