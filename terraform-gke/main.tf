@@ -1,12 +1,12 @@
 module "gke_auth" {
   source = "terraform-google-modules/kubernetes-engine/google//modules/auth"
-  depends_on   = [module.gke_private-cluster]
+  depends_on   = [module.tembici-gke_private-cluster]
   project_id   = var.project_id
-  location     = module.gke_private-cluster.location
-  cluster_name = module.gke_private-cluster.name
+  location     = module.tembici-gke_private-cluster.location
+  cluster_name = module.tembici-gke_private-cluster.name
 }
 resource "local_file" "kubeconfig" {
-  content  = module.gke_auth.kubeconfig_raw
+  content  = module.tembici-gke_auth.kubeconfig_raw
   filename = "kubeconfig-${var.env_name}"
 }
 
