@@ -1,4 +1,4 @@
-name: Manage Flask App
+name: Flask App
 on:
   push:
     branches:
@@ -21,13 +21,23 @@ on:
   
 jobs:
   manage_app:
+    strategy:
+      matrix:
+        k8s_env: [dev, hlg, prod]
+        include:
+          - ns_k8s: dev
+            namespace: "tembici-sre-apps-dev"
+          - ns_k8s: hlg
+            namespace: "tembici-sre-apps-hlg"
+          - ns_k8s: prod
+            namespace: "tembici-sre-apps-prod"
     runs-on: ubuntu-latest
     env:
-      NAMESPACE: "tembici-devops-apps"
-      PROJECT_ID: "xenon-axe-359616"
-      CLUSTER_NAME: "tembici-devops-sre-prod"
+      NS_ENV: ${{ matrix.namespace }}
+      PROJECT_ID: "tembici-sre"
+      CLUSTER_NAME: "tembici-sre-cluster"
       REGION: "us-central1"
-      DOCKER_GCP_REGISTRY: "tembici-python-registry"
+
     steps:
       - name: Checkout Actions
         uses: actions/checkout@v3
@@ -46,27 +56,15 @@ jobs:
           gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
-
-      # - name: Build Docker Image
-      #   uses: FlowSquad/docker-cloud-build@v1.0.1
-      #   with:
-      #     gcp-project-id: ${{ env.PROJECT_ID }}
-      #     gcp-service-account-key: ${{ secrets.GCP_CREDENTIALS }}
-      #     image-name: tembici-flask-app
-      #     image-sources: Dockerfile
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     image-tag-latest: true
-      #     gcp-cloud-storage-bucket: ${{ env.DOCKER_GCP_REGISTRY }}
-
       - name: Verify if Namespace Exist
         run: |
-          echo "CHECK_NS=`kubectl get ns $NAMESPACE |grep $NAMESPACE |awk '{print $1}'`" >> $GITHUB_ENV
+          echo "CHECK_NS=`kubectl get ns $NS_ENV |grep $NS_ENV |awk '{print $1}'`" >> $GITHUB_ENV
 
       - name: Create Namespace
-        if: ${{ env.CHECK_NS != env.NAMESPACE && inputs.delete-k8s == false }}
+        if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-k8s == false }}
         continue-on-error: true
         run: |
-          kubectl create ns $NAMESPACE
+          kubectl create ns $NS_ENV
 
       - name: List All Namespaces
         run: |
@@ -76,16 +74,16 @@ jobs:
         if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
         run: |
           cd k8s
-          kubectl apply -f '*.yaml' -n $NAMESPACE
+          kubectl apply -f '*.yaml' -n $NS_ENV
         
       - name: Remove K8s Resources
         if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
         run: |
           cd k8s
-          kubectl delete -f '*.yaml' -n $NAMESPACE
+          kubectl delete -f '*.yaml' -n $NS_ENV
 
       # - name: Delete Namespace
       #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
       #   continue-on-error: true
       #   run: |
-      #     kubectl delete ns $NAMESPACE
+      #     kubectl delete ns $NS_ENV

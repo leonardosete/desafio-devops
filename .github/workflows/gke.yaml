@@ -1,7 +1,7 @@
-name: Manage Infra - GKE
+name: Infra - GKE
 on:
   push:
-    branches: [infra]
+    branches: [master]
 
   workflow_dispatch:
     inputs:
