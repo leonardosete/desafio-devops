@@ -8,26 +8,31 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
-      should-deploy:
-        description: 'Should deploy app? (desmarcado = false)'
-        default: false
-        required: false
-        type: boolean
-      delete-k8s:
+      delete-app:
         description: 'Run: kubectl delete *.yaml? (desmarcado = false)'
         default: false
         required: false
         type: boolean
+      deploy-app-env:
+        description: 'Select a k8s namespace to deploy'
+        required: true
+        default: 'tembici-sre-apps-dev'
+        type: choice
+        options:
+        - tembici-sre-apps-dev
+        - tembici-sre-apps-hlg
+        - tembici-sre-apps-prod
   
 jobs:
   manage_app:
-    strategy:
-      matrix:
-        k8s_env: [tembici-sre-apps-dev, tembici-sre-apps-hlg, tembici-sre-apps-prod]
-      max-parallel: 1
+    # strategy:
+    #   matrix:
+    #     k8s_env: [tembici-sre-apps-dev, tembici-sre-apps-hlg, tembici-sre-apps-prod]
+    #   max-parallel: 1
     runs-on: ubuntu-latest
     env:
-      NS_ENV: ${{ matrix.k8s_env }}
+      # NS_ENV: ${{ matrix.k8s_env }}
+      NS_ENV: ${{ inputs.deploy-app-env }}
       PROJECT_ID: "tembici-sre"
       CLUSTER_NAME: "tembici-sre-cluster-prod"
       REGION: "us-central1"
@@ -58,17 +63,22 @@ jobs:
         if: ${{ env.CHECK_NS != env.NS_ENV && inputs.delete-k8s == false }}
         continue-on-error: true
         run: |
-          kubectl create ns ${{ matrix.k8s_env }}
+          kubectl create ns ${{ inputs.deploy-app-env }}
 
       - name: List Namespace
         run: |
-          kubectl get ns ${{ matrix.k8s_env }}
+          kubectl get ns ${{ inputs.deploy-app-env }}
+
+      ## BUILD >> BUSCAR IMAGEM BASE NO REGISTRY DOCKER
+      ## TEST
+      ## PUBLISH REGISTRY PYTHON ou APP
+      ## GERAR VERSIONAMENTO - COMO GERENCIAR ISSO???
 
       - name: Apply/Create K8s Resources
-        if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
+        if: ${{ inputs.delete-k8s == false && inputs.deploy-app-env }}
         run: |
           cd k8s
-          kubectl apply -f '*.yaml' -n tembici-sre-apps-dev
+          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
       # - name: Remove K8s Resources
       #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
