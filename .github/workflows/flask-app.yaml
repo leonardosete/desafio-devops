@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         k8s_env: [tembici-sre-apps-dev, tembici-sre-apps-hlg, tembici-sre-apps-prod]
-
+      max-parallel: 1
     runs-on: ubuntu-latest
     env:
       NS_ENV: ${{ matrix.k8s_env }}
@@ -60,15 +60,15 @@ jobs:
         run: |
           kubectl create ns ${{ matrix.k8s_env }}
 
-      - name: List All Namespaces
+      - name: List Namespace
         run: |
-          kubectl get ns
+          kubectl get ns ${{ matrix.k8s_env }}
 
-      # - name: Apply/Create K8s Resources
-      #   if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
-      #   run: |
-      #     cd k8s
-      #     kubectl apply -f '*.yaml' -n $NS_ENV
+      - name: Apply/Create K8s Resources
+        if: ${{ inputs.should-deploy == true &&  inputs.delete-k8s == false }}
+        run: |
+          cd k8s
+          kubectl apply -f '*.yaml' -n tembici-sre-apps-dev
         
       # - name: Remove K8s Resources
       #   if: ${{ inputs.should-deploy == false &&  inputs.delete-k8s == true }}
