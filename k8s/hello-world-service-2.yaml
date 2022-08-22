@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: hello-world-2
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     greeting: hello
     version: two
