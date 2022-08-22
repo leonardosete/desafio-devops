@@ -1,10 +1,10 @@
 variable "project_id" {
   description = "The project ID to host the cluster in"
-  default = "xenon-axe-359616"
+  default = "tembici-sre"
 }
 variable "cluster_name" {
   description = "The name for the GKE cluster"
-  default     = "tembici-devops-sre"
+  default     = "tembici-sre-cluster"
 }
 variable "env_name" {
   description = "The environment for the GKE cluster"
@@ -16,11 +16,11 @@ variable "region" {
 }
 variable "network" {
   description = "The VPC network created to host the cluster in"
-  default     = "gke-network"
+  default     = "tembici-gke-network"
 }
 variable "subnetwork" {
   description = "The subnetwork created to host the cluster in"
-  default     = "gke-subnet"
+  default     = "tembici-gke-subnet"
 }
 variable "ip_range_pods_name" {
   description = "The secondary ip range to use for pods"

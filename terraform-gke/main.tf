@@ -36,7 +36,7 @@ module "gcp-network" {
   }
 }
 
-module "gke_private-cluster" {
+module "tembici-gke_private-cluster" {
   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
   project_id             = var.project_id
   name                   = "${var.cluster_name}-${var.env_name}"
@@ -63,7 +63,7 @@ module "gke_private-cluster" {
 ## CREATE DOCKER REGISTRY
 resource "google_artifact_registry_repository" "repository" {
   location      = var.region
-  repository_id = "tembici-docker-registry"
+  repository_id = "tembici-sre-docker-registry"
   description   = "DOCKER repository"
   format        = "DOCKER"
 }
@@ -71,7 +71,7 @@ resource "google_artifact_registry_repository" "repository" {
 ## CREATE PYTHON REGISTRY
 resource "google_artifact_registry_repository" "python" {
   location      = var.region
-  repository_id = "tembici-python-registry"
+  repository_id = "tembici-sre-python-registry"
   description   = "PYTHON repository"
   format        = "PYTHON"
 }
