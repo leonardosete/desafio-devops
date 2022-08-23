@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       greeting: flask
-      version: one
+      version: three
   replicas: 3
   template:
     metadata:
