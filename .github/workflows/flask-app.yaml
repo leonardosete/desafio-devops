@@ -24,7 +24,9 @@ env: ## Variables available in this workflow
   PROJECT_ID: "tembici-sre"
   CLUSTER_NAME: "tembici-sre-cluster-prod"
   REGION: "us-central1"
+  REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: flask-app
+
 
 jobs:
   manage_app:
@@ -46,7 +48,7 @@ jobs:
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.REGION }}
+          location: $REGION
 
 ## TESTE BUILD E PUSH ##
       - name: Build Docker Image
@@ -59,16 +61,16 @@ jobs:
 
       - name: Configure Docker Client
         run: |
-          gcloud auth configure-docker  ${{ env.REGION }}.pkg.dev --quiet
+          gcloud auth configure-docker  $REGION.pkg.dev --quiet
 
       - name: Push Docker Image to Artifact Registry
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker tag $IMAGE_NAME:latest  ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-          docker tag $IMAGE_NAME:latest  ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
-          docker push  ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-          docker push  ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
+          docker tag $IMAGE_NAME:latest  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
+          docker tag $IMAGE_NAME:latest  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GIT_TAG
+          docker push  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
+          docker push  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GIT_TAG
 
   
       # - name: Namespace to Deploy
