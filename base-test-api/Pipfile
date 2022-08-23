@@ -17,5 +17,6 @@ yapf = "*"
 flask-api = "*"
 pytest-docker-compose = "*"
 
+
 [requires]
 python_version = "3.6"
