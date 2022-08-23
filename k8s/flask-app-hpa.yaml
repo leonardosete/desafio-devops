@@ -1,17 +1,15 @@
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: flask-app-hpa
 spec:
-  maxReplicas: 5
-  metrics:
-  - type: ContainerResource
-    containerResource:
-      name: cpu
-      container: flask-app
-      targetAverageUtilization: 60
-  minReplicas: 2
+  selector:
+    greeting: flask-app
+    version: one
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: flask-app
+    name: flask-app-deployement
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
