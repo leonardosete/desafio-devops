@@ -52,18 +52,22 @@ jobs:
 
 ## TESTE BUILD E PUSH ##
       - name: Build Docker Image
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: docker build -t ${{ env.IMAGE_NAME }}:latest ./flask
 
       - name: Automatic Tagging of Releases
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         id: increment-git-tag
         run: |
           bash ./flask/scripts/git_update.sh -v major
 
       - name: Configure Docker Client
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Push Docker Image to Artifact Registry
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
@@ -93,8 +97,8 @@ jobs:
           cd k8s
           kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
-      # - name: Delete K8s Resources
-      #   if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
-      #   run: |
-      #     cd k8s
-      #     kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+      - name: Delete K8s Resources
+        if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
+        run: |
+          cd k8s
+          kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
