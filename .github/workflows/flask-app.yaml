@@ -47,17 +47,9 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
   
-      - name: Check Namespace
+      - name: Namespace to Deploy
         run: |
-          echo "CHECK_NS=`kubectl get ns $NS_ENV |grep $NS_ENV |awk '{print $1}'`" >> $GITHUB_ENV
-
-
-      # - name: Get GKE Cluster Kubeconfig
-      #   run: |
-      #     gcloud components update --quiet
-      #     gcloud components install gke-gcloud-auth-plugin --quiet
-      #     gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
-
+          kubectl get ns $NS_ENV |grep $NS_ENV
 
       ## BUILD >> BUSCAR/PULL DA IMAGEM BASE + COD DO APP
       ## TEST DO APP
