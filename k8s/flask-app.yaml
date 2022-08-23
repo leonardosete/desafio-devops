@@ -6,13 +6,13 @@ spec:
   selector:
     matchLabels:
       greeting: flask
-      version: three
+      version: one
   replicas: 3
   template:
     metadata:
       labels:
         greeting: flask
-        version: three
+        version: one
     spec:
       containers:
       - name: flask-app-1

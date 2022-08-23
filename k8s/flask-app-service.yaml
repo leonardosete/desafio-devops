@@ -6,7 +6,7 @@ spec:
   type: ClusterIP
   selector:
     greeting: flask
-    version: three
+    version: one
   ports:
   - protocol: TCP
     port: 1001
