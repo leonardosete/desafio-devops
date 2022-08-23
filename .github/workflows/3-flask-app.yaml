@@ -61,8 +61,12 @@ jobs:
         run: |
           bash ./scripts/git_update.sh -v major
 
+      - name: Teste Flask APP
+        run: |
+          TEST_OK=`docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest" |grep "1 passed"` >> GITHUB_ENV
+
       - name: Configure Docker Client
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env && env.TEST_OK }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
@@ -76,9 +80,9 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-      - name: Teste Flask APP
-        run: |
-          docker run -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
+      # - name: Teste Flask APP
+      #   run: |
+      #     docker run -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
 
       # - name: Namespace to Deploy
