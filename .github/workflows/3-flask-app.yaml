@@ -114,7 +114,7 @@ jobs:
         if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: |
           cd k8s
-          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+          gcloud container clusters get-credentials tembici-sre-cluster-prod --region us-central1 --project tembici-sre
           kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
       - name: Delete K8s Resources
