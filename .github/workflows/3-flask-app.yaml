@@ -63,7 +63,7 @@ jobs:
 
       - name: Teste Flask APP
         run: |
-          echo "TEST_OK=`docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest" |grep "1 passed"`"" >> GITHUB_ENV
+          echo "TEST_OK=`docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest" |grep "1 passed"`" >> GITHUB_ENV
           echo ${{ env.TEST_OK }}
 
       - name: Configure Docker Client
