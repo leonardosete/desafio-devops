@@ -67,7 +67,7 @@ jobs:
           echo ${{ env.TEST_OK }}
 
       - name: Configure Docker Client
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env && env.TEST_OK == "1 passed" }}
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env && startsWith(env.TESTE_OK, '1 passed') }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
