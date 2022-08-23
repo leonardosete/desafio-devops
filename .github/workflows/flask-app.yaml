@@ -41,11 +41,11 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      # - name: Get GKE Cluster Kubeconfig
-      #   run: |
-      #     gcloud components update --quiet
-      #     gcloud components install gke-gcloud-auth-plugin --quiet
-      #     gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
+      - name: Get GKE Cluster Kubeconfig
+        run: |
+          gcloud components update --quiet
+          gcloud components install gke-gcloud-auth-plugin --quiet
+          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
       - name: Verify if Namespace Exist
         run: |
