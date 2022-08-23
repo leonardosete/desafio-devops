@@ -77,9 +77,10 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   
-      # - name: Namespace to Deploy
-      #   run: |
-      #     kubectl get ns $NS_ENV |grep $NS_ENV
+      - name: Namespace to Deploy
+        run: |
+          kubectl get ns ${{ inputs.deploy-app-env }}
+          echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
 
       ## BUILD >> BUSCAR/PULL DA IMAGEM BASE + COD DO APP
       ## TEST DO APP
