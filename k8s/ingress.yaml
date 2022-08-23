@@ -23,3 +23,10 @@ spec:
             name: hello-world-2
             port:
               number: 8000
+      - path: /hello
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: flask-1
+            port:
+              number: 1001

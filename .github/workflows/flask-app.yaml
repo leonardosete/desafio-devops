@@ -87,11 +87,11 @@ jobs:
       ## SEGURANÇA DA CONTA GCP - IAM/SERVICE ACCOUNTS?
       ## SEGURANÇA DO CLUSTER GKE - RBAC???
 
-      # - name: Apply/Create K8s Resources
-      #   if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
-      #   run: |
-      #     cd k8s
-      #     kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+      - name: Apply/Create K8s Resources
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
+        run: |
+          cd k8s
+          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
       # - name: Delete K8s Resources
       #   if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
