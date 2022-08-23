@@ -50,7 +50,7 @@ jobs:
 
 ## TESTE BUILD E PUSH ##
       - name: Build Docker Image
-        run: docker build -t $IMAGE_NAME:latest ./flask/Dockerfile
+        run: docker build -t $IMAGE_NAME:latest ./flask
 
       - name: Automatic Tagging of Releases
         id: increment-git-tag
