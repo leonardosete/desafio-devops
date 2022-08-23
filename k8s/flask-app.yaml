@@ -12,7 +12,7 @@ spec:
     metadata:
       labels:
         greeting: flask
-        version: one
+        version: three
     spec:
       containers:
       - name: flask-app-1
