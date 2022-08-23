@@ -83,6 +83,7 @@ jobs:
         run: terraform destroy -auto-approve 
       
       - name: Get Credentials
+        if: ${{ inputs.should-destroy == false }}
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
