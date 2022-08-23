@@ -41,20 +41,27 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: Get GKE Cluster Kubeconfig
-        run: |
-          gcloud components update --quiet
-          gcloud components install gke-gcloud-auth-plugin --quiet
-          gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
-
-      - name: Verify if Namespace Exist
+      - name: Get Credentials
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
+  
+      - name: Check Namespace
         run: |
           echo "CHECK_NS=`kubectl get ns $NS_ENV |grep $NS_ENV |awk '{print $1}'`" >> $GITHUB_ENV
 
-      ## CONFIGURAR REGISTRY PARA GUARDAR IMAGEM BASE
-      ## BUILD >> BUSCAR/PULL DA IMAGEM BASE NO REGISTRY DOCKER
+
+      # - name: Get GKE Cluster Kubeconfig
+      #   run: |
+      #     gcloud components update --quiet
+      #     gcloud components install gke-gcloud-auth-plugin --quiet
+      #     gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
+
+
+      ## BUILD >> BUSCAR/PULL DA IMAGEM BASE + COD DO APP
       ## TEST DO APP
-      ## PUBLISH DO APP >> ENVIAR PARA REGISTRY PYTHON ou APP
+      ## PUBLISH DO APP >> ENVIAR PARA ARTIFACT REGISTRY - GCP
       ## GERAR VERSIONAMENTO - GIT VERSION???
       ## CONTROLAR RELEASES - DE QUAL FORMA (XLRELEASE)???
       ## MONITORAÇÃO
