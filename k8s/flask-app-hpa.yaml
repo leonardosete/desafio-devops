@@ -3,6 +3,9 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: flask-app
 spec:
+  selector:
+    greeting: flask-app
+    version: one
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
