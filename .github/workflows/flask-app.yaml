@@ -48,7 +48,7 @@ jobs:
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.REPOSITORY }}
+          location: ${{ env.REGION }}
 
 ## TESTE BUILD E PUSH ##
       - name: Build Docker Image
@@ -67,10 +67,10 @@ jobs:
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-          docker push  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          docker push  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker push  ${{ env.REGION }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push  ${{ env.REGION }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   
       # - name: Namespace to Deploy
