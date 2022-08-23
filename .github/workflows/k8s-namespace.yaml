@@ -42,7 +42,7 @@ jobs:
           gcloud components install gke-gcloud-auth-plugin --quiet
           gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.REGION }} --project ${{ env.PROJECT_ID }}
 
-      - name: Verify if Namespace Exist
+      - name: Check Namespace
         run: |
           echo "CHECK_NS=`kubectl get ns $NS_ENV |grep $NS_ENV |awk '{print $1}'`" >> $GITHUB_ENV
 
