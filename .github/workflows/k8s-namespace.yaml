@@ -1,16 +1,11 @@
-name: Flask App
+name: Manage K8s Namespaces
 on:
   push:
-    branches: [release, feature, hotfix, task]
+    branches: [infra]
   workflow_dispatch:
     inputs:
-      delete-app:
-        description: 'Run: kubectl delete *.yaml? (unmarked = false)'
-        default: false
-        required: false
-        type: boolean
       deploy-app-env:
-        description: 'Select a k8s namespace to deploy/delete'
+        description: 'Select a k8s namespace to create'
         required: true
         default: 'tembici-sre-apps-dev'
         type: choice
@@ -26,7 +21,7 @@ env: ## Variables available in this workflow
   REGION: "us-central1"
 
 jobs:
-  manage_app:
+  k8s_namespace:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Actions
@@ -51,25 +46,17 @@ jobs:
         run: |
           echo "CHECK_NS=`kubectl get ns $NS_ENV |grep $NS_ENV |awk '{print $1}'`" >> $GITHUB_ENV
 
-      ## CONFIGURAR REGISTRY PARA GUARDAR IMAGEM BASE
-      ## BUILD >> BUSCAR/PULL DA IMAGEM BASE NO REGISTRY DOCKER
-      ## TEST DO APP
-      ## PUBLISH DO APP >> ENVIAR PARA REGISTRY PYTHON ou APP
-      ## GERAR VERSIONAMENTO - GIT VERSION???
-      ## CONTROLAR RELEASES - DE QUAL FORMA (XLRELEASE)???
-      ## MONITORAÇÃO
-      ## LOGS
-      ## SEGURANÇA DA CONTA GCP - IAM/SERVICE ACCOUNTS?
-      ## SEGURANÇA DO CLUSTER GKE - RBAC???
+      - name: Create Namespace
+        if: ${{ env.CHECK_NS != env.NS_ENV }}
+        continue-on-error: true
+        run: |
+          kubectl create ns ${{ inputs.deploy-app-env }}
 
-      - name: Apply/Create K8s Resources
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
+      - name: List Namespace
         run: |
-          cd k8s
-          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
-        
-      - name: Delete K8s Resources
-        if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
-        run: |
-          cd k8s
-          kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+          kubectl get ns ${{ inputs.deploy-app-env }}
+
+
+
+
+
