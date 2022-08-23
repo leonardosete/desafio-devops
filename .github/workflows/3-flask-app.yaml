@@ -55,12 +55,8 @@ jobs:
         if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
-      - name: Teste Flask APP
-        run: |
-          TEST_OK=`docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest" |grep "1 passed"` >> $GITHUB_ENV
-
       - name: Automatic Tagging of Releases
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env && env.TESTE_OK }}
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v major
@@ -79,6 +75,10 @@ jobs:
           docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+
+      - name: Teste Flask APP
+        run: |
+          docker run -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
 
       # - name: Namespace to Deploy
