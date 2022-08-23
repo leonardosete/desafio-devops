@@ -68,6 +68,7 @@ jobs:
         run: terraform validate 
 
       - name: Terraform Plan
+        if: ${{ inputs.should-destroy == false }}
         id: plan
         run: terraform plan 
         continue-on-error: true
