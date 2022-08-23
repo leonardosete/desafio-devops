@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       delete-app:
-        description: 'Delete App Deployment? (unmarked = false)'
+        description: 'Delete App Deployment?'
         default: false
         required: false
         type: boolean
