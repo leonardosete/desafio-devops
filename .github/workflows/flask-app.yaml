@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       delete-app:
-        description: 'Delete App Deployment?'
+        description: 'Delete App K8s Resources?'
         default: false
         required: false
         type: boolean
