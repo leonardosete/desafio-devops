@@ -3,10 +3,6 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: flask-app-hpa
 spec:
-  selector:
-    matchLabels:
-      greeting: flask-app
-      version: one
   maxReplicas: 5
   metrics:
   - type: ContainerResource
