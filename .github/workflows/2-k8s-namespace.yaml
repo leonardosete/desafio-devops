@@ -1,4 +1,4 @@
-name: Manage K8s Namespaces
+name: 2-Manage K8s Namespaces
 on:
   push:
     branches: [infra]
