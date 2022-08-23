@@ -1,4 +1,4 @@
-name: Infra - GKE
+name: 1-Infra - GKE
 on:
   push:
     branches: [infra]

@@ -1,4 +1,4 @@
-name: Flask App
+name: 3-Flask App
 on:
   push:
     branches: [release, feature, hotfix, task]
@@ -78,7 +78,7 @@ jobs:
 
       - name: Teste Flask APP
         run: |
-          docker run -it ${{ env.IMAGE_NAME }} bash -c "BASE_API_ENV=test pipenv run pytest"
+          docker run -it ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
 
       # - name: Namespace to Deploy
