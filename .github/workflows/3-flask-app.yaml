@@ -114,6 +114,7 @@ jobs:
         if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: |
           cd k8s
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
           kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
       - name: Delete K8s Resources
