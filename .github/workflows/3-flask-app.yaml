@@ -26,6 +26,7 @@ env: ## Variables available in this workflow
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: flask-app
+  TEST_OK: "passed"
 
 
 jobs:
@@ -62,12 +63,13 @@ jobs:
           bash ./scripts/git_update.sh -v major
 
       - name: Teste Flask APP
+        if: always()
         run: |
-          echo "TEST_OK=`docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest" |grep "1 passed"`" >> GITHUB_ENV
-          echo ${{ env.TEST_OK }}
+          echo "CHECK_TEST=`docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest" |grep "1 passed" |awk '{print $2}'`" >> $GITHUB_ENV
+          echo ${{ env.CHECK_TEST }}
 
       - name: Configure Docker Client
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env && startsWith(env.TESTE_OK, '1 passed') }}
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env && env.CHECK_TEST != env.TESTE_OK }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
