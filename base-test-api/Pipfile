@@ -7,16 +7,14 @@ name = "pypi"
 pylint = "*"
 
 [packages]
-flask = "*"
 flask-script = "*"
 requests = "*"
 gunicorn = "*"
 pytest = "*"
 flake8 = "*"
 yapf = "*"
-flask-api = "*"
 pytest-docker-compose = "*"
-
+flask = "==1.1.4"
 
 [requires]
 python_version = "3.6"

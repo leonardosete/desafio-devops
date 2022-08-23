@@ -53,13 +53,13 @@ jobs:
 ## TESTE BUILD E PUSH ##
       - name: Build Docker Image
         if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
-        run: docker build -t ${{ env.IMAGE_NAME }}:latest ./flask
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Automatic Tagging of Releases
         if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         id: increment-git-tag
         run: |
-          bash ./flask/scripts/git_update.sh -v major
+          bash ./scripts/git_update.sh -v major
 
       - name: Configure Docker Client
         if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
@@ -76,11 +76,15 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-  
-      - name: Namespace to Deploy
+      - name: Teste Flask APP
         run: |
-          kubectl get ns ${{ inputs.deploy-app-env }}
-          echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
+          docker run -it ${{ env.IMAGE_NAME }} bash -c "BASE_API_ENV=test pipenv run pytest"
+
+
+      # - name: Namespace to Deploy
+      #   run: |
+      #     kubectl get ns ${{ inputs.deploy-app-env }}
+      #     echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
 
       ## BUILD >> BUSCAR/PULL DA IMAGEM BASE + COD DO APP
       ## TEST DO APP
@@ -92,14 +96,14 @@ jobs:
       ## SEGURANÇA DA CONTA GCP - IAM/SERVICE ACCOUNTS?
       ## SEGURANÇA DO CLUSTER GKE - RBAC???
 
-      - name: Apply/Create K8s Resources
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
-        run: |
-          cd k8s
-          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+      # - name: Apply/Create K8s Resources
+      #   if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
+      #   run: |
+      #     cd k8s
+      #     kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
-      - name: Delete K8s Resources
-        if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
-        run: |
-          cd k8s
-          kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+      # - name: Delete K8s Resources
+      #   if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
+      #   run: |
+      #     cd k8s
+      #     kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
