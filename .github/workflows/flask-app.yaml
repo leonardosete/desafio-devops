@@ -48,11 +48,11 @@ jobs:
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
-          location: $REGION
+          location: ${{ env.REPOSITORY }}
 
 ## TESTE BUILD E PUSH ##
       - name: Build Docker Image
-        run: docker build -t $IMAGE_NAME:latest ./flask
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest ./flask
 
       - name: Automatic Tagging of Releases
         id: increment-git-tag
@@ -61,16 +61,16 @@ jobs:
 
       - name: Configure Docker Client
         run: |
-          gcloud auth configure-docker  $REGION.pkg.dev --quiet
+          gcloud auth configure-docker  ${{ env.REPOSITORY }}.pkg.dev --quiet
 
       - name: Push Docker Image to Artifact Registry
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker tag $IMAGE_NAME:latest  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
-          docker tag $IMAGE_NAME:latest  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GIT_TAG
-          docker push  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:latest
-          docker push  $REGION.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE_NAME:$GIT_TAG
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker push  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push  ${{ env.REPOSITORY }}.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   
       # - name: Namespace to Deploy
