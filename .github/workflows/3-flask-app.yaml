@@ -26,8 +26,6 @@ env: ## Variables available in this workflow
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: flask-app
-  TEST_OK: "passed"
-
 
 jobs:
   manage_app:
@@ -63,13 +61,11 @@ jobs:
           bash ./scripts/git_update.sh -v major
 
       - name: Teste Flask APP
-        if: always()
         run: |
-          echo "CHECK_TEST=`docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest" |grep "1 passed" |awk '{print $2}'`" >> $GITHUB_ENV
-          echo ${{ env.CHECK_TEST }}
+          docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: Configure Docker Client
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env && env.CHECK_TEST != env.TESTE_OK }}
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
@@ -83,15 +79,10 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-      # - name: Teste Flask APP
-      #   run: |
-      #     docker run -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
-
-
-      # - name: Namespace to Deploy
-      #   run: |
-      #     kubectl get ns ${{ inputs.deploy-app-env }}
-      #     echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
+      - name: Namespace to Deploy
+        run: |
+          kubectl get ns ${{ inputs.deploy-app-env }}
+          echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
 
       ## BUILD >> BUSCAR/PULL DA IMAGEM BASE + COD DO APP
       ## TEST DO APP
@@ -103,14 +94,14 @@ jobs:
       ## SEGURANÇA DA CONTA GCP - IAM/SERVICE ACCOUNTS?
       ## SEGURANÇA DO CLUSTER GKE - RBAC???
 
-      # - name: Apply/Create K8s Resources
-      #   if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
-      #   run: |
-      #     cd k8s
-      #     kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+      - name: Apply/Create K8s Resources
+        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
+        run: |
+          cd k8s
+          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
         
-      # - name: Delete K8s Resources
-      #   if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
-      #   run: |
-      #     cd k8s
-      #     kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+      - name: Delete K8s Resources
+        if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
+        run: |
+          cd k8s
+          kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}

@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-1
+  name: flask-app
 spec:
   type: ClusterIP
   selector:
-    greeting: flask
+    greeting: flask-app
     version: one
   ports:
   - protocol: TCP
