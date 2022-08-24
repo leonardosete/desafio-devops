@@ -49,7 +49,7 @@ module "gke_private-cluster" {
   release_channel        = var.release_channel
   # grant_registry_access  = true
   service_account        = var.cluster_admin
-  registry_project_ids   = [roles/resourcemanager.projectIamAdmin, roles/artifactregistry.reader]
+  registry_project_ids   = [ "roles/resourcemanager.projectIamAdmin", "roles/artifactregistry.reader" ]
   node_pools = [
     {
       name                      = "node-pool"
