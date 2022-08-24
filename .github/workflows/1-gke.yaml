@@ -54,7 +54,7 @@ jobs:
           gcloud services list --enabled |egrep "cloudresourcemanager.googleapis.com|compute.googleapis.com|container.googleapis.com|artifactregistry.googleapis.com"
           sleep 60
   
-      - name: Install Terraform
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.2.7 ## Se não definida, usará default: latest
@@ -88,7 +88,7 @@ jobs:
         id: destroy
         run: terraform destroy -auto-approve 
       
-      - name: Get Credentials
+      - name: Get Kubeconfig Credentials
         if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
