@@ -23,7 +23,7 @@ spec:
       #       name: hello-world-2
       #       port:
       #         number: 8000
-      - path: /hello
+      - path: /api/ping
         pathType: ImplementationSpecific
         backend:
           service:
