@@ -35,3 +35,18 @@ variable "release_channel" {
   description = "The release channel type"
   default     = "REGULAR"
 }
+
+variable "repository_id" {
+  description = "Artifact Registry Repo Name"
+  default     = "sre-docker-registry"
+}
+
+variable "artifact_registry_repository_format" {
+  description = "Artifact Registry Type"
+  default     = "DOCKER"
+}
+
+variable "artifact_registry_repository_role" {
+  description = "Artifact Registry IAM Role"
+  default     = "roles/artifactregistry.writer"
+}
