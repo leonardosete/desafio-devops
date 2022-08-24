@@ -27,6 +27,6 @@ spec:
         pathType: ImplementationSpecific
         backend:
           service:
-            name: flask-app
+            name: flask-app-service
             port:
               number: 1001
