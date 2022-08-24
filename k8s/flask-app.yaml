@@ -19,4 +19,4 @@ spec:
         image: "us-central1-docker.pkg.dev/tembici-sre/sre-docker-registry/flask-app:latest"
         env:
         - name: "PORT"
-          value: "1000"
+          value: "8080"
