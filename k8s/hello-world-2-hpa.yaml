@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: hello-app-1
+  name: hello-app-2
   namespace: tembici-sre-apps-dev
 spec:
   maxReplicas: 5
@@ -9,5 +9,5 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: hello-app-1
+    name: hello-app-2
   targetCPUUtilizationPercentage: 80

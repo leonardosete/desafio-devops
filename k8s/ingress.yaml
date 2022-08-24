@@ -20,10 +20,10 @@ spec:
               number: 8080
   - http:
       paths:
-      - path: /*
+      - path: /v2
         pathType: ImplementationSpecific
         backend:
           service:
-            name: hello-world-1
+            name: hello-world-2
             port:
-              number: 60000
+              number: 8000
