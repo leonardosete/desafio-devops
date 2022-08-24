@@ -48,7 +48,6 @@ module "gke_private-cluster" {
   ip_range_services      = var.ip_range_services_name
   release_channel        = var.release_channel
   grant_registry_access  = true
-  registry_project_ids   =  [ resource.google_artifact_registry_repository.repository.repository_id ]
   node_pools = [
     {
       name                      = "node-pool"
