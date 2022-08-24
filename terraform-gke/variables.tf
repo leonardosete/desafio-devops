@@ -46,3 +46,7 @@ variable "artifact_registry_repository_format" {
   default     = "DOCKER"
 }
 
+variable "cluster_admin" {
+  description = "Service Account to Manage Cluster"
+  default     = "terraform-cluster-admin"
+}
