@@ -23,7 +23,7 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /
-            port: 60000
+            port: 50000
             scheme: HTTP
           initialDelaySeconds: 60
           periodSeconds: 10
@@ -33,7 +33,7 @@ spec:
           failureThreshold: 3
           httpGet:
             path: /
-            port: 60000
+            port: 50000
             scheme: HTTP
           periodSeconds: 10
           successThreshold: 3
