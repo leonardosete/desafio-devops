@@ -1,16 +1,11 @@
-name: 3-Flask App
+name: 3-Flask App Deploy
 on:
   push:
     branches: [release, feature, hotfix, task]
   workflow_dispatch:
     inputs:
-      delete-app:
-        description: 'Delete App K8s Resources?'
-        default: false
-        required: false
-        type: boolean
       deploy-app-env:
-        description: 'Select a k8s namespace to deploy/delete'
+        description: 'Select a k8s namespace to deploy'
         required: true
         default: 'tembici-sre-apps-dev'
         type: choice
@@ -49,13 +44,10 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-## TESTE BUILD E PUSH ##
       - name: Build Docker Image
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Automatic Tagging of Releases
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v major
@@ -65,12 +57,10 @@ jobs:
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: Configure Docker Client
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Push Docker Image to Artifact Registry
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
@@ -83,6 +73,11 @@ jobs:
         run: |
           kubectl get ns ${{ inputs.deploy-app-env }}
           echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
+
+      - name: Apply/Create K8s Resources
+        run: |
+          cd k8s
+          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
 
       ## BUILD >> BUSCAR/PULL DA IMAGEM BASE + COD DO APP
       ## TEST DO APP
@@ -108,16 +103,3 @@ jobs:
       #     ./kustomize build . | kubectl apply -f -
       #     kubectl rollout status deployment/$DEPLOYMENT_NAME
       #     kubectl get services -o wide
-
-
-      - name: Apply/Create K8s Resources
-        if: ${{ inputs.delete-app == false && inputs.deploy-app-env }}
-        run: |
-          cd k8s
-          kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
-        
-      - name: Delete K8s Resources
-        if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
-        run: |
-          cd k8s
-          kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
