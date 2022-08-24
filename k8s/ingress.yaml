@@ -1,16 +1,38 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: dev-ingress
+#   annotations:
+#     # If the class annotation is not specified it defaults to "gce".
+#     kubernetes.io/ingress.class: "gce"
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /api/ping
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: flask-app
+#             port:
+#               number: 8080
+
+# ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: dev-ingress
-  annotations:
-    # If the class annotation is not specified it defaults to "gce".
-    kubernetes.io/ingress.class: "gce"
 spec:
+  defaultBackend:
+    service:
+      name: flask-app
+      port:
+        number: 8080
   rules:
   - http:
       paths:
       - path: /api/ping
-        pathType: Prefix
+        pathType: ImplementationSpecific
         backend:
           service:
             name: flask-app
