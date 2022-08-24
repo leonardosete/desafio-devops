@@ -47,7 +47,7 @@ module "gke_private-cluster" {
   ip_range_pods          = var.ip_range_pods_name
   ip_range_services      = var.ip_range_services_name
   release_channel        = var.release_channel
-  registry_project_ids   = [ var.repository_id ]
+  # registry_project_ids   = [ var.repository_id ]
   grant_registry_access  = true
 
   node_pools = [
