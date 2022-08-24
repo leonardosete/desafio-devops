@@ -36,30 +36,6 @@ module "gcp-network" {
   }
 }
 
-# module "gke_private-cluster" {
-#   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-#   project_id             = var.project_id
-#   name                   = "${var.cluster_name}-${var.env_name}"
-#   regional               = true
-#   region                 = var.region
-#   network                = module.gcp-network.network_name
-#   subnetwork             = module.gcp-network.subnets_names[0]
-#   ip_range_pods          = var.ip_range_pods_name
-#   ip_range_services      = var.ip_range_services_name
-#   release_channel        = var.release_channel
-#   grant_registry_access  = true
-
-#   node_pools = [
-#     {
-#       name                      = "node-pool"
-#       machine_type              = "e2-medium"
-#       node_locations            = "us-central1-b,us-central1-c,us-central1-f"
-#       min_count                 = 1
-#       max_count                 = 3
-#       disk_size_gb              = 30
-#     },
-#   ]
-# }
 module "gke_private-cluster" {
   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
   project_id             = var.project_id
@@ -72,6 +48,7 @@ module "gke_private-cluster" {
   ip_range_services      = var.ip_range_services_name
   release_channel        = var.release_channel
   grant_registry_access  = true
+  registry_project_ids   =  [ resource.google_artifact_registry_repository.repository.repository_id ]
   node_pools = [
     {
       name                      = "node-pool"
