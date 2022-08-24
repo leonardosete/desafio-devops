@@ -18,7 +18,10 @@ spec:
         image: "us-docker.pkg.dev/google-samples/containers/gke/hello-app:2.0"
         env:
         - name: "PORT"
-          value: "8080"          
+          value: "8080"   
+        ports:
+        - name: hello-app-2
+          container_port: 8080       
         livenessProbe:
           failureThreshold: 3
           httpGet:

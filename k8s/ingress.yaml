@@ -3,16 +3,11 @@ kind: Ingress
 metadata:
   name: dev-ingress
 spec:
-  defaultBackend:
-    service:
-      name: flask-app
-      port:
-        number: 8080
   rules:
   - http:
       paths:
       - path: /api/ping
-        pathType: ImplementationSpecific
+        pathType: Prefix
         backend:
           service:
             name: flask-app
@@ -21,9 +16,9 @@ spec:
   - http:
       paths:
       - path: /v2
-        pathType: ImplementationSpecific
+        pathType: Prefix
         backend:
           service:
             name: hello-world-2
             port:
-              number: 8000
+              number: 8080
