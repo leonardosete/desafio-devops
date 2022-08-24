@@ -7,7 +7,6 @@ spec:
     matchLabels:
       greeting: hello
       version: one
-  replicas: 3
   template:
     metadata:
       labels:
