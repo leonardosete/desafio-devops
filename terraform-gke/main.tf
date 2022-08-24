@@ -47,8 +47,8 @@ module "gke_private-cluster" {
   ip_range_pods          = var.ip_range_pods_name
   ip_range_services      = var.ip_range_services_name
   release_channel        = var.release_channel
-  # grant_registry_access  = true
-  service_account        = var.cluster_admin
+  grant_registry_access  = true
+  # service_account        = var.cluster_admin
   registry_project_ids   = [ "roles/resourcemanager.projectIamAdmin", "roles/artifactregistry.reader" ]
   node_pools = [
     {
