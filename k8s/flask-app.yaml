@@ -7,7 +7,6 @@ spec:
     matchLabels:
       greeting: flask-app
       version: one
-  replicas: 3
   template:
     metadata:
       labels:
