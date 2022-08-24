@@ -6,7 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       should-destroy:
-        description: 'Run: terraform destroy -auto-approve? (desmarcado = false)'
+        description: 'Run: terraform destroy -auto-approve?'
+        default: false
+        required: false
+        type: boolean
+      should-destroy-yes:
+        description: 'Are you Sure? Run: terraform destroy -auto-approve?'
         default: false
         required: false
         type: boolean
@@ -43,7 +48,7 @@ jobs:
   
       ## TO RUN WITH GKE MODULE
       - name: Enable Compute and Container APIs
-        if: ${{ inputs.should-destroy == false }}
+        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         run: |
           gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
           gcloud services list --enabled |egrep "cloudresourcemanager.googleapis.com|compute.googleapis.com|container.googleapis.com|artifactregistry.googleapis.com"
@@ -68,30 +73,30 @@ jobs:
         run: terraform validate 
 
       - name: Terraform Plan
-        if: ${{ inputs.should-destroy == false }}
+        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         id: plan
         run: terraform plan 
         continue-on-error: true
 
       - name: Terraform Apply
-        if: ${{ inputs.should-destroy == false }}
+        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         id: apply
         run: terraform apply -auto-approve
 
       - name: Terraform Destroy
-        if: ${{ inputs.should-destroy == true }}
+        if: ${{ inputs.should-destroy == true && inputs.should-destroy-yes == true }}
         id: destroy
         run: terraform destroy -auto-approve 
       
       - name: Get Credentials
-        if: ${{ inputs.should-destroy == false }}
+        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
       - name: Check GKE Cluster
-        if: ${{ inputs.should-destroy == false }}
+        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         run: |
           gcloud container clusters list
           echo " "
