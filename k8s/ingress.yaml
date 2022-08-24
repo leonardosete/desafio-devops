@@ -18,3 +18,12 @@ spec:
             name: flask-app
             port:
               number: 8080
+  - http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: hello-world-1
+            port:
+              number: 60000
