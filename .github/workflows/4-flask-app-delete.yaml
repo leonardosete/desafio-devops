@@ -52,7 +52,7 @@ jobs:
       - name: Namespace to Delete
         run: |
           kubectl get ns ${{ inputs.deploy-app-env }}
-          echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
+          echo "Namespace to delete is ${{ inputs.deploy-app-env }}"
 
       - name: Delete K8s Resources
         if: ${{ inputs.delete-app == true && inputs.deploy-app-env }}
