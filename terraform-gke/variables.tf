@@ -46,7 +46,47 @@ variable "artifact_registry_repository_format" {
   default     = "DOCKER"
 }
 
-variable "artifact_registry_repository_role_iam_member" {
-  description = "Artifact Registry Role IAM Member"
-  default     = "roles/artifactregistry.reader"
+variable "cluster_admin" {
+  description = "Service Account to Manage Cluster"
+  default     = "terraform-cluster-admin"
+}
+
+## node_pools_vars ##
+variable "node_pools_name" {
+  description = "The name of the node pool"
+  default     = "tembici-node-pool"
+}
+
+variable "node_pools_machine_type" {
+  description = "The name of a Google Compute Engine machine type"
+  default     = "e2-medium"
+}
+
+variable "node_pools_service_account" {
+  description = "The service account to run nodes"
+  default     = "terraform-service-account@tembici-sre.iam.gserviceaccount.com"
+}
+
+variable "node_pools_min_count" {
+  description = "Minimum number of nodes in the NodePool"
+  default     = 2
+}
+variable "node_pools_max_count" {
+  description = "Maximum number of nodes in the NodePool"
+  default     = 6
+}
+
+variable "node_pools_disk_size_gb" {
+  description = "Size of the disk attached to each node, specified in GB"
+  default     = 50
+}
+
+variable "node_pools_disk_type" {
+  description = "Type of the disk attached to each node"
+  default     = "pd-standard"
+}
+
+variable "node_pools_image_type" {
+  description = "The image type to use for this node"
+  default     = "COS_CONTAINERD"
 }

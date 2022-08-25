@@ -38,21 +38,17 @@ module "gcp-network" {
 
 module "gke_private-cluster" {
   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-  project_id             = "${var.project_id}"
+  project_id             = var.project_id
   name                   = "${var.cluster_name}-${var.env_name}"
   regional               = true
-  region                 = "${var.region}"
+  region                 = var.region
   network                = module.gcp-network.network_name
   subnetwork             = module.gcp-network.subnets_names[0]
-  ip_range_pods          = "${var.ip_range_pods_name}"
-  ip_range_services      = "${var.ip_range_services_name}"
-  release_channel        = "${var.release_channel}"
+  ip_range_pods          = var.ip_range_pods_name
+  ip_range_services      = var.ip_range_services_name
+  release_channel        = var.release_channel
   http_load_balancing        = false
   horizontal_pod_autoscaling = true
-#   create_service_account  = true
-  grant_registry_access  = true
-#   service_account        = var.cluster_admin
-#   registry_project_ids   = [ var.repository_id ]
 
   node_pools = [
     {

@@ -50,7 +50,7 @@ jobs:
       - name: Automatic Tagging of Releases
         id: increment-git-tag
         run: |
-          bash ./scripts/git_update.sh -v major
+          bash ./scripts-github/git_update.sh -v major
 
       - name: Teste Flask APP
         run: |
