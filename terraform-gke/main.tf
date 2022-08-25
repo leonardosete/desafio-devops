@@ -30,6 +30,8 @@ module "gke_private-cluster" {
   enable_private_nodes       = true
   master_ipv4_cidr_block     = "10.0.0.0/28"
   grant_registry_access      = true
+  service_account            = "${var.node_pools_service_account}"
+
 
   node_pools = [
     {
@@ -46,7 +48,6 @@ module "gke_private-cluster" {
       enable_gvnic              = false
       auto_repair               = true
       auto_upgrade              = true
-      # service_account           = "${var.node_pools_service_account}"
       preemptible               = false
       initial_node_count        = 3
     },
