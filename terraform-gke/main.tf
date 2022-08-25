@@ -50,7 +50,7 @@ module "gke_private-cluster" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = true
 #   create_service_account  = true
-#   grant_registry_access  = true
+  grant_registry_access  = true
 #   service_account        = var.cluster_admin
 #   registry_project_ids   = [ var.repository_id ]
 
