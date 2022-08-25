@@ -26,7 +26,7 @@ module "gke_private-cluster" {
   network_policy             = false
   horizontal_pod_autoscaling = true
   filestore_csi_driver       = false
-  enable_private_endpoint    = true
+  enable_private_endpoint    = false
   enable_private_nodes       = true
   master_ipv4_cidr_block     = "10.0.0.0/28"
   grant_registry_access      = true
