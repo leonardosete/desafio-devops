@@ -10,7 +10,31 @@ resource "local_file" "kubeconfig" {
   filename = "kubeconfig-${var.env_name}"
 }
 
-## TESTE ##
+module "gcp-network" {
+  source       = "terraform-google-modules/network/google"
+  version      = "~> 4.0"
+  project_id   = var.project_id
+  network_name = "${var.network}-${var.env_name}"
+  subnets = [
+    {
+      subnet_name   = "${var.subnetwork}-${var.env_name}"
+      subnet_ip     = "10.10.0.0/16"
+      subnet_region = var.region
+    },
+  ]
+  secondary_ranges = {
+    "${var.subnetwork}-${var.env_name}" = [
+      {
+        range_name    = var.ip_range_pods_name
+        ip_cidr_range = "10.20.0.0/16"
+      },
+      {
+        range_name    = var.ip_range_services_name
+        ip_cidr_range = "10.30.0.0/16"
+      },
+    ]
+  }
+}
 module "gke_private-cluster" {
   source                     = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
   project_id                 = "${var.project_id}"
@@ -29,9 +53,6 @@ module "gke_private-cluster" {
   enable_private_endpoint    = false
   enable_private_nodes       = true
   master_ipv4_cidr_block     = "10.0.0.0/28"
-  # grant_registry_access      = true
-  service_account            = "${var.node_pools_service_account}"
-
 
   node_pools = [
     {
@@ -97,36 +118,7 @@ module "gke_private-cluster" {
   }
 }
 
-## /TESTE/ ##
-
-
-
-module "gcp-network" {
-  source       = "terraform-google-modules/network/google"
-  version      = "~> 4.0"
-  project_id   = var.project_id
-  network_name = "${var.network}-${var.env_name}"
-  subnets = [
-    {
-      subnet_name   = "${var.subnetwork}-${var.env_name}"
-      subnet_ip     = "10.10.0.0/16"
-      subnet_region = var.region
-    },
-  ]
-  secondary_ranges = {
-    "${var.subnetwork}-${var.env_name}" = [
-      {
-        range_name    = var.ip_range_pods_name
-        ip_cidr_range = "10.20.0.0/16"
-      },
-      {
-        range_name    = var.ip_range_services_name
-        ip_cidr_range = "10.30.0.0/16"
-      },
-    ]
-  }
-}
-
+## TESTE ANTERIOR ##
 # module "gke_private-cluster" {
 #   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
 #   project_id             = var.project_id
@@ -139,10 +131,10 @@ module "gcp-network" {
 #   ip_range_services      = var.ip_range_services_name
 #   release_channel        = var.release_channel
   
-#   create_service_account  = true
-#   grant_registry_access  = true
-#   service_account        = var.cluster_admin
-#   registry_project_ids   = [ var.repository_id ]
+##   create_service_account  = true
+##   grant_registry_access  = true
+##   service_account        = var.cluster_admin
+##   registry_project_ids   = [ var.repository_id ]
 
 #   node_pools = [
 #     {
