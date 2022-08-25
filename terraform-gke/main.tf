@@ -48,9 +48,7 @@ module "gke_private-cluster" {
   ip_range_services      = "${var.ip_range_services_name}"
   release_channel        = "${var.release_channel}"
   http_load_balancing        = false
-  network_policy             = false
   horizontal_pod_autoscaling = true
-  filestore_csi_driver       = false
 #   create_service_account  = true
 #   grant_registry_access  = true
 #   service_account        = var.cluster_admin
