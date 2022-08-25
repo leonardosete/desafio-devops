@@ -7,5 +7,5 @@ resource "google_artifact_registry_repository" "repository" {
 resource "google_project_iam_member" "project" {
   project     = "${var.project_id}"
   role        = "${var.artifact_registry_repository_role_iam_member}"
-  member      = output.service_account_member
+  member      = output.service_account
 }

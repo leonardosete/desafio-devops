@@ -8,6 +8,7 @@ output "release_channel" {
   value       = module.gke_private-cluster.release_channel
 }
 
-output "service_account_member" {
-  value = module.gke_private-cluster.google_project_iam_member.cluster_service_account-metric_writer[0].member
+output "service_account" {
+  description = "The service account to default running nodes as if not overridden in `node_pools`."
+  value = module.gke_private-cluster.service_account
 }
