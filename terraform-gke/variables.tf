@@ -50,3 +50,14 @@ variable "cluster_admin" {
   description = "Service Account to Manage Cluster"
   default     = "terraform-cluster-admin"
 }
+
+## node_pools_vars ##
+variable "node_pools_name" {
+  description = "The name of the node pool"
+  default     = "tembici-node-pool"
+}
+
+variable "node_pools_machine_type" {
+  description = "The name of a Google Compute Engine machine type"
+  default     = "e2-medium"
+}

@@ -18,24 +18,23 @@ module "gke_private-cluster" {
   region                     = "${var.region}"
   regional                   = true
   release_channel            = "${var.release_channel}"
-  network                    = "vpc-01"
-  subnetwork                 = "us-central1-01"
-  ip_range_pods              = "us-central1-01-gke-01-pods"
-  ip_range_services          = "us-central1-01-gke-01-services"
+  network                    = module.gcp-network.network_name
+  subnetwork                 = module.gcp-network.subnets_names[0]
+  ip_range_pods              = var.ip_range_pods_name
+  ip_range_services          = var.ip_range_services_name
   http_load_balancing        = false
   network_policy             = false
   horizontal_pod_autoscaling = true
   filestore_csi_driver       = false
   enable_private_endpoint    = true
   enable_private_nodes       = true
-  master_ipv4_cidr_block     = "10.0.0.0/28"
+  # master_ipv4_cidr_block     = "10.0.0.0/28"
   grant_registry_access      = true
 
   node_pools = [
     {
-      name                      = "default-node-pool"
-      machine_type              = "e2-medium"
-      node_locations            = "us-central1-b,us-central1-c"
+      name                      = "${var.node_pools_name}"
+      machine_type              = "${var.node_pools_machine_type}"
       min_count                 = 2
       max_count                 = 6
       local_ssd_count           = 0
@@ -72,7 +71,7 @@ module "gke_private-cluster" {
     all = {}
 
     default-node-pool = {
-      node-pool-metadata-custom-value = "my-node-pool"
+      node-pool-metadata-custom-value = "default-node-pool"
     }
   }
 
@@ -101,31 +100,31 @@ module "gke_private-cluster" {
 
 
 
-# module "gcp-network" {
-#   source       = "terraform-google-modules/network/google"
-#   version      = "~> 4.0"
-#   project_id   = var.project_id
-#   network_name = "${var.network}-${var.env_name}"
-#   subnets = [
-#     {
-#       subnet_name   = "${var.subnetwork}-${var.env_name}"
-#       subnet_ip     = "10.10.0.0/16"
-#       subnet_region = var.region
-#     },
-#   ]
-#   secondary_ranges = {
-#     "${var.subnetwork}-${var.env_name}" = [
-#       {
-#         range_name    = var.ip_range_pods_name
-#         ip_cidr_range = "10.20.0.0/16"
-#       },
-#       {
-#         range_name    = var.ip_range_services_name
-#         ip_cidr_range = "10.30.0.0/16"
-#       },
-#     ]
-#   }
-# }
+module "gcp-network" {
+  source       = "terraform-google-modules/network/google"
+  version      = "~> 4.0"
+  project_id   = var.project_id
+  network_name = "${var.network}-${var.env_name}"
+  subnets = [
+    {
+      subnet_name   = "${var.subnetwork}-${var.env_name}"
+      subnet_ip     = "10.10.0.0/16"
+      subnet_region = var.region
+    },
+  ]
+  secondary_ranges = {
+    "${var.subnetwork}-${var.env_name}" = [
+      {
+        range_name    = var.ip_range_pods_name
+        ip_cidr_range = "10.20.0.0/16"
+      },
+      {
+        range_name    = var.ip_range_services_name
+        ip_cidr_range = "10.30.0.0/16"
+      },
+    ]
+  }
+}
 
 # module "gke_private-cluster" {
 #   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
