@@ -1,18 +1,17 @@
 module "gke_auth" {
   source = "terraform-google-modules/kubernetes-engine/google//modules/auth"
-  depends_on   = [module.gke_private-cluster]
+  depends_on   = [module.gke]
   project_id   = var.project_id
-  location     = module.gke_private-cluster.location
-  cluster_name = module.gke_private-cluster.name
+  location     = module.gke.location
+  cluster_name = module.gke.name
 }
 resource "local_file" "kubeconfig" {
   content  = module.gke_auth.kubeconfig_raw
   filename = "kubeconfig-${var.env_name}"
 }
-
 module "gcp-network" {
   source       = "terraform-google-modules/network/google"
-  version      = "~> 4.0"
+  version      = "~> 2.5"
   project_id   = var.project_id
   network_name = "${var.network}-${var.env_name}"
   subnets = [
@@ -36,65 +35,27 @@ module "gcp-network" {
   }
 }
 
-module "gke_private-cluster" {
-  source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-  project_id             = var.project_id
-  name                   = "${var.cluster_name}-${var.env_name}"
-  regional               = true
-  region                 = var.region
-  network                = module.gcp-network.network_name
-  subnetwork             = module.gcp-network.subnets_names[0]
-  ip_range_pods          = var.ip_range_pods_name
-  ip_range_services      = var.ip_range_services_name
+module "gke" {
+  source                     = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
+  project_id                 = var.project_id
+  name                       = "${var.cluster_name}-${var.env_name}"
+  regional                   = true
+  region                     = var.region
+  network                    = module.gcp-network.network_name
+  subnetwork                 = module.gcp-network.subnets_names[0]
+  ip_range_pods              = var.ip_range_pods_name
+  ip_range_services          = var.ip_range_services_name
+  release_channel            = "${var.release_channel}"
+  http_load_balancing        = false
+  horizontal_pod_autoscaling = true
   node_pools = [
     {
-      name                      = "${var.node_pools_name}"
-      machine_type              = "${var.node_pools_machine_type}"
-      min_count                 = "${var.node_pools_min_count}"
-      max_count                 = "${var.node_pools_max_count}"
-      disk_size_gb              = "${var.node_pools_disk_size_gb}"
-      disk_type                 = "${var.node_pools_disk_type}"
-      image_type                = "${var.node_pools_image_type}"
-      auto_upgrade              = true
-      preemptible               = true
-      initial_node_count        = 1
+      name                      = "node-pool"
+      machine_type              = "e2-medium"
+      node_locations            = "us-central1-a, us-central1-b, us-central1-f"
+      min_count                 = 1
+      max_count                 = 3
+      disk_size_gb              = 50
     },
   ]
 }
-
-
-
-## BKP ##
-# module "gke_private-cluster" {
-#   source                 = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-#   project_id             = "${var.project_id}"
-#   name                   = "${var.cluster_name}-${var.env_name}"
-#   regional               = true
-#   region                 = "${var.region}"
-#   network                = module.gcp-network.network_name
-#   subnetwork             = module.gcp-network.subnets_names[0]
-#   ip_range_pods          = "${var.ip_range_pods_name}"
-#   ip_range_services      = "${var.ip_range_services_name}"
-#   release_channel        = "${var.release_channel}"
-#   http_load_balancing        = false
-#   horizontal_pod_autoscaling = true
-#   # create_service_account  = true
-#   # grant_registry_access  = true
-#   # service_account        = var.cluster_admin
-#   # registry_project_ids   = [ var.repository_id ]
-
-#   node_pools = [
-#     {
-#       name                      = "${var.node_pools_name}"
-#       machine_type              = "${var.node_pools_machine_type}"
-#       min_count                 = "${var.node_pools_min_count}"
-#       max_count                 = "${var.node_pools_max_count}"
-#       disk_size_gb              = "${var.node_pools_disk_size_gb}"
-#       disk_type                 = "${var.node_pools_disk_type}"
-#       image_type                = "${var.node_pools_image_type}"
-#       auto_upgrade              = true
-#       preemptible               = true
-#       initial_node_count        = 1
-#     },
-#   ]
-# }
