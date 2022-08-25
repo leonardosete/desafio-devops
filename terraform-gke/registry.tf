@@ -5,18 +5,16 @@ resource "google_artifact_registry_repository" "repository" {
   format        = var.artifact_registry_repository_format
 }
 
-# resource "google_artifact_registry_repository_iam_member" "member" {
-#   project = "google_artifact_registry_repository.repository.${var.project_id}"
-#   location = google_artifact_registry_repository.repository.module.gke_private-cluster.location
-#   repository = "google_artifact_registry_repository.repository.${var.repository_id}"
-#   role = "roles/artifactregistry.reader"
-#   member = "serviceAccount:tf-gke-tembici-sre-clu-fpm1@tembici-sre.iam.gserviceaccount.com"
-# }
-
 resource "google_artifact_registry_repository_iam_member" "member" {
-  project = "${var.project_id}"
-  location = module.gke_private-cluster.location
-  repository = "${var.repository_id}"
-  role = "roles/artifactregistry.reader"
-  member = "serviceAccount:tf-gke-tembici-sre-clu-fpm1@tembici-sre.iam.gserviceaccount.com"
+  location    = module.gke_private-cluster.location
+  project     = "${var.project_id}"
+  repository  = "${var.repository_id}"
+  role        = "${var.artifact_registry_repository_role_iam_member}"
+  member      = "${var.artifact_registry_repository_iam_member}"
+}
+
+resource "google_project_iam_member" "project" {
+  project     = "${var.project_id}"
+  role        = "${var.artifact_registry_repository_role_iam_member}"
+  member      = output.service_account_member
 }

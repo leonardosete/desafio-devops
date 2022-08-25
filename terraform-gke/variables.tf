@@ -46,3 +46,12 @@ variable "artifact_registry_repository_format" {
   default     = "DOCKER"
 }
 
+variable "artifact_registry_repository_iam_member" {
+  description = "Artifact Registry IAM Member"
+  default     = "serviceAccount:tf-gke-tembici-sre-clu-fpm1@tembici-sre.iam.gserviceaccount.com"
+}
+
+variable "artifact_registry_repository_role_iam_member" {
+  description = "Artifact Registry Role IAM Member"
+  default     = "roles/artifactregistry.reader"
+}
