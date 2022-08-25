@@ -61,3 +61,8 @@ variable "node_pools_machine_type" {
   description = "The name of a Google Compute Engine machine type"
   default     = "e2-medium"
 }
+
+variable "node_pools_service_account" {
+  description = "The service account to run nodes"
+  default     = "terraform-service-account@tembici-sre.iam.gserviceaccount.com"
+}

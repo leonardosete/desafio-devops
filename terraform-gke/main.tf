@@ -46,7 +46,7 @@ module "gke_private-cluster" {
       enable_gvnic              = false
       auto_repair               = true
       auto_upgrade              = true
-      service_account           = "project-service-account@${var.project_id}.iam.gserviceaccount.com"
+      service_account           = "${var.node_pools_service_account}"
       preemptible               = false
       initial_node_count        = 3
     },
