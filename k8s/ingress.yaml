@@ -5,6 +5,7 @@ metadata:
 # If the class annotation is not specified it defaults to "gce".
   annotations:
     kubernetes.io/ingress.class: "gce"
+    cloud.google.com/load-balancer-type: "External"
 spec:
   rules:
   - http:
