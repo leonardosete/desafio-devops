@@ -132,6 +132,20 @@ done
     echo " "
     echo "### ${RED}END-OF-SCRIPT${NC} ###"
 
+##################
+## LAST MESSAGE ##
+##################
+echo " "
+echo "Ao término da execução do script, será gerado o arquivo ${RED}[svc-$NEW_PROJECT_ID-private-key.json]${NC}."
+echo " "
+echo "Esse arquivo será utilizado na etapa seguinte:"
+echo "- Configurando Secrets no Repositório:"
+echo "    * No github, na home do projeto/repositório que foi realizado o fork, clique na opção ${RED}[Settings]${NC} que fica ao lado de ${RED}[Insights]${NC};"
+echo "    * Dentro das opções na coluna ${RED}[General]${NC}, navegue na sessão até chegar na opção ${RED}"Actions": ${RED}[Security]${NC} >> ${RED}[Secrets]${NC} >> ${RED}[Actions]${NC};"
+echo "    * Clique em ${RED}[New Repository Secret]${NC} >> Crie um nome baseado na finalidade dessa secret:"
+echo "        - Defina: ${RED}[GCP_TERRAFORM_SVC_ACCOUNT]${NC} ## Esse é o valor configurado nos arquivos de workflows."
+echo "    * Em ${RED}[Value]${NC}, cole o conteúdo do arquivo ${RED}[svc-$NEW_PROJECT_ID-private-key.json]${NC} e clique em ${RED}[Add Secret]${NC}."
+
 ###################
 ## END OF SCRIPT ##
 ###################

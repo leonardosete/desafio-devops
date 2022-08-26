@@ -6,3 +6,4 @@ iam.serviceAccountAdmin
 iam.serviceAccountAdmin
 iam.serviceAccountUser
 resourcemanager.projectIamAdmin
+storage.objectViewer

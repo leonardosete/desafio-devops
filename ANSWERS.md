@@ -28,7 +28,7 @@ Será necessário interagir com o script em 2 momentos:
 Os valores definidos nas variáveis pré-definidas, não necessitam de alteração - mas é possível alterá-los
 caso deseje.
 
-Ao término da execução do script, será gerado o arquivo [svc-VALOR_DEFINIDO-private-key.json].
+Ao término da execução do script, será gerado o arquivo [svc-$NEW_PROJECT_ID-private-key.json].
 
 Esse arquivo será utilizado na etapa seguinte:
 - Configurando Secrets no Repositório:
