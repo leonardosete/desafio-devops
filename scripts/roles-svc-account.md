@@ -1,4 +1,4 @@
-artifactregistry.writer
+artifactregistry.admin
 compute.networkAdmin
 compute.securityAdmin
 compute.viewer
