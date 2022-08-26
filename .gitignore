@@ -179,3 +179,4 @@ dmypy.json
 cython_debug/
 
 ## To ignore KEY.json - GCP ##
+*private-key.json
