@@ -1,4 +1,5 @@
 artifactregistry.writer
+compute.networkAdmin
 compute.securityAdmin
 compute.viewer
 container.clusterAdmin
