@@ -1,2 +1,2 @@
 #!/bin/bash
-cat ./scripts/service_account.md
+cat service_account.md
