@@ -15,13 +15,10 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: "us-central1-docker.pkg.dev/tembici-sre/sre-docker-registry/flask-app:latest"
+        image: "us-central1-docker.pkg.dev/devops-sre-1/sre-docker-registry/flask-app:latest"
         env:
         - name: "PORT"
           value: "8080"
-        ports:
-        - name: flask-app
-          container_port: 8080
         livenessProbe:
           failureThreshold: 3
           httpGet:
