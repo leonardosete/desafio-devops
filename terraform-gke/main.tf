@@ -48,8 +48,9 @@ module "gke" {
   release_channel            = "${var.release_channel}"
   http_load_balancing        = false
   horizontal_pod_autoscaling = true
-  create_service_account     = false
-  service_account            = "terraform-svc-account@devops-sre-1.iam.gserviceaccount.com"
+  grant_registry_access      = true
+  # create_service_account     = false
+  # service_account            = "terraform-svc-account@devops-sre-1.iam.gserviceaccount.com"
   node_pools = [
     {
       name                      = "node-pool"
