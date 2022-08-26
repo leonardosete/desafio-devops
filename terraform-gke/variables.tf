@@ -1,6 +1,6 @@
 variable "project_id" {
   description = "The project ID to host the cluster in"
-  default = "tembici-sre"
+  default = "devops-sre-1"
 }
 variable "cluster_name" {
   description = "The name for the GKE cluster"
