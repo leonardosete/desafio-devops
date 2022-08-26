@@ -16,8 +16,8 @@ on:
 
 env: ## Variables available in this workflow
   NS_ENV: ${{ inputs.deploy-app-env }}
-  PROJECT_ID: "tembici-sre"
-  CLUSTER_NAME: "tembici-sre-cluster-prod"
+  PROJECT_ID: "devops-sre-1"
+  CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: flask-app
