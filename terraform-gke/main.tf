@@ -49,7 +49,7 @@ module "gke" {
   http_load_balancing        = false
   horizontal_pod_autoscaling = true
   create_service_account     = false
-  service_account            = data.external.gke_service_account.result
+  service_account            = "terraform-svc-account@devops-sre-1.iam.gserviceaccount.com"
   node_pools = [
     {
       name                      = "node-pool"
