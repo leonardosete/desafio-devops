@@ -2,28 +2,26 @@
 ## CRIAÇÃO DE UM NOVO PROJETO GCP E SERVICE ACCOUNT ##
 Após realizado o fork do projeto/repo, execute em sua máquina o bash script a seguir:
 
-sh create-project-and-svc-account.sh
+sh ./scripts/create-project-and-svc-account.sh
 ## OBS - Arquivo consumido pelo script ##
-roles-svc-account.md
+./scripts/roles-svc-account.md
 
 ## ORIENTAÇÃO DE USO DO SCRIPT - create-project-and-svc-account.sh ##
 
 Será necessário interagir com o script em 2 momentos:
 
 - Confirmação da instalação do gcloud CLI:
-    * Necessário digitar [y/Y] para que o script siga, do contrário não será executado.
+    * Necessário digitar [y/Y] ou apenas a tecla [ENTER] para que o script siga.
 
-- Fornecer os valores de 3 variáveis:
-
-    * [PROJECT_ID] = Projeto no qual você irá se conectar
-    * [YOUR_GCP_ACCOUNT] = Seu IAM User - normalmente seu email/conta no Google/GCP.
-    * [NEW_PROJECT_ID] = Nome do novo projeto que será criado
+- Fornecer o valor de 1 variável:
+    * [NEW_PROJECT_ID] = Nome do novo projeto que será criado.
 
 - VARIÁVEIS PRÉ-DEFINIDAS:
-    * [SVC_DESCRIPTION]="Terraform Service Account" ## `Service Account Description`
-    * [LIST_ROLES]=`cat ./roles-svc-account.md` ## `A list of the needed roles to be added to the new Service Account`
+    * [BUCKET_NAME]="tembici-sre-tf-state" ## `Bucket to be created`
     * [KEY_FILE]="./svc-$NEW_PROJECT_ID-private-key.json" ## `The key/json file to be created to the Service Account`
+    * [LIST_ROLES]=`cat ./roles-svc-account.md` ## `A list of the needed roles to be added to the new Service Account`
     * [SERVICE_ACCOUNT_ID]="terraform-svc-account" ## `The new Service Account to be created to run Terraform`
+    * [SVC_DESCRIPTION]="Terraform Service Account" ## `Service Account Description`
 
 Os valores definidos nas variáveis pré-definidas, não necessitam de alteração - mas é possível alterá-los
 caso deseje.

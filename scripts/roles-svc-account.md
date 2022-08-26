@@ -7,3 +7,8 @@ iam.serviceAccountAdmin
 iam.serviceAccountUser
 resourcemanager.projectIamAdmin
 storage.objectViewer
+artifactregistry.reader
+logging.logWriter
+monitoring.metricWriter
+monitoring.viewer
+stackdriver.resourceMetadata.writer

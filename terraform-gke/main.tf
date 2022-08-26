@@ -48,6 +48,8 @@ module "gke" {
   release_channel            = "${var.release_channel}"
   http_load_balancing        = false
   horizontal_pod_autoscaling = true
+  create_service_account     = false
+  service_account            = data.gke_service_account.result
   node_pools = [
     {
       name                      = "node-pool"

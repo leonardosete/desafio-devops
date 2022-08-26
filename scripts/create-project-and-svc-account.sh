@@ -35,29 +35,32 @@ case ${answer:0:1} in
 esac
 
 #########################
-## DEFINE DYNAMIC ENVS ##
+## DEFINE DYNAMIC VARS ##
 #########################
 
 echo " "
-echo "### Please, define some inputs variables about the GCP ###"
-# echo " "
-# echo "### Default: ${RED}tembici-desafio-devops-1${NC} ###"
-# read -p "Your default PROJECT_ID is: " PROJECT_ID
+echo "### Please, define the variable below ###"
 echo " "
-echo "### Your IAM User: ${RED}username@email.domain${NC} ###"
-read -p "YOUR_GCP_ACCOUNT is: " YOUR_GCP_ACCOUNT
-echo " "
-echo "### The New Project: ${RED}New-Project-Name${NC} ###"
+echo "### The ${RED}New Project-Name:${NC} ###"
 read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
+echo " "
 
 #################
 ## STATIC ENVS ##
 #################
 
-SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description
-LIST_ROLES=`cat ./roles-svc-account.md` ## A list of the needed roles to be added to the new Service Account
+# NEW_PROJECT_ID="tembici-devops-sre-1" ## New Project to be created
+BUCKET_NAME="tembici-sre-tf-state" ## Bucket to be created
 KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" ## The key/json file to be created to the Service Account
+LIST_ROLES=`cat ./scripts/roles-svc-account.md` ## A list of the needed roles to be added to the new Service Account
 SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be created to run Terraform
+SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description
+
+######################################
+## DEFINE TERRAFORM SERVICE ACCOUNT ##
+######################################
+
+echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/service_account.md
 
 ######################
 ## GCLOUD EXECUTION ##
@@ -71,7 +74,8 @@ SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be crea
     echo "### ${RED}1-Auth and Config gcloud${NC} ###"
     echo " "
     gcloud components update --quiet
-    gcloud auth login --account $YOUR_GCP_ACCOUNT
+    gcloud components install alpha --quiet
+    gcloud auth login    
 
 ########################
 ## Create New Project ##
@@ -82,7 +86,6 @@ SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be crea
     echo " "
     gcloud projects create $NEW_PROJECT_ID
     gcloud config set project $NEW_PROJECT_ID
-
 
 ############################
 ## Create Service Account ##
@@ -113,9 +116,9 @@ SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be crea
     echo "### ${RED}5-Add roles in Service Account${NC} ###"
     echo " "
 
-for ROLES in $LIST_ROLES
-    do gcloud projects add-iam-policy-binding $NEW_PROJECT_ID --member="serviceAccount:$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" --role="roles/$ROLES"
-done
+    for ROLES in $LIST_ROLES
+        do gcloud projects add-iam-policy-binding $NEW_PROJECT_ID --member="serviceAccount:$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" --role="roles/$ROLES"
+    done
 
 ###################################
 ## Check Service Account Details ##
@@ -130,11 +133,31 @@ done
     echo " "
     gcloud projects list
     echo " "
-    echo "### ${RED}END-OF-SCRIPT${NC} ###"
+
+################################################
+## Create Bucket and activate Project Billing ##
+################################################
+
+    echo " "
+    echo "### ${RED}7-Activate Billing Project Account${NC} ###"
+    BILLING_ID=`gcloud alpha billing accounts list |tail -n1 |awk '{print $1}'`
+    gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
+
+    echo "### ${RED}8-Activate Requested APIs${NC} ###"
+    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
+    
+    echo " "
+    echo "### ${RED}9-Create Bucket - ${BUCKET_NAME}${NC} ###"
+    gcloud alpha storage buckets create gs://$BUCKET_NAME --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
+    
+    echo "### ${RED}10-List Buckets${NC} ###"
+    gcloud alpha storage ls --project="${NEW_PROJECT_ID}"
+    echo " "
 
 ##################
 ## LAST MESSAGE ##
 ##################
+
 echo " "
 echo "Ao término da execução do script, será gerado o arquivo ${RED}[svc-$NEW_PROJECT_ID-private-key.json]${NC}."
 echo " "
@@ -145,6 +168,8 @@ echo "    * Dentro das opções na coluna ${RED}[General]${NC}, navegue na sess�
 echo "    * Clique em ${RED}[New Repository Secret]${NC} >> Crie um nome baseado na finalidade dessa secret:"
 echo "        - Defina: ${RED}[GCP_TERRAFORM_SVC_ACCOUNT]${NC} ## Esse é o valor configurado nos arquivos de workflows."
 echo "    * Em ${RED}[Value]${NC}, cole o conteúdo do arquivo ${RED}[svc-$NEW_PROJECT_ID-private-key.json]${NC} e clique em ${RED}[Add Secret]${NC}."
+echo " "
+echo "### ${RED}END-OF-SCRIPT${NC} ###"
 
 ###################
 ## END OF SCRIPT ##
