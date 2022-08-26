@@ -37,16 +37,17 @@ esac
 #########################
 ## DEFINE DYNAMIC ENVS ##
 #########################
+
 echo " "
 echo "### Please, define some inputs variables about the GCP ###"
+# echo " "
+# echo "### Default: ${RED}tembici-desafio-devops-1${NC} ###"
+# read -p "Your default PROJECT_ID is: " PROJECT_ID
 echo " "
-echo "### Default: ${RED}tembici-desafio-devops-1${NC} ###"
-read -p "Your default PROJECT_ID is: " PROJECT_ID
-echo " "
-echo "### Default: ${RED}leonardosete@gmail.com${NC} ###"
+echo "### Your IAM User: ${RED}username@email.domain${NC} ###"
 read -p "YOUR_GCP_ACCOUNT is: " YOUR_GCP_ACCOUNT
 echo " "
-echo "### Must be different than: ${RED}tembici-desafio-devops-8${NC} ###"
+echo "### The New Project: ${RED}New-Project-Name${NC} ###"
 read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
 
 #################
@@ -65,24 +66,22 @@ SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be crea
 ############################
 ## Auth and Config gcloud ##
 ############################
+
     echo " "
-    echo "### ${RED}Auth and Config gcloud${NC} ###"
+    echo "### ${RED}1-Auth and Config gcloud${NC} ###"
     echo " "
     gcloud components update --quiet
     gcloud auth login --account $YOUR_GCP_ACCOUNT
-    gcloud config set project $PROJECT_ID
-    gcloud config set account $YOUR_GCP_ACCOUNT
 
 ########################
 ## Create New Project ##
 ########################
 
     echo " "
-    echo "### ${RED}Create New Project${NC} ###"
+    echo "### ${RED}2-Create New Project${NC} ###"
     echo " "
     gcloud projects create $NEW_PROJECT_ID
     gcloud config set project $NEW_PROJECT_ID
-    gcloud config set account $YOUR_GCP_ACCOUNT
 
 
 ############################
@@ -90,19 +89,18 @@ SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be crea
 ############################
 
     echo " "
-    echo "### ${RED}Create Service Account${NC} ###"
+    echo "### ${RED}3-Create Service Account${NC} ###"
     echo " "
     gcloud iam service-accounts create $SERVICE_ACCOUNT_ID \
         --description="$SVC_DESCRIPTION" \
         --display-name="$SERVICE_ACCOUNT_ID"
-
 
 ###################################
 ## Create Key to Service Account ##
 ###################################
 
     echo " "
-    echo "### ${RED}Create Key to Service Account${NC} ###"
+    echo "### ${RED}4-Create Key to Service Account${NC} ###"
     echo " "
     gcloud iam service-accounts keys create $KEY_FILE \
         --iam-account="$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com"
@@ -112,7 +110,7 @@ SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be crea
 ###################################
 
     echo " "
-    echo "### ${RED}Add roles in Service Account${NC} ###"
+    echo "### ${RED}5-Add roles in Service Account${NC} ###"
     echo " "
 
 for ROLES in $LIST_ROLES
@@ -124,14 +122,16 @@ done
 ###################################
 
     echo " "
-    echo "### ${RED}Check Service Account Details${NC} ###"
+    echo "### ${RED}6-Check Project and Service Account Details${NC} ###"
     echo " "
     gcloud iam service-accounts describe $SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com
     echo " "
-    echo " "
     gcloud iam service-accounts list
+    echo " "
+    gcloud projects list
+    echo " "
+    echo "### ${RED}END-OF-SCRIPT${NC} ###"
 
 ###################
 ## END OF SCRIPT ##
 ###################
-
