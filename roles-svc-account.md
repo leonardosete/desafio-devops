@@ -1,0 +1,8 @@
+compute.viewer
+compute.securityAdmin
+container.clusterAdmin
+container.developer
+iam.serviceAccountAdmin
+iam.serviceAccountAdmin
+iam.serviceAccountUser
+resourcemanager.projectIamAdmin
