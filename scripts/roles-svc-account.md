@@ -1,4 +1,4 @@
-artifactregistry.reader
+artifactregistry.writer
 compute.securityAdmin
 compute.viewer
 container.clusterAdmin
