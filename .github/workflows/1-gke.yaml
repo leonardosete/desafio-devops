@@ -46,13 +46,13 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
   
-      ## TO RUN WITH GKE MODULE
-      - name: Enable Compute and Container APIs
-        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-        run: |
-          gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
-          gcloud services list --enabled |egrep "cloudresourcemanager.googleapis.com|compute.googleapis.com|container.googleapis.com|artifactregistry.googleapis.com"
-          sleep 60
+      # ## TO RUN WITH GKE MODULE
+      # - name: Enable Compute and Container APIs
+      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+      #   run: |
+      #     gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
+      #     gcloud services list --enabled |egrep "cloudresourcemanager.googleapis.com|compute.googleapis.com|container.googleapis.com|artifactregistry.googleapis.com"
+      #     sleep 60
   
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
