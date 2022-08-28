@@ -1,0 +1,22 @@
+configmap:
+  data:
+    ENV: PRD
+ingress:
+  hosts:
+    - host: flask-app-tembici-prd.leosete7.com
+      paths:
+        - path: /api/ping
+  tls:
+    - hosts:
+        - flask-app-tembici-prd.leosete7.com
+hpa:
+  minReplicas: 1
+  maxReplicas: 2
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 20Mi
+  limits:
+    cpu: 50m
+    memory: 100Mi

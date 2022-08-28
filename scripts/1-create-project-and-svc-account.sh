@@ -31,6 +31,7 @@ case ${answer:0:1} in
     ;;
     * )
         echo No
+        exit
     ;;
 esac
 
@@ -75,6 +76,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
     echo " "
     gcloud components update --quiet
     gcloud components install alpha --quiet
+    gcloud components install beta --quiet
     gcloud auth login    
 
 ########################
@@ -144,7 +146,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
     gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
 
     echo "### ${RED}8-Activate Requested APIs${NC} ###"
-    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com
+    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com
     
     echo " "
     echo "### ${RED}9-Create Bucket - ${BUCKET_NAME}${NC} ###"

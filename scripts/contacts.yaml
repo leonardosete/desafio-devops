@@ -1,0 +1,30 @@
+registrantContact:
+  email: 'seteleonardo7@gmail.com'
+  phoneNumber: '+1.8005550123'
+  postalAddress:
+    regionCode: 'US'
+    postalCode: '94043'
+    administrativeArea: 'CA'
+    locality: 'Mountain View'
+    addressLines: ['1600 Amphitheatre Pkwy']
+    recipients: ['Registrant Leonardo Sete']
+adminContact:
+  email: 'seteleonardo7@gmail.com'
+  phoneNumber: '+1.8005550123'
+  postalAddress:
+    regionCode: 'US'
+    postalCode: '94043'
+    administrativeArea: 'CA'
+    locality: 'Mountain View'
+    addressLines: ['1600 Amphitheatre Pkwy']
+    recipients: ['Admin Leonardo Sete']
+technicalContact:
+  email: 'seteleonardo7@gmail.com'
+  phoneNumber: '+1.8005550123'
+  postalAddress:
+    regionCode: 'US'
+    postalCode: '94043'
+    administrativeArea: 'CA'
+    locality: 'Mountain View'
+    addressLines: ['1600 Amphitheatre Pkwy']
+    recipients: ['Technic Leonardo Sete']

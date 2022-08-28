@@ -2,32 +2,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-app-deployment
+  name: hello-app-deployment
   labels:
-    app: flask-app
+    app: hello-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: flask-app
+      app: hello-app
   template:
     metadata:
       labels:
-        app: flask-app
+        app: hello-app
     spec:
       containers:
-      - name: flask-app
-        image: "us-central1-docker.pkg.dev/devops-sre-1/sre-docker-registry/flask-app:latest"
+      - name: hello-app
+        image: "us-docker.pkg.dev/google-samples/containers/gke/hello-app:2.0"
         ports:
-        - name: http-flask-app
+        - name: http-hello-app
           containerPort: 8080
         env:
         - name: "PORT"
-          value: "8080"
+          value: "8080"   
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/ping
+            path: /v2
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 60
@@ -37,7 +37,7 @@ spec:
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/ping
+            path: /v2
             port: 8080
             scheme: HTTP
           periodSeconds: 10
@@ -50,66 +50,52 @@ spec:
           requests:
             cpu: 50m
             memory: 100Mi
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-app-service
+  name: hello-app-service
 spec:
   selector:
-    app.kubernetes.io/name: flask-app-deployment
+    app.kubernetes.io/name: hello-app-deployment
   ports:
-  - name: http-flask-app
+  - name: http-hello-app
     protocol: TCP
     port: 8080
-    targetPort: http-flask-app
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: flask-app-service
-# spec:
-#   type: ClusterIP
-#   selector:
-#     app: flask-app
-#   ports:
-#   - protocol: TCP
-#     port: 8080
-#     targetPort: http-flask-app
+    targetPort: http-hello-app
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: flask-app-ingress
+  name: hello-app-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   tls:
   - hosts:
-      - flask-app-tembici-dev.leosete-devops.com
+      - hello-app-tembici-dev.leosete-devops.com
     secretName: leosete-devops.com-tls
   rules:
-  - host: flask-app-tembici-dev.leosete-devops.com
+  - host: hello-app-tembici-dev.leosete-devops.com
     http:
       paths:
-      - path: /api/ping
+      - path: /v2
         pathType: Prefix
         backend:
           service:
-            name: flask-app-service
+            name: hello-app-service
             port:
               number: 8080
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: flask-app-hpa
+  name: hello-app-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: flask-app-deployment
+    name: hello-app-deployment
   minReplicas: 2
   maxReplicas: 6
   targetCPUUtilizationPercentage: 75

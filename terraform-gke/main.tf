@@ -46,14 +46,14 @@ module "gke" {
   ip_range_pods              = var.ip_range_pods_name
   ip_range_services          = var.ip_range_services_name
   release_channel            = "${var.release_channel}"
-  http_load_balancing        = true
+  http_load_balancing        = false
   horizontal_pod_autoscaling = true
   grant_registry_access      = true
   # create_service_account     = false
   # service_account            = "terraform-svc-account@devops-sre-1.iam.gserviceaccount.com"
   node_pools = [
     {
-      name                      = "node-pool"
+      name                      = "tembici-node-pool"
       machine_type              = "e2-medium"
       min_count                 = 1
       max_count                 = 3
