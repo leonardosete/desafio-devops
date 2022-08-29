@@ -4,15 +4,39 @@
 ## ENV COLOR####
 ################
 RED='\033[0;31m'
+GREEN='\033[0;32m'
+YEL='\033[0;33m'
 NC='\033[0m' # No Color
+
+################
+### WARNING ####
+################
+   
+   echo " "
+   echo "### ${YEL}ONLY RUN THIS SCRIPT ${GREEN}IF YOU NEED TO ENABLE${NC} ${YEL}CLOUD DNS PROVIDER SERVICE${NC} ###"
+   echo "### ${YEL}AND BUY A NEW DOMAIN -${NC} ${RED}THIS WILL CAUSE BILLING CHARGES${NC} ###"
+   echo " "
 
 ########################
 ## INTERACTIVE SCRIPT ##
 ########################
 
-   echo "### The ${RED}Search Terms of your research - DOMAIN:${NC} ###"
-   read -p "The SEARCH_TERMS is: " SEARCH_TERMS
    echo " "
+   echo "### ${RED}Check before creating a Cloud DNS Provider and Buying a Domain Name${NC} ###"  
+   read -p "Are you sure about the Cloud DNS Provider and Buying a Domain Name (y/n)? " answer
+   case ${answer:0:1} in
+       y|Y )
+           echo Yes
+       ;;
+       * )
+           echo No
+           exit
+       ;;
+   esac
+
+########################
+## INTERACTIVE SCRIPT ##
+########################
 
    echo "### The ${RED}New Domain Name:${NC} ###"
    read -p "The DOMAIN_NAME is: " DOMAIN_NAME
@@ -25,12 +49,22 @@ NC='\033[0m' # No Color
    echo " "
    echo "### ${RED}1-Search if the Domain already exists${NC} ###"
    echo " "
-   gcloud domains registrations search-domains $SEARCH_TERMS
+   gcloud domains registrations search-domains $DOMAIN_NAME
    
    echo " "
    echo "### ${RED}2-To check up-to-date availability for a domain name${NC} ###"
    echo " "
-   gcloud domains registrations get-register-parameters $DOMAIN_NAME
+   AVAILABILITY=`gcloud domains registrations get-register-parameters $DOMAIN_NAME |grep UNAVAILABLE`
+
+   if [ $AVAILABILITY == "UNAVAILABLE" ]
+   then
+      echo "### The ${GREEN}$DOMAIN_NAME${NC} is ${GREEN}AVAILABLE${NC} ###"
+   else
+      echo "### The ${RED}$DOMAIN_NAME${NC} is ${RED}UNAVAILABLE${NC} ###"
+      echo " "
+      echo "### Choose another ${RED}DOMAIN NAME${NC} SEARCH and run this scripts again ###"
+      exit
+   fi
 
 ###########################################################################
 ### Check before creating a Cloud DNS Provider and Buying a Domain Name ###
@@ -39,7 +73,19 @@ NC='\033[0m' # No Color
    echo " "
    echo "### ${RED}Check before creating a Cloud DNS Provider and Buying a Domain Name${NC} ###"  
 
-   read -p "Are you sure about the Cloud DNS Provider and Buying a Domain Name (y/n)? " answer
+   read -p "Do you REALLY want to proceed with it? (y/n)? " answer
+   case ${answer:0:1} in
+       y|Y )
+           echo Yes
+       ;;
+       * )
+           echo No
+           exit
+       ;;
+   esac
+
+
+   read -p "REALLY??? There is no way back from here! ;) (y/n)? " answer
    case ${answer:0:1} in
        y|Y )
            echo Yes
@@ -103,3 +149,22 @@ NC='\033[0m' # No Color
    echo " "
    echo "Once Cloud Domains verifies your contact information, a Google Domains page"
    echo "with the message that your email address has been verified is displayed."
+
+###################
+## END OF SCRIPT ##
+###################
+
+   echo " "
+   echo " "
+   echo "### ${YEL}Do you want to set a External Static IP and create a DNS Record in Cloud DNS Provider for this project:${NC} ${GREEN}$PROJECT_ID?${NC} ###"
+   read -p "Type y or Y for it - (y/n)? " answer
+   case ${answer:0:1} in
+       y|Y )
+           echo Yes
+           sh scripts/3-OPTIONAL-get-domain.sh
+       ;;
+       * )
+           echo No
+           exit
+       ;;
+   esac

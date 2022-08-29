@@ -1,9 +1,14 @@
 #!/bin/sh
 
+## The main goal of this script is: ##
+## Sets a External Static IP in GCP and sets in Cloud DNS Provider a DNS Record ##
+## with the new IP created ##
+
 ################
 ## ENV COLOR####
 ################
 RED='\033[0;31m'
+GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 REGION="us-central1"
 ########################

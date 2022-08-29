@@ -3,10 +3,7 @@ compute.networkAdmin
 compute.securityAdmin
 compute.viewer
 container.clusterAdmin
-container.developer
 iam.serviceAccountAdmin
-iam.serviceAccountAdmin
-iam.serviceAccountUser
 logging.logWriter
 monitoring.metricWriter
 monitoring.viewer

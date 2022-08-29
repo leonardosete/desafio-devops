@@ -4,21 +4,23 @@
 ## ENV COLOR####
 ################
 RED='\033[0;31m'
+GREEN='\033[0;32m'
+YEL='\033[0;33m'
 NC='\033[0m' # No Color
 
 ########################
 ## INTERACTIVE SCRIPT ##
 ########################
 
-echo "### First things first! ###"
+echo "### ${YEL}First things first!${NC} ###"
 echo " "
-echo "### You need to install the gcloud CLI: ###"
+echo "### ${YEL}You need to install the${NC} ${GREEN}gcloud CLI:${NC} ###"
 echo " "
-echo "### ${RED}Click/open the link: https://cloud.google.com/sdk/docs/install${NC} ###"
+echo "### ${YEL}Click/open the link:${NC} ${GREEN}https://cloud.google.com/sdk/docs/install${NC} ###"
 echo " "
-echo "### After installation, awswer ${RED}"y or Y"${NC} to proceed: ###"
+echo "### ${YEL}After installation, awswer${NC} ${GREEN}y|Y${NC} ${YEL}to proceed or:${NC} ###"
 echo " "
-echo "### If you do not install gcloud CLI, this script will not run properly! ###"
+echo "### ${YEL}If you do not install gcloud CLI, this script will not run properly!${NC} ###"
 
 ########################
 ## INTERACTIVE SCRIPT ##
@@ -40,23 +42,25 @@ esac
 #########################
 
 echo " "
-echo "### Please, define the variable below ###"
+echo "### Please, define the variables below ###"
 echo " "
-echo "### The ${RED}New Project-Name:${NC} ###"
+echo "### The ${YEL}New Project-Name:${NC} ###"
 read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
 echo " "
+
 
 #################
 ## STATIC ENVS ##
 #################
 
 # NEW_PROJECT_ID="tembici-devops-sre-1" ## New Project to be created
-BUCKET_NAME="tembici-sre-tf-state" ## Bucket to be created
+# BUCKET_NAME="tembici-sre-tf-state-1" ## Bucket to be createds
 KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" ## The key/json file to be created to the Service Account
 LIST_ROLES=`cat ./scripts/roles-svc-account.md` ## A list of the needed roles to be added to the new Service Account
 SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be created to run Terraform
 SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description
-
+TF_BACKEND_FILE="provider.tf"
+TF_BACKEND_PATH="tembici-desafio-devops/terraform-gke/"
 ######################################
 ## DEFINE TERRAFORM SERVICE ACCOUNT ##
 ######################################
@@ -72,7 +76,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ############################
 
     echo " "
-    echo "### ${RED}1-Auth and Config gcloud${NC} ###"
+    echo "### ${YEL}1-Auth and Config gcloud${NC} ###"
     echo " "
     gcloud components update --quiet
     gcloud components install alpha --quiet
@@ -84,7 +88,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ########################
 
     echo " "
-    echo "### ${RED}2-Create New Project${NC} ###"
+    echo "### ${YEL}2-Create New Project${NC} ###"
     echo " "
     gcloud projects create $NEW_PROJECT_ID
     gcloud config set project $NEW_PROJECT_ID
@@ -94,7 +98,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ############################
 
     echo " "
-    echo "### ${RED}3-Create Service Account${NC} ###"
+    echo "### ${YEL}3-Create Service Account${NC} ###"
     echo " "
     gcloud iam service-accounts create $SERVICE_ACCOUNT_ID \
         --description="$SVC_DESCRIPTION" \
@@ -105,7 +109,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ###################################
 
     echo " "
-    echo "### ${RED}4-Create Key to Service Account${NC} ###"
+    echo "### ${YEL}4-Create Key to Service Account${NC} ###"
     echo " "
     gcloud iam service-accounts keys create $KEY_FILE \
         --iam-account="$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com"
@@ -115,7 +119,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ###################################
 
     echo " "
-    echo "### ${RED}5-Add roles in Service Account${NC} ###"
+    echo "### ${YEL}5-Add roles in Service Account${NC} ###"
     echo " "
 
     for ROLES in $LIST_ROLES
@@ -127,7 +131,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ###################################
 
     echo " "
-    echo "### ${RED}6-Check Project and Service Account Details${NC} ###"
+    echo "### ${YEL}6-Check Project and Service Account Details${NC} ###"
     echo " "
     gcloud iam service-accounts describe $SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com
     echo " "
@@ -141,19 +145,34 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ################################################
 
     echo " "
-    echo "### ${RED}7-Activate Billing Project Account${NC} ###"
+    echo "### ${YEL}7-Activate Billing Project Account${NC} ###"
     BILLING_ID=`gcloud alpha billing accounts list |tail -n1 |awk '{print $1}'`
     gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
 
-    echo "### ${RED}8-Activate Requested APIs${NC} ###"
+    echo "### ${YEL}8-Activate Requested APIs${NC} ###"
     gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com
     
     echo " "
-    echo "### ${RED}9-Create Bucket - ${BUCKET_NAME}${NC} ###"
+    echo "### ${YEL}9-Checking bucket availability${NC} ###"
+    echo "### The new ${YEL}Bucket to create${NC} must be different than: ###"
+    echo " "
+    echo "### If the message below appears, it is normal, because your project doesn't have buckets yet: ###"
+    echo " "
+    echo "### ${RED}ERROR:${NC} ${YEL}(gcloud.alpha.storage.ls) One or more URLs matched no objects.${NC} ### "
+    gcloud alpha storage ls --project=$NEW_PROJECT_ID
+    echo " "
+
+    echo "### The ${YEL}10-New Bucket-Name to keep TFSTATE:${NC} ###"
+    read -p "The BUCKET_NAME to be created is: " BUCKET_NAME
+    echo " "
     gcloud alpha storage buckets create gs://$BUCKET_NAME --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
     
-    echo "### ${RED}10-List Buckets${NC} ###"
-    gcloud alpha storage ls --project="${NEW_PROJECT_ID}"
+    echo " "
+    echo "### ${YEL}11-Verify the new bucket ${NC} ###"
+    echo "### The new ${YEL}Bucket to create${NC} must be different than: ###"
+    gcloud alpha storage ls --project=$NEW_PROJECT_ID
+    echo " "
+    echo " "
     echo " "
 
 ##################
@@ -161,7 +180,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
 ##################
 
 echo " "
-echo "Ao término da execução do script, será gerado o arquivo ${RED}[svc-$NEW_PROJECT_ID-private-key.json]${NC}."
+echo "Ao término da execução do script, será gerado o arquivo ${GREEN}[svc-$NEW_PROJECT_ID-private-key.json]${NC}."
 echo " "
 echo "Esse arquivo será utilizado na etapa seguinte:"
 echo "- Configurando Secrets no Repositório:"
@@ -169,9 +188,33 @@ echo "    * No github, na home do projeto/repositório que foi realizado o fork,
 echo "    * Dentro das opções na coluna ${RED}[General]${NC}, navegue na sessão até chegar na opção ${RED}"Actions": ${RED}[Security]${NC} >> ${RED}[Secrets]${NC} >> ${RED}[Actions]${NC};"
 echo "    * Clique em ${RED}[New Repository Secret]${NC} >> Crie um nome baseado na finalidade dessa secret:"
 echo "        - Defina: ${RED}[GCP_TERRAFORM_SVC_ACCOUNT]${NC} ## Esse é o valor configurado nos arquivos de workflows."
-echo "    * Em ${RED}[Value]${NC}, cole o conteúdo do arquivo ${RED}[svc-$NEW_PROJECT_ID-private-key.json]${NC} e clique em ${RED}[Add Secret]${NC}."
+echo "    * Em ${RED}[Value]${NC}, cole o conteúdo do arquivo ${GREEN}[svc-$NEW_PROJECT_ID-private-key.json]${NC} e clique em ${RED}[Add Secret]${NC}."
 echo " "
-echo "### ${RED}END-OF-SCRIPT${NC} ###"
+echo " "
+echo "### ${YEL}VERY IMPORTANT${NC} ###"
+echo "### ${YEL}SAVE THIS BUCKET NAME: ${NC} ${GREEN}$BUCKET_NAME${NC} ###"
+echo "### ${YEL}WE GONNA NEED IN TERRAFORM FILE${NC} ${GREEN}$TF_BACKEND_FILE${NC} ###"
+echo "### ${YEL}LOCATE IN:${NC} ${GREEN}$TF_BACKEND_PATH/$TF_BACKEND_FILE${NC} ###"
+echo "### ${YEL}Change this value:${NC} bucket = ${RED}tembici-sre-tf-state${NC} ###"
+echo "### ${YEL}For the new bucket name:${NC} bucket = ${GREEN}$BUCKET_NAME${NC} ###"
+echo " "
+echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
+
+echo " "
+echo " "
+echo "### ${YEL}Do you want to set the Cloud DNS Provider and buy a new domain for this project:${NC} ${GREEN}$PROJECT_ID?${NC} ###"
+read -p "Type y or Y for it - (y/n)? " answer
+case ${answer:0:1} in
+    y|Y )
+        echo Yes
+        sh scripts/2-OPTIONAL-get-domain.sh
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+
 
 ###################
 ## END OF SCRIPT ##
