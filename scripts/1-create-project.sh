@@ -45,11 +45,6 @@ SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be crea
 SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description
 TF_BACKEND_FILE="provider.tf"
 TF_BACKEND_PATH="tembici-desafio-devops/terraform-gke/"
-######################################
-## DEFINE TERRAFORM SERVICE ACCOUNT ##
-######################################
-
-echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./service_account.md
 
 ######################
 ## GCLOUD EXECUTION ##
@@ -90,6 +85,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./service_a
 #################
 ## The key/json file to be created to the Service Account
 KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" 
+echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./service_account.md
 #################
 
     echo " "
