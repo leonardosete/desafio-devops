@@ -193,9 +193,9 @@ echo "### ${YEL}LOCATE IN:${NC} ${GREEN}$TF_BACKEND_PATH/$TF_BACKEND_FILE${NC} #
 echo "### ${YEL}Change the current value:${NC} bucket = ${RED}CURRENT_VALUE${NC} ###"
 echo "### ${YEL}For the new bucket name:${NC} bucket = ${GREEN}$BUCKET_NAME${NC} ###"
 echo " "
-echo "### ${GREEN}Also, we need to change the follow values:${NC} ###"
-echo "### ${GREEN} $PROJECT_ID |$CLUSTER_NAME |$REGION${NC} ###"
-echo "### ${RED}path:${NC} ${GREEN}tembici-desafio-devops/.github/workflows${NC} ###"
+echo "### ${YEL}Also, we need to change the follow value:${NC} ###"
+echo "### ${GREEN}$NEW_PROJECT_ID${NC} ###"
+echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/.github/workflows${NC} ###"
 echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
 
 ###################

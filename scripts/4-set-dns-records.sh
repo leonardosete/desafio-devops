@@ -18,14 +18,16 @@ create_dns_record_entry(){
 TTL="300"
 MANAGED_ZONE_LIST=`gcloud dns managed-zones list |awk '{print $1}' |egrep -v NAME`
 DOMAIN_NAME_LIST=`gcloud dns managed-zones list |awk '{print $2}' |egrep -v DNS_NAME`
+APP_HOST=`cat ../k8s/flask-app.yaml |grep "host:" |awk '{print $3}'`
 ## vars/ ##
 
-# echo "### The External Static IP created was ${GREEN}$STATIC_EXT_IP${NC} ###"
-# echo " " 
-echo "### ${YEL}One example of ${GREEN}RR_DATA${NC} ${YEL}could be an IP ADDRESS:${NC} "
+echo " " 
+echo "### ${YEL}One example of ${GREEN}RR_DATA${NC} ${YEL}could be an IP ADDRESS:${NC} ###"
 echo "### ${YEL}from the list above -${NC} ${GREEN}Static External IPs${NC} ###"
 echo " " 
-echo "### The example of DNS_NAME is: ${RED}myapp${NC} ###"
+echo "### ${YEL}The example of${NC} ${GREEN}DNS_NAME is:${NC} ${RED}$APP_HOST${NC} ###"
+echo "### ${YEL}But don't type the${NC} ${RED}DOMAIN,${NC} ${YEL}just the${NC} ${GREEN}NAME${NC} ###"
+
 echo " "
 echo "### The default TTL is: ${RED}${TTL}${NC} = equal to 5 minutes ###" 
 echo " "
@@ -80,6 +82,8 @@ echo "### 4-To execute the transaction ###"
 echo " "
 echo "### ${YEL}List Static External IPs Created in Current Project${NC} ###"
     gcloud compute addresses list
+echo "### ${YEL}You can set your apps DNS Records now, but remember to change in below file too:${NC} ###"
+echo "### Change the ${GREEN}spec.tls.hosts${NC} in ${GREEN}tembici-desafio-devops/k8s/flask-app.yaml${NC} ###"
 echo " "
 echo "### ${RED}2-Create a new DNS Record?${NC} ###"   
 read -p "### Are you sure about this creation? (y/N)" answer

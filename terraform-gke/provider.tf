@@ -10,7 +10,7 @@ provider "google" {
 # https://www.terraform.io/language/settings/backends/gcs
 terraform {
   backend "gcs" {
-    bucket = "leosete-devops-tfstate"
+    bucket = "new-sre-tembici-tfstate-1"
     prefix = "terraform/state"
   }
   required_providers {

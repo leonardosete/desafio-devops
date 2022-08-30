@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     env: ## Variables available in this workflow
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
-      PROJECT_ID: "devops-sre-1"
+      PROJECT_ID: "leosete-devops-4"
       CLUSTER_NAME: "tembici-cluster-prod"
       REGION: "us-central1"
     ## Add "id-token" with the intended permissions.
