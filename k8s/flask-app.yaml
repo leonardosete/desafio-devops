@@ -79,7 +79,7 @@ spec:
 #     targetPort: http-flask-app
 ---
 apiVersion: networking.k8s.io/v1
-kind: Ingress
+kind: IngressClass
 metadata:
   name: external-ingress
   annotations:
