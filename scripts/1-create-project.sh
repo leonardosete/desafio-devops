@@ -192,7 +192,8 @@ echo " "
 echo "### ${YEL}Also, we need to change the follow value:${NC} ###"
 echo "### ${GREEN}$NEW_PROJECT_ID${NC} ###"
 echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/.github/workflows/*yaml${NC} ###"
-echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/terraform-gke/variables.tf${NC} ###"
+echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/terraform-gke/*.tf${NC} ###"
+echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/k8s/flask-app.yaml${NC} ###"
 echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
 
 ###################
