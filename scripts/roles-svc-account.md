@@ -3,6 +3,7 @@ compute.networkAdmin
 compute.securityAdmin
 compute.viewer
 container.clusterAdmin
+container.nodeServiceAccount
 iam.serviceAccountAdmin
 iam.serviceAccountUser
 logging.logWriter
