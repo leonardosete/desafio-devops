@@ -85,8 +85,8 @@ metadata:
   annotations:
     cloud.google.com/load-balancer-type: "External"
     kubernetes.io/ingress.class: "gce"
-    ingressclass.kubernetes.io/is-default-class: "true"
-    kubernetes.io/ingress.regional-static-ip-name: 35.226.218.111
+    # ingressclass.kubernetes.io/is-default-class: "true"
+    # kubernetes.io/ingress.regional-static-ip-name: 35.226.218.111
 spec:
   tls:
   - hosts:
