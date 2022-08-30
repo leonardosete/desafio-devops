@@ -58,7 +58,7 @@ jobs:
 
       - name: Create TLS Secret
         run: |
-          cd ./certs/
+          cd ./scripts/certs/
           kubectl create secret tls my-tls-secret --key="*-key.pem" --cert="*-crt.pem" --namespace ${{ inputs.deploy-app-env }}
 
 
