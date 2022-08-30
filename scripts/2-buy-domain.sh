@@ -124,22 +124,7 @@ case ${answer:0:1} in
     ;;
 esac
 
-### SCRIPT-4 ###
-echo " "
-echo "### ${YEL}Do you want to set a External Static IP and create a DNS Record in Cloud DNS Provider for this project:${NC} ${GREEN}$PROJECT_ID?${NC} ###"
-
-read -p "Type y or Y for it - (y/N)? " answer
-case ${answer:0:1} in
-    y|Y )
-        sh ./3-static-ip-and-dns-record.sh
-    ;;
-    * )
-        echo No
-        exit
-    ;;
-esac
-
-### RUN FUNCTIONS/ ###
+### END OF FUNCTIONS ###
 
 #######################################
 ### Verify your contact information ###

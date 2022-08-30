@@ -73,10 +73,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - hello-app-tembici-dev.leosete-devops.com
-    secretName: leosete-devops.com-tls
+      - hello-app-tembici-dev.leo7-devops.com
+    secretName: leo7-devops.com-tls
   rules:
-  - host: hello-app-tembici-dev.leosete-devops.com
+  - host: hello-app-tembici-dev.leo7-devops.com
     http:
       paths:
       - path: /v2

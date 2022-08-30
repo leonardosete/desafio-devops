@@ -12,45 +12,30 @@ NC='\033[0m' # No Color
 ## vars/ ##
 
 ### /FUNCTIONS ###
-create_ext_static_ip(){
-## /vars ##
-REGION="us-central1"
-## vars/ ##
-
-echo "### The ${RED}Static External IP${NC} Address Name to be created ###"
-read -p "The ADDRESS_NAME is: " ADDRESS_NAME
-echo " "
-echo " "
-echo "### ${RED}1-Creating a new static external IP${NC} ###"
-echo "### ${RED}Reserving the $ADDRESS_NAME${NC} ###"
-echo " "
-    gcloud compute addresses create $ADDRESS_NAME --region="$REGION"
-echo " "
-echo "### ${RED}2-Describe your new static external IP${NC} ###"
-echo " "
-    gcloud compute addresses describe $ADDRESS_NAME --region="$REGION"
-}
-
 create_dns_record_entry(){
 ## /vars ##
-STATIC_EXT_IP=`gcloud compute addresses list |tail -n1 |awk '{print $2}'` ## I'm using my External Static IP on this case
+# STATIC_EXT_IP=`gcloud compute addresses list |tail -n1 |awk '{print $2}'` ## I'm using my External Static IP on this case
 TTL="300"
-RECORD_TYPE="A"
-MANAGED_ZONE=`gcloud dns managed-zones list |tail -n1 |awk '{print $1}'`
-DOMAIN_NAME=`gcloud dns managed-zones list |tail -n1 |awk '{print $2}'`
+MANAGED_ZONE_LIST=`gcloud dns managed-zones list |awk '{print $1}' |egrep -v NAME`
+DOMAIN_NAME_LIST=`gcloud dns managed-zones list |awk '{print $2}' |egrep -v DNS_NAME`
 ## vars/ ##
 
-echo "### The External Static IP created was ${GREEN}$STATIC_EXT_IP${NC} ###"
-echo " " 
-echo "### The example of RR_DATA is: ${RED}${STATIC_EXT_IP}${NC} ###"
+# echo "### The External Static IP created was ${GREEN}$STATIC_EXT_IP${NC} ###"
+# echo " " 
+echo "### ${YEL}One example of ${GREEN}RR_DATA${NC} ${YEL}could be an IP ADDRESS:${NC} "
+echo "### ${YEL}from the list above -${NC} ${GREEN}Static External IPs${NC} ###"
 echo " " 
 echo "### The example of DNS_NAME is: ${RED}myapp${NC} ###"
 echo " "
 echo "### The default TTL is: ${RED}${TTL}${NC} = equal to 5 minutes ###" 
 echo " "
-echo "### The default RECORD_TYPE is: ${RED}${RECORD_TYPE}${NC} - Another types: ${RED}AAAA, ALIAS, MX, CNAME, NS, TXT${NC} and etc... ###"
+echo "### Sets a RECORD_TYPE: ${RED}${RECORD_TYPE}${NC} - Another types: ${RED}AAAA, ALIAS, MX, CNAME, NS, TXT${NC} and etc... ###"
 echo " "
-echo "### The default MANAGED_ZONE is: ${GREEN}$MANAGED_ZONE${NC} ###" 
+echo "### The MANAGED_ZONE already created is/are: "
+echo "${GREEN}$MANAGED_ZONE_LIST${NC}"
+echo " "
+echo "### The DOMAIN NAME already created is/are: "
+echo "${GREEN}$DOMAIN_NAME_LIST${NC}"
 
 read -p "The RR_DATA is: " RR_DATA
 echo " "
@@ -61,6 +46,8 @@ echo " "
 read -p "The RECORD_TYPE is: " RECORD_TYPE
 echo " "
 read -p "The MANAGED_ZONE is: " MANAGED_ZONE
+echo " "
+read -p "The DOMAIN_NAME is: " DOMAIN_NAME
 echo " "
 echo " "
 
@@ -91,21 +78,10 @@ echo "### 4-To execute the transaction ###"
 
 ### SCRIPT 1 ###
 echo " "
-echo "### ${RED}1-Check before creating a new Static External IP${NC} ###"
-read -p "### Are you sure about the External Static IP creation? (y/N)" answer
-case ${answer:0:1} in
-    y|Y )
-        create_ext_static_ip
-    ;;
-    * )
-        echo No
-        exit
-    ;;
-esac
-
-### SCRIPT 2 ###
+echo "### ${YEL}List Static External IPs Created in Current Project${NC} ###"
+    gcloud compute addresses list
 echo " "
-echo "### ${RED}2-Create a new DNS Record with this IP?${NC} ###"   
+echo "### ${RED}2-Create a new DNS Record?${NC} ###"   
 read -p "### Are you sure about this creation? (y/N)" answer
 case ${answer:0:1} in
     y|Y )
@@ -116,4 +92,5 @@ case ${answer:0:1} in
         exit
     ;;
 esac
-### RUN FUNCTIONS/ ###
+
+### END OF FUNCTIONS ###

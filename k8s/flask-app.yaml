@@ -87,10 +87,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - flask-app-tembici-dev.leosete-devops.com
-    secretName: leosete-devops.com-tls
+      - flask-app-tembici-dev.leo7-devops.com
+    secretName: leo7-devops.com-tls
   rules:
-  - host: flask-app-tembici-dev.leosete-devops.com
+  - host: flask-app-tembici-dev.leo7-devops.com
     http:
       paths:
       - path: /api/ping
