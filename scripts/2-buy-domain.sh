@@ -1,61 +1,25 @@
 #!/bin/sh
 
-################
-## ENV COLOR####
-################
+## /vars ##
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YEL='\033[0;33m'
 NC='\033[0m' # No Color
+## vars/ ##
 
-################
-### WARNING ####
-################
+### /FUNCTIONS ###
+check_domain_name(){
 
-    echo " "
-    echo "### ${YEL}ONLY RUN THIS SCRIPT ${GREEN}IF YOU NEED TO ENABLE${NC} ${YEL}CLOUD DNS PROVIDER SERVICE${NC} ###"
-    echo "### ${YEL}AND BUY A NEW DOMAIN -${NC} ${RED}THIS WILL CAUSE BILLING CHARGES${NC} ###"
-    echo " "
-
-########################
-## INTERACTIVE SCRIPT ##
-########################
-
-    echo " "
-    echo "### ${RED}Check before creating a Cloud DNS Provider and Buying a Domain Name${NC} ###"  
-    read -p "Are you sure about the Cloud DNS Provider and Buying a Domain Name (y/N)? " answer
-    case ${answer:0:1} in
-        y|Y )
-            echo Yes
-        ;;
-        * )
-            echo No
-            exit
-        ;;
-    esac
-
-########################
-## INTERACTIVE SCRIPT ##
-########################
-
-    echo "### The ${RED}New Domain Name:${NC} ###"
-    read -p "The DOMAIN_NAME is: " DOMAIN_NAME
-    echo " "
-
-#########################
-## SEARCH TERMS/DOMAIN ##
-########################
-
-    echo " "
-    echo "### ${YEL}1-Search if the Domain already exists${NC} ###"
-    echo " "
+echo "### ${YEL}1-Check Domain Name's Availability${NC} ###"
+echo " "
+read -p "The DOMAIN_NAME is: " DOMAIN_NAME
+echo " "
     gcloud domains registrations search-domains $DOMAIN_NAME
 
-    echo " "
-    echo "### ${YEL}2-To check up-to-date availability for a domain name${NC} ###"
-    echo " "
-    AVAILABILITY=`gcloud domains registrations get-register-parameters $DOMAIN_NAME |grep AVAILABLE`
-    PRICE=`gcloud domains registrations search-domains $DOMAIN_NAME |head -n2 |awk '{print $3}'|tail -n1`
+## /VARS ##
+AVAILABILITY=`gcloud domains registrations get-register-parameters $DOMAIN_NAME |grep AVAILABLE`
+PRICE=`gcloud domains registrations search-domains $DOMAIN_NAME |head -n2 |awk '{print $3}'|tail -n1`
+## VARS/ ##
 
     if [[ $AVAILABILITY == "availability: AVAILABLE" ]]
     then
@@ -63,107 +27,140 @@ NC='\033[0m' # No Color
     else
         echo "### The ${RED}$DOMAIN_NAME${NC} is ${RED}UNAVAILABLE${NC} ###"
         echo " "
-        echo "### Choose another ${RED}DOMAIN NAME${NC} SEARCH and run this scripts again ###"
+        echo "### Choose another ${RED}DOMAIN NAME${NC} and run this scripts again ###"
         exit
     fi
+}
 
-###########################################################################
-### Check before creating a Cloud DNS Provider and Buying a Domain Name ###
-###########################################################################
-########################
-## /INTERACTIVE SCRIPT ##
-########################
+configure_cloud_dns_provider(){
 
-    echo " "
-    echo "### ${RED}Check before creating a Cloud DNS Provider and Buying a Domain Name${NC} ###"  
-
-    read -p "Do you REALLY want to proceed with it? (y/N)? " answer
-    case ${answer:0:1} in
-        y|Y )
-            echo Yes
-        ;;
-        * )
-            echo No
-            exit
-        ;;
-    esac
-
-#########################
-## INTERACTIVE SCRIPT/ ##
-#########################
+## /VARS ##
+local check_domain_name=$DOMAIN_NAME
+## VARS/ ##
     
-    echo "### ${YEL}The Last Domain Name Verified and AVAILABLE is:${NC} ${GREEN}${DOMAIN_NAME}${NC} ###"
-    
-    read -p "Do you want to buy/create it? (y/N)? " answer
-    case ${answer:0:1} in
-        y|Y )
-            echo "### The ${RED}Description's Domain Name:${NC} ###"
-            read -p "The DESCRIPTION is: " DESCRIPTION
-            echo " "
-            
-            echo "### The ${RED}New Cloud DNS Zone Name -${NC} ${YEL}example-com${NC} ###"
-            read -p "The CLOUD_DNS_ZONE_NAME is: " CLOUD_DNS_ZONE_NAME
-            echo " "
-            
-            echo " "
-            echo "### ${YEL}3-Creating a managed public zone for your domain${NC} ###"
-            echo " "
-            gcloud dns managed-zones create $CLOUD_DNS_ZONE_NAME \
-                --description="$DESCRIPTION" \
-                --dns-name=$DOMAIN_NAME
+echo "### The ${RED}Description's Domain Name:${NC} ###"
+read -p "The DESCRIPTION is: " DESCRIPTION
+echo " "
+echo "### The ${RED}New Cloud DNS Zone Name -${NC} ${YEL}example-com${NC} ###"
+read -p "The CLOUD_DNS_ZONE_NAME is: " CLOUD_DNS_ZONE_NAME
+echo " "
+echo " "
+echo "### ${YEL}2-Create a Managed Public Zone${NC} ###"
+echo " "
+    gcloud dns managed-zones create $CLOUD_DNS_ZONE_NAME \
+        --description="$DESCRIPTION" \
+        --dns-name=$DOMAIN_NAME
+}
 
-            echo " "
-            echo "### ${YEL}4-To register the domain${NC} ###"
-            echo " "
-            gcloud beta domains registrations register "$DOMAIN_NAME" \
-            --contact-data-from-file=contacts.yaml --contact-privacy=private-contact-data \
-            --yearly-price="12.00 USD" --cloud-dns-zone="$CLOUD_DNS_ZONE_NAME" --quiet
-        ;;
-        * )
-            echo No
-            exit
-        ;;
-    esac
+buy_domain_name(){
+
+## /VARS ##
+local check_domain_name=$PRICE
+## VARS/ ##
+
+echo " "
+echo "### ${YEL}3-Buy a Domain Name${NC} ###"
+echo " "
+    gcloud beta domains registrations register "$DOMAIN_NAME" \
+    --contact-data-from-file=contacts.yaml --contact-privacy=private-contact-data \
+    --yearly-price="$PRICE USD" --cloud-dns-zone="$CLOUD_DNS_ZONE_NAME" --quiet
+}
+
+
+### FUNCTIONS/ ###
+
+### /WARNING SECTION ###
+echo "### ${RED} WARNING${NC} ###"
+echo " "
+echo "### ${YEL}ONLY RUN THIS SCRIPT IF YOU NEED TO ENABLE${NC} ${YEL}CLOUD DNS PROVIDER SERVICE${NC} ###"
+echo "### ${YEL}AND BUY A NEW DOMAIN -${NC} ${RED}THIS WILL CAUSE BILLING CHARGES${NC} ###"
+echo " "
+echo "### ${RED} WARNING-2${NC} ###"
+echo "### ${YEL}TO RUN THIS SCRIPT, FIRST YOU MUST CHANGE VALUES IN${NC} ${GREEN}contacts.yaml${NC} ${YEL}FILE${NC} ###"
+echo " "
+### WARNING SECTION/ ###
+
+### /RUN FUNCTIONS ###
+
+## SCRIPT 1 ##
+echo "### ${YEL}Check Availability's Domain Name${NC} ###"
+
+read -p "Do you want to verify a Domain Name? (y/N)" answer
+case ${answer:0:1} in
+    y|Y )
+        check_domain_name
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+
+### SCRIPT 2 ###
+echo "### ${YEL}Configure Google Cloud DNS Provider${NC} ###"    
+read -p "Do you want to create a Managed Public Zone? (y/N)? " answer
+case ${answer:0:1} in
+    y|Y )
+        configure_cloud_dns_provider
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+
+### SCRIPT 3 ###
+echo " "
+echo "### ${RED}Buy a Domain Name${NC} ###"  
+
+read -p "Do you REALLY want to buy a Domain Name? (y/N)? " answer
+case ${answer:0:1} in
+    y|Y )
+    buy_domain_name
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+
+### SCRIPT-4 ###
+echo " "
+echo "### ${YEL}Do you want to set a External Static IP and create a DNS Record in Cloud DNS Provider for this project:${NC} ${GREEN}$PROJECT_ID?${NC} ###"
+
+read -p "Type y or Y for it - (y/N)? " answer
+case ${answer:0:1} in
+    y|Y )
+        sh ./3-static-ip-and-dns-record.sh
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+
+### RUN FUNCTIONS/ ###
 
 #######################################
 ### Verify your contact information ###
 #######################################
 
-   echo " "
-   echo "### ${RED}IMPORTANT${NC} ###"
-   echo " "
-   echo "### ${RED}Verify your contact information${NC} ###"
-   echo " "
-   echo "After you register your domain, Cloud Domains sends a verification email"
-   echo "to the address that you provided in your contact information for the domain."
-   echo " "
-   echo "This email includes a subject line that states Action required:"
-   echo "Please verify your email address."
-   echo " "
-   echo "You must verify your contact information within 15 days or your domain becomes inactive."
-   echo "To verify your email address, follow these steps:"
-   echo " "
-   echo "1. Open the verification email from domains-noreply@google.com."
-   echo "2. Click Verify email now."
-   echo " "
-   echo "Once Cloud Domains verifies your contact information, a Google Domains page"
-   echo "with the message that your email address has been verified is displayed."
-
-
-###################
-## END OF SCRIPT ##
-###################
-
-    echo " "
-    echo " "
-    echo "### ${YEL}Do you want to set a External Static IP and create a DNS Record in Cloud DNS Provider for this project:${NC} ${GREEN}$PROJECT_ID?${NC} ###"
-    read -p "Type y or Y for it - (y/N)? " answer
-    case ${answer:0:1} in
-        y|Y )
-            sh 3-static-ip-and-dns-record.sh
-        ;;
-        * )
-            echo No
-            exit
-        ;;
-    esac
+echo " "
+echo "### ${RED}IMPORTANT${NC} ###"
+echo " "
+echo "### ${RED}Verify your contact information${NC} ###"
+echo " "
+echo "After you register your domain, Cloud Domains sends a verification email"
+echo "to the address that you provided in your contact information for the domain."
+echo " "
+echo "This email includes a subject line that states Action required:"
+echo "Please verify your email address."
+echo " "
+echo "You must verify your contact information within 15 days or your domain becomes inactive."
+echo "To verify your email address, follow these steps:"
+echo " "
+echo "1. Open the verification email from domains-noreply@google.com."
+echo "2. Click Verify email now."
+echo " "
+echo "Once Cloud Domains verifies your contact information, a Google Domains page"
+echo "with the message that your email address has been verified is displayed."

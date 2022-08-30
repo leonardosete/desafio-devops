@@ -7,10 +7,11 @@
 ## /vars ##
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YEL='\033[0;33m'
 NC='\033[0m' # No Color
 ## vars/ ##
 
-
+### /FUNCTIONS ###
 create_ext_static_ip(){
 ## /vars ##
 REGION="us-central1"
@@ -23,11 +24,11 @@ echo " "
 echo "### ${RED}1-Creating a new static external IP${NC} ###"
 echo "### ${RED}Reserving the $ADDRESS_NAME${NC} ###"
 echo " "
-gcloud compute addresses create $ADDRESS_NAME --region="$REGION"
+    gcloud compute addresses create $ADDRESS_NAME --region="$REGION"
 echo " "
 echo "### ${RED}2-Describe your new static external IP${NC} ###"
 echo " "
-gcloud compute addresses describe $ADDRESS_NAME --region="$REGION"
+    gcloud compute addresses describe $ADDRESS_NAME --region="$REGION"
 }
 
 create_dns_record_entry(){
@@ -38,6 +39,7 @@ RECORD_TYPE="A"
 MANAGED_ZONE=`gcloud dns managed-zones list |tail -n1 |awk '{print $1}'`
 DOMAIN_NAME=`gcloud dns managed-zones list |tail -n1 |awk '{print $2}'`
 ## vars/ ##
+
 echo "### The External Static IP created was ${GREEN}$STATIC_EXT_IP${NC} ###"
 echo " " 
 echo "### The example of RR_DATA is: ${RED}${STATIC_EXT_IP}${NC} ###"
@@ -48,7 +50,7 @@ echo "### The default TTL is: ${RED}${TTL}${NC} = equal to 5 minutes ###"
 echo " "
 echo "### The default RECORD_TYPE is: ${RED}${RECORD_TYPE}${NC} - Another types: ${RED}AAAA, ALIAS, MX, CNAME, NS, TXT${NC} and etc... ###"
 echo " "
-echo "### The default MANAGED_ZONE is: ${RED}$MANAGED_ZONE${NC} ###" 
+echo "### The default MANAGED_ZONE is: ${GREEN}$MANAGED_ZONE${NC} ###" 
 
 read -p "The RR_DATA is: " RR_DATA
 echo " "
@@ -63,8 +65,8 @@ echo " "
 echo " "
 
 echo "### 1-To start a transaction - DNS Record Registration ###"
-gcloud dns record-sets transaction start \
---zone="$MANAGED_ZONE"
+    gcloud dns record-sets transaction start \
+    --zone="$MANAGED_ZONE"
 echo " "
 echo " "
 echo "### 2-To add a record set as part of a transaction ###"
@@ -83,11 +85,13 @@ echo " "
 echo "### 4-To execute the transaction ###"
     gcloud dns record-sets list --zone="$MANAGED_ZONE"
 }
+### FUNCTIONS/ ###
 
+### /RUN FUNCTIONS ###
 
 ### SCRIPT 1 ###
 echo " "
-echo "### ${RED}Check before creating a new Static External IP${NC} ###"
+echo "### ${RED}1-Check before creating a new Static External IP${NC} ###"
 read -p "### Are you sure about the External Static IP creation? (y/N)" answer
 case ${answer:0:1} in
     y|Y )
@@ -101,7 +105,7 @@ esac
 
 ### SCRIPT 2 ###
 echo " "
-echo "### ${RED}3-Create a new DNS Record with this IP?${NC} ###"   
+echo "### ${RED}2-Create a new DNS Record with this IP?${NC} ###"   
 read -p "### Are you sure about this creation? (y/N)" answer
 case ${answer:0:1} in
     y|Y )
@@ -112,3 +116,4 @@ case ${answer:0:1} in
         exit
     ;;
 esac
+### RUN FUNCTIONS/ ###
