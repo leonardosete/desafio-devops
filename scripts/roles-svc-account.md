@@ -10,3 +10,4 @@ monitoring.viewer
 resourcemanager.projectIamAdmin
 stackdriver.resourceMetadata.writer
 storage.objectCreator
+storage.objectViewer
