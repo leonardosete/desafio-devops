@@ -1,4 +1,18 @@
 ## Criado por Leonardo Sete ##
+
+## INSTALAÇÃO DO GCLOUD CLI ##
+Será necessário em primeiro lugar (caso não possua), baixar o [gcloud_CLI] através desse link:
+https://cloud.google.com/sdk/docs/install
+
+
+### /DETALHE IMPORTANTE ###
+
+A abordagem adotada nesse projeto, parte do princípio que será utilizada uma [conta_nova] da GCP [recomendado],
+sem projetos/serviços/APIs configurados. Por essa razão, foram criados 3 scripts [bash] para realizar o processo
+necessário de configuração do ambiente na GCP.
+
+### DETALHE IMPORTANTE/ ###
+
 ## CRIAÇÃO DE UM NOVO PROJETO GCP E SERVICE ACCOUNT ##
 Após realizado o fork do projeto/repo, execute em sua máquina o bash script a seguir:
 
@@ -16,13 +30,6 @@ Será necessário interagir com o script em 2 momentos:
 - Fornecer o valor de 1 variável:
     * [NEW_PROJECT_ID] = Nome do novo projeto que será criado.
     * [BUCKET_NAME] = Nome do novo bucket para armazenar o tfstate do projeto que será criado.
-
-- VARIÁVEIS PRÉ-DEFINIDAS:
-    * [BUCKET_NAME]="tembici-sre-tf-state" ## `Bucket to be created`
-    * [KEY_FILE]="./svc-$NEW_PROJECT_ID-private-key.json" ## `The key/json file to be created to the Service Account`
-    * [LIST_ROLES]=`cat ./roles-svc-account.md` ## `A list of the needed roles to be added to the new Service Account`
-    * [SERVICE_ACCOUNT_ID]="terraform-svc-account" ## `The new Service Account to be created to run Terraform`
-    * [SVC_DESCRIPTION]="Terraform Service Account" ## `Service Account Description`
 
 Os valores definidos nas variáveis pré-definidas, não necessitam de alteração - mas é possível alterá-los
 caso deseje.
@@ -54,8 +61,8 @@ Foram gerados alguns workflows (pipelines/esteiras) no path:
         https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/private-cluster
         
 
-##
-## CONTINUAR A DOC ##
-##
 ## RBAC - IMPORTANTE ##
 https://cloud.google.com/kubernetes-engine/docs/best-practices/rbac
+
+## Referências ##
+https://cloud.google.com/compute/docs/access/iam

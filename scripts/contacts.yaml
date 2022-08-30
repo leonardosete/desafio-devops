@@ -1,5 +1,5 @@
 registrantContact:
-  email: 'seteleonardo7@gmail.com'
+  email: 'leo7devops@gmail.com'
   phoneNumber: '+1.8005550123'
   postalAddress:
     regionCode: 'US'
@@ -9,7 +9,7 @@ registrantContact:
     addressLines: ['1600 Amphitheatre Pkwy']
     recipients: ['Registrant Leonardo Sete']
 adminContact:
-  email: 'seteleonardo7@gmail.com'
+  email: 'leo7devops@gmail.com'
   phoneNumber: '+1.8005550123'
   postalAddress:
     regionCode: 'US'
@@ -19,7 +19,7 @@ adminContact:
     addressLines: ['1600 Amphitheatre Pkwy']
     recipients: ['Admin Leonardo Sete']
 technicalContact:
-  email: 'seteleonardo7@gmail.com'
+  email: 'leo7devops@gmail.com'
   phoneNumber: '+1.8005550123'
   postalAddress:
     regionCode: 'US'

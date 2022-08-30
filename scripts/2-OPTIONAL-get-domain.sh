@@ -23,7 +23,7 @@ NC='\033[0m' # No Color
 
    echo " "
    echo "### ${RED}Check before creating a Cloud DNS Provider and Buying a Domain Name${NC} ###"  
-   read -p "Are you sure about the Cloud DNS Provider and Buying a Domain Name (y/n)? " answer
+   read -p "Are you sure about the Cloud DNS Provider and Buying a Domain Name (y/N)? " answer
    case ${answer:0:1} in
        y|Y )
            echo Yes
@@ -47,16 +47,16 @@ NC='\033[0m' # No Color
 ########################
 
    echo " "
-   echo "### ${RED}1-Search if the Domain already exists${NC} ###"
+   echo "### ${YEL}1-Search if the Domain already exists${NC} ###"
    echo " "
    gcloud domains registrations search-domains $DOMAIN_NAME
    
    echo " "
-   echo "### ${RED}2-To check up-to-date availability for a domain name${NC} ###"
+   echo "### ${YEL}2-To check up-to-date availability for a domain name${NC} ###"
    echo " "
-   AVAILABILITY=`gcloud domains registrations get-register-parameters $DOMAIN_NAME |grep UNAVAILABLE`
+   AVAILABILITY=`gcloud domains registrations get-register-parameters $DOMAIN_NAME |grep AVAILABLE`
 
-   if [ $AVAILABILITY == "UNAVAILABLE" ]
+   if [[ $AVAILABILITY == "availability: AVAILABLE" ]]
    then
       echo "### The ${GREEN}$DOMAIN_NAME${NC} is ${GREEN}AVAILABLE${NC} ###"
    else
@@ -69,6 +69,9 @@ NC='\033[0m' # No Color
 ###########################################################################
 ### Check before creating a Cloud DNS Provider and Buying a Domain Name ###
 ###########################################################################
+########################
+## /INTERACTIVE SCRIPT ##
+########################
 
    echo " "
    echo "### ${RED}Check before creating a Cloud DNS Provider and Buying a Domain Name${NC} ###"  
@@ -97,7 +100,7 @@ NC='\033[0m' # No Color
    esac
 
 ########################
-## INTERACTIVE SCRIPT ##
+## INTERACTIVE SCRIPT/ ##
 ########################
 
    echo "### The ${RED}New Cloud DNS Zone Name - example-com${NC} ###"
@@ -109,18 +112,18 @@ NC='\033[0m' # No Color
    echo " "
 
 #############################################################
-### Create a new Cloud DNS managed zone for the domain ###
+### Creating a new Cloud DNS managed zone for the domain ###
 #############################################################
 
    echo " "
-   echo "### ${RED}3-Create a managed public zone for your domain${NC} ###"
+   echo "### ${YEL}3-Creating a managed public zone for your domain${NC} ###"
    echo " "
    gcloud dns managed-zones create $CLOUD_DNS_ZONE_NAME \
       --description="$DESCRIPTION" \
       --dns-name=$DOMAIN_NAME
    
    echo " "
-   echo "### ${RED}4-To register the domain${NC} ###"
+   echo "### ${YEL}4-To register the domain${NC} ###"
    echo " "
    gcloud beta domains registrations register "$DOMAIN_NAME" \
    --contact-data-from-file=contacts.yaml --contact-privacy=private-contact-data \
@@ -150,6 +153,7 @@ NC='\033[0m' # No Color
    echo "Once Cloud Domains verifies your contact information, a Google Domains page"
    echo "with the message that your email address has been verified is displayed."
 
+
 ###################
 ## END OF SCRIPT ##
 ###################
@@ -161,7 +165,7 @@ NC='\033[0m' # No Color
    case ${answer:0:1} in
        y|Y )
            echo Yes
-           sh scripts/3-OPTIONAL-get-domain.sh
+           sh 3-OPTIONAL-get-domain.sh
        ;;
        * )
            echo No

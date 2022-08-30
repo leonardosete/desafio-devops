@@ -26,7 +26,7 @@ echo "### ${YEL}If you do not install gcloud CLI, this script will not run prope
 ## INTERACTIVE SCRIPT ##
 ########################
 
-read -p "Did install the gcloud CLI (y/n)? " answer
+read -p "Did install the gcloud CLI (y/N)? " answer
 case ${answer:0:1} in
     y|Y )
         echo Yes
@@ -37,26 +37,10 @@ case ${answer:0:1} in
     ;;
 esac
 
-#########################
-## DEFINE DYNAMIC VARS ##
-#########################
-
-echo " "
-echo "### Please, define the variables below ###"
-echo " "
-echo "### The ${YEL}New Project-Name:${NC} ###"
-read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
-echo " "
-
-
-#################
-## STATIC ENVS ##
-#################
-
-# NEW_PROJECT_ID="tembici-devops-sre-1" ## New Project to be created
-# BUCKET_NAME="tembici-sre-tf-state-1" ## Bucket to be createds
-KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" ## The key/json file to be created to the Service Account
-LIST_ROLES=`cat ./scripts/roles-svc-account.md` ## A list of the needed roles to be added to the new Service Account
+###########
+## VARS ##
+########### 
+LIST_ROLES=`cat ./roles-svc-account.md` ## A list of the needed roles to be added to the new Service Account
 SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be created to run Terraform
 SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description
 TF_BACKEND_FILE="provider.tf"
@@ -65,7 +49,7 @@ TF_BACKEND_PATH="tembici-desafio-devops/terraform-gke/"
 ## DEFINE TERRAFORM SERVICE ACCOUNT ##
 ######################################
 
-echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/service_account.md
+echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./service_account.md
 
 ######################
 ## GCLOUD EXECUTION ##
@@ -81,35 +65,56 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
     gcloud components update --quiet
     gcloud components install alpha --quiet
     gcloud components install beta --quiet
-    gcloud auth login    
+    # gcloud auth login ## DESCOMENTAR QUANDO ENVIAR
+    gcloud auth login --no-launch-browser
 
 ########################
-## Create New Project ##
+## Creating New Project ##
 ########################
+
+    echo "### ${YEL}Checking Project availability${NC} ###"
+    echo "### The new ${YEL}PROJECT_ID to create${NC} must be different than: ###"
+    echo " "
+    gcloud projects list
+    echo " "
 
     echo " "
-    echo "### ${YEL}2-Create New Project${NC} ###"
+    echo "### Please, define the variable below ###"
+    echo " "
+    echo "### The ${YEL}New Project-Name:${NC} ###"
+    read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
+    echo " "
+
+#################
+## DINAMIC VAR ##
+#################
+## The key/json file to be created to the Service Account
+KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" 
+#################
+
+    echo " "
+    echo "### ${YEL}2-Creating New Project${NC} ###"
     echo " "
     gcloud projects create $NEW_PROJECT_ID
     gcloud config set project $NEW_PROJECT_ID
 
 ############################
-## Create Service Account ##
+## Creating Service Account ##
 ############################
 
     echo " "
-    echo "### ${YEL}3-Create Service Account${NC} ###"
+    echo "### ${YEL}3-Creating Service Account${NC} ###"
     echo " "
     gcloud iam service-accounts create $SERVICE_ACCOUNT_ID \
         --description="$SVC_DESCRIPTION" \
         --display-name="$SERVICE_ACCOUNT_ID"
 
 ###################################
-## Create Key to Service Account ##
+## Creating Key to Service Account ##
 ###################################
 
     echo " "
-    echo "### ${YEL}4-Create Key to Service Account${NC} ###"
+    echo "### ${YEL}4-Creating Key to Service Account${NC} ###"
     echo " "
     gcloud iam service-accounts keys create $KEY_FILE \
         --iam-account="$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com"
@@ -141,7 +146,7 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
     echo " "
 
 ################################################
-## Create Bucket and activate Project Billing ##
+## Creating Bucket and activate Project Billing ##
 ################################################
 
     echo " "
@@ -150,26 +155,25 @@ echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./scripts/s
     gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
 
     echo "### ${YEL}8-Activate Requested APIs${NC} ###"
-    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com
+    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com domains.googleapis.com
     
     echo " "
-    echo "### ${YEL}9-Checking bucket availability${NC} ###"
-    echo "### The new ${YEL}Bucket to create${NC} must be different than: ###"
-    echo " "
-    echo "### If the message below appears, it is normal, because your project doesn't have buckets yet: ###"
-    echo " "
-    echo "### ${RED}ERROR:${NC} ${YEL}(gcloud.alpha.storage.ls) One or more URLs matched no objects.${NC} ### "
-    gcloud alpha storage ls --project=$NEW_PROJECT_ID
-    echo " "
+    # echo "### ${YEL}9-Checking bucket availability${NC} ###"
+    # echo "### The new ${YEL}Bucket to create${NC} must be different than: ###"
+    # echo " "
+    # echo "### If the message below appears, it is normal, because your project doesn't have buckets yet: ###"
+    # echo " "
+    # echo "### ${RED}ERROR:${NC} ${YEL}(gcloud.alpha.storage.ls) One or more URLs matched no objects.${NC} ### "
+    # gcloud alpha storage ls --project=$NEW_PROJECT_ID
+    # echo " "
 
-    echo "### The ${YEL}10-New Bucket-Name to keep TFSTATE:${NC} ###"
+    echo "### The ${YEL}9-New Bucket-Name to keep TFSTATE:${NC} ###"
     read -p "The BUCKET_NAME to be created is: " BUCKET_NAME
     echo " "
     gcloud alpha storage buckets create gs://$BUCKET_NAME --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
     
     echo " "
-    echo "### ${YEL}11-Verify the new bucket ${NC} ###"
-    echo "### The new ${YEL}Bucket to create${NC} must be different than: ###"
+    echo "### ${YEL}10-Verify the new bucket ${NC} ###"
     gcloud alpha storage ls --project=$NEW_PROJECT_ID
     echo " "
     echo " "
@@ -207,7 +211,7 @@ read -p "Type y or Y for it - (y/n)? " answer
 case ${answer:0:1} in
     y|Y )
         echo Yes
-        sh scripts/2-OPTIONAL-get-domain.sh
+        sh 2-OPTIONAL-get-domain.sh
     ;;
     * )
         echo No
