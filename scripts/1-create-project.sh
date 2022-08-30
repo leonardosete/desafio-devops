@@ -158,15 +158,6 @@ KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json"
     gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com domains.googleapis.com
     
     echo " "
-    # echo "### ${YEL}9-Checking bucket availability${NC} ###"
-    # echo "### The new ${YEL}Bucket to create${NC} must be different than: ###"
-    # echo " "
-    # echo "### If the message below appears, it is normal, because your project doesn't have buckets yet: ###"
-    # echo " "
-    # echo "### ${RED}ERROR:${NC} ${YEL}(gcloud.alpha.storage.ls) One or more URLs matched no objects.${NC} ### "
-    # gcloud alpha storage ls --project=$NEW_PROJECT_ID
-    # echo " "
-
     echo "### The ${YEL}9-New Bucket-Name to keep TFSTATE:${NC} ###"
     read -p "The BUCKET_NAME to be created is: " BUCKET_NAME
     echo " "
@@ -199,26 +190,13 @@ echo "### ${YEL}VERY IMPORTANT${NC} ###"
 echo "### ${YEL}SAVE THIS BUCKET NAME: ${NC} ${GREEN}$BUCKET_NAME${NC} ###"
 echo "### ${YEL}WE GONNA NEED IN TERRAFORM FILE${NC} ${GREEN}$TF_BACKEND_FILE${NC} ###"
 echo "### ${YEL}LOCATE IN:${NC} ${GREEN}$TF_BACKEND_PATH/$TF_BACKEND_FILE${NC} ###"
-echo "### ${YEL}Change this value:${NC} bucket = ${RED}tembici-sre-tf-state${NC} ###"
+echo "### ${YEL}Change the current value:${NC} bucket = ${RED}CURRENT_VALUE${NC} ###"
 echo "### ${YEL}For the new bucket name:${NC} bucket = ${GREEN}$BUCKET_NAME${NC} ###"
 echo " "
+echo "### ${GREEN}Also, we need to change the follow values:${NC} ###"
+echo "### ${GREEN} $PROJECT_ID |$CLUSTER_NAME |$REGION${NC} ###"
+echo "### ${RED}path:${NC} ${GREEN}tembici-desafio-devops/.github/workflows${NC} ###"
 echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
-
-echo " "
-echo " "
-echo "### ${YEL}Do you want to set the Cloud DNS Provider and buy a new domain for this project:${NC} ${GREEN}$PROJECT_ID?${NC} ###"
-read -p "Type y or Y for it - (y/n)? " answer
-case ${answer:0:1} in
-    y|Y )
-        echo Yes
-        sh 2-OPTIONAL-get-domain.sh
-    ;;
-    * )
-        echo No
-        exit
-    ;;
-esac
-
 
 ###################
 ## END OF SCRIPT ##
