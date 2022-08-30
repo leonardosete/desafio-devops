@@ -88,10 +88,10 @@ metadata:
     # ingressclass.kubernetes.io/is-default-class: "true"
     # kubernetes.io/ingress.regional-static-ip-name: 35.226.218.111
 spec:
-  tls:
-  - hosts:
-      - flask-app-tembici-dev.leosete7.com
-    secretName: my-tls-secret
+  # tls:
+  # - hosts:
+  #     - flask-app-tembici-dev.leosete7.com
+  #   secretName: my-tls-secret
   rules:
   - host: flask-app-tembici-dev.leosete7.com
     http:
