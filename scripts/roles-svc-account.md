@@ -2,10 +2,8 @@ artifactregistry.admin
 compute.networkAdmin
 compute.securityAdmin
 compute.viewer
-container.clusterAdmin
-container.nodeServiceAccount
+container.admin
 iam.serviceAccountAdmin
-iam.serviceAccountUser
 logging.logWriter
 monitoring.metricWriter
 monitoring.viewer
