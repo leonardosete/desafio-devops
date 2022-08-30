@@ -46,7 +46,7 @@ module "gke" {
   ip_range_pods              = var.ip_range_pods_name
   ip_range_services          = var.ip_range_services_name
   release_channel            = "${var.release_channel}"
-  http_load_balancing        = false
+  http_load_balancing        = true
   horizontal_pod_autoscaling = true
   grant_registry_access      = true
   # create_service_account     = false
