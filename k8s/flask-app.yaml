@@ -64,19 +64,6 @@ spec:
     protocol: TCP
     port: 8080
     targetPort: http-flask-app
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: flask-app-service
-# spec:
-#   type: ClusterIP
-#   selector:
-#     app: flask-app
-#   ports:
-#   - protocol: TCP
-#     port: 8080
-#     targetPort: http-flask-app
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
