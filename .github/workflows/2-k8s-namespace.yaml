@@ -56,6 +56,11 @@ jobs:
         run: |
           kubectl get ns ${{ inputs.deploy-app-env }}
 
+      - name: Create TLS Secret
+        run: |
+          kubectl kubectl create secret tls my-tls-secret \
+          --key ./certs/*-key.pem \
+          --cert ./certs/*-crt.pem ns ${{ inputs.deploy-app-env }}
 
 
 

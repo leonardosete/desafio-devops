@@ -88,7 +88,7 @@ spec:
   tls:
   - hosts:
       - flask-app-tembici-dev.leo7-devops.com
-    secretName: leo7-devops.com-tls
+    secretName: my-tls-secret
   rules:
   - host: flask-app-tembici-dev.leo7-devops.com
     http:
