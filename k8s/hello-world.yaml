@@ -1,101 +1,101 @@
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: hello-app-deployment
-  labels:
-    app: hello-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: hello-app
-  template:
-    metadata:
-      labels:
-        app: hello-app
-    spec:
-      containers:
-      - name: hello-app
-        image: "us-docker.pkg.dev/google-samples/containers/gke/hello-app:2.0"
-        ports:
-        - name: http-hello-app
-          containerPort: 8080
-        env:
-        - name: "PORT"
-          value: "8080"   
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /v2
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 60
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 2
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /v2
-            port: 8080
-            scheme: HTTP
-          periodSeconds: 10
-          successThreshold: 3
-          timeoutSeconds: 2
-        resources:
-          limits:
-            cpu: 100m
-            memory: 200Mi
-          requests:
-            cpu: 50m
-            memory: 100Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hello-app-service
-spec:
-  selector:
-    app.kubernetes.io/name: hello-app-deployment
-  ports:
-  - name: http-hello-app
-    protocol: TCP
-    port: 8080
-    targetPort: http-hello-app
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: hello-app-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  tls:
-  - hosts:
-      - hello-app-tembici-dev.leo7-devops.com
-    secretName: my-tls-secret
-  rules:
-  - host: hello-app-tembici-dev.leo7-devops.com
-    http:
-      paths:
-      - path: /v2
-        pathType: Prefix
-        backend:
-          service:
-            name: hello-app-service
-            port:
-              number: 8080
----
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: hello-app-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: hello-app-deployment
-  minReplicas: 2
-  maxReplicas: 6
-  targetCPUUtilizationPercentage: 75
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: hello-app-deployment
+#   labels:
+#     app: hello-app
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: hello-app
+#   template:
+#     metadata:
+#       labels:
+#         app: hello-app
+#     spec:
+#       containers:
+#       - name: hello-app
+#         image: "us-docker.pkg.dev/google-samples/containers/gke/hello-app:2.0"
+#         ports:
+#         - name: http-hello-app
+#           containerPort: 8080
+#         env:
+#         - name: "PORT"
+#           value: "8080"   
+#         livenessProbe:
+#           failureThreshold: 3
+#           httpGet:
+#             path: /v2
+#             port: 8080
+#             scheme: HTTP
+#           initialDelaySeconds: 60
+#           periodSeconds: 10
+#           successThreshold: 1
+#           timeoutSeconds: 2
+#         readinessProbe:
+#           failureThreshold: 3
+#           httpGet:
+#             path: /v2
+#             port: 8080
+#             scheme: HTTP
+#           periodSeconds: 10
+#           successThreshold: 3
+#           timeoutSeconds: 2
+#         resources:
+#           limits:
+#             cpu: 100m
+#             memory: 200Mi
+#           requests:
+#             cpu: 50m
+#             memory: 100Mi
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: hello-app-service
+# spec:
+#   selector:
+#     app.kubernetes.io/name: hello-app-deployment
+#   ports:
+#   - name: http-hello-app
+#     protocol: TCP
+#     port: 8080
+#     targetPort: http-hello-app
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: hello-app-ingress
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+# spec:
+#   tls:
+#   - hosts:
+#       - hello-app-tembici-dev.leo7-devops.com
+#     secretName: my-tls-secret
+#   rules:
+#   - host: hello-app-tembici-dev.leo7-devops.com
+#     http:
+#       paths:
+#       - path: /v2
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: hello-app-service
+#             port:
+#               number: 8080
+# ---
+# apiVersion: autoscaling/v1
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: hello-app-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: hello-app-deployment
+#   minReplicas: 2
+#   maxReplicas: 6
+#   targetCPUUtilizationPercentage: 75

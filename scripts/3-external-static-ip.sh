@@ -30,8 +30,13 @@ echo " "
     gcloud compute addresses describe $ADDRESS_NAME --region="$REGION"
 
 echo " "
-echo "### ${YEL}Updated list Static External IPs${NC} ###"
+echo "### ${YEL}Get the IP ADDRESS here in - Static External IPs${NC} ###"
     gcloud compute addresses list
+
+echo " "
+echo "### ${YEL}And set the annotation value equal to: kubernetes.io/ingress.regional-static-ip-name: ${RED}VALUE${NC} ###"
+echo "### ${YEL}File path:${NC} ${GREEN}../k8s/nginx-controller-tembici.yaml${NC} ###"
+
 }
 ### FUNCTIONS/ ###
 

@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: controller
   name: gce-ingress-controller-tembici
   annotations:
-    # ingressclass.kubernetes.io/is-default-class: "true"
-    kubernetes.io/ingress.regional-static-ip-name: STATIC_IP_NAME
+    ingressclass.kubernetes.io/is-default-class: "true"
+    kubernetes.io/ingress.regional-static-ip-name: 35.226.218.111
 spec:
   controller: k8s.io/ingress-nginx
