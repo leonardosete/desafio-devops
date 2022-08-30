@@ -195,7 +195,8 @@ echo "### ${YEL}For the new bucket name:${NC} bucket = ${GREEN}$BUCKET_NAME${NC}
 echo " "
 echo "### ${YEL}Also, we need to change the follow value:${NC} ###"
 echo "### ${GREEN}$NEW_PROJECT_ID${NC} ###"
-echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/.github/workflows${NC} ###"
+echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/.github/workflows/*yaml${NC} ###"
+echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/terraform-gke/variables.tf${NC} ###"
 echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
 
 ###################

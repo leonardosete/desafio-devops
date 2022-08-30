@@ -1,6 +1,6 @@
 variable "project_id" {
   description = "The project ID to host the cluster in"
-  default = "devops-sre-1"
+  default = "leosete-devops-4"
 }
 variable "cluster_name" {
   description = "The name for the GKE cluster"
