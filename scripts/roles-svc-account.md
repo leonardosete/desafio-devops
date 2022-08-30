@@ -4,6 +4,7 @@ compute.securityAdmin
 compute.viewer
 container.clusterAdmin
 iam.serviceAccountAdmin
+iam.serviceAccountUser
 logging.logWriter
 monitoring.metricWriter
 monitoring.viewer
