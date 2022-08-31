@@ -104,7 +104,7 @@ jobs:
 
       - name: Create Namespace
         if: ${{ env.CHECK_NS_DEV != env.NS_ENV_DEV && env.CHECK_NS_HLG != env.NS_ENV_HLG && env.CHECK_NS_PRD != env.NS_ENV_PRD }}
-        # continue-on-error: true
+        continue-on-error: true
         run: |
           kubectl create ns ${{ env.NS_ENV_DEV }}
           kubectl create ns ${{ env.NS_ENV_HLG }}
