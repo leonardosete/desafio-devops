@@ -1,4 +1,4 @@
-name: 4-Flask App Delete
+name: 3-Flask App Delete
 on:
   push:
     branches: [release, feature, hotfix, task]
