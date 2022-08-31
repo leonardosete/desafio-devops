@@ -136,7 +136,7 @@ metadata:
     app.kubernetes.io/version: "0.0.0-managed"
     app.kubernetes.io/managed-by: Helm
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: gce-internal
 spec:
   tls:
   - hosts:
@@ -150,7 +150,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: flask-app-service
+            name: flask-app-tembici
             port:
               number: 8080
 ---
@@ -166,7 +166,7 @@ metadata:
     app.kubernetes.io/version: "0.0.0-managed"
     app.kubernetes.io/managed-by: Helm
   annotations:
-    kubernetes.io/ingress.class: nginx-ingress-external
+    kubernetes.io/ingress.class: gce
 spec:
   tls:
   - hosts:
@@ -180,6 +180,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: flask-app-service
+            name: flask-app-tembici
             port:
               number: 8080
