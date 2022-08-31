@@ -123,7 +123,6 @@ jobs:
           # kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_PRD }}
 
       - name: Create TLS Secret
-        working-directory: $HOME
         run: |
           cd /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}
           pwd
