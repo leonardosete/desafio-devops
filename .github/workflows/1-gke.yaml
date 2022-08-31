@@ -20,11 +20,13 @@ jobs:
   gke_cluster:
     runs-on: ubuntu-latest
     env: ## Variables available in this workflow
-      TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       PROJECT_ID: "leosete-devops-4"
-      CLUSTER_NAME: "tembici-cluster-prod"
       REGION: "us-central1"
-      NS_ENVS: "tembici-sre-apps-dev tembici-sre-apps-hlg tembici-sre-apps-prod"
+      CLUSTER_NAME: "tembici-cluster-prod"
+      NS_ENV_DEV: "tembici-sre-apps-dev"
+      NS_ENV_HLG: "tembici-sre-apps-hlg"
+      NS_ENV_PRD: "tembici-sre-apps-prod"
+      TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
     ## Add "id-token" with the intended permissions.
     permissions:
       contents: read
@@ -96,24 +98,30 @@ jobs:
 
       - name: Check Namespace
         run: |
-          echo "CHECK_NS=`kubectl get ns $NS_ENVS |grep $NS_ENVS |awk '{print $1}'`" >> $GITHUB_ENV
+          echo "CHECK_NS_DEV=`kubectl get ns $NS_ENV_DEV |grep $NS_ENV_DEV |awk '{print $1}'`" >> $GITHUB_ENV
+          echo "CHECK_NS_HLG=`kubectl get ns $NS_ENV_HLG |grep $NS_ENV_HLG |awk '{print $1}'`" >> $GITHUB_ENV
+          echo "CHECK_NS_PRD=`kubectl get ns $NS_ENV_PRD |grep $NS_ENV_PRD |awk '{print $1}'`" >> $GITHUB_ENV
 
       - name: Create Namespace
-        if: ${{ env.CHECK_NS != env.NS_ENVS }}
-        continue-on-error: true
+        if: ${{ env.CHECK_NS_DEV != env.NS_ENV_DEV && env.CHECK_NS_HLG != env.NS_ENV_HLG && env.CHECK_NS_PRD != env.NS_ENV_PRD }}
+        # continue-on-error: true
         run: |
-          kubectl create ns ${{ env.NS_ENVS }}
+          kubectl create ns ${{ env.NS_ENV_DEV }}
+          kubectl create ns ${{ env.NS_ENV_HLG }}
+          kubectl create ns ${{ env.NS_ENV_PRD }}
 
-      - name: List Namespace
+      - name: List Namespaces
         run: |
-          kubectl get ns ${{ env.NS_ENVS }}
+          kubectl get --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
 
       - name: Create TLS Secret
         run: |
           cd ./scripts/certs/
           KEY=`ls |grep key`
           CRT=`ls |grep crt`
-          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENVS }}
+          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_DEV }}
+          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_HLG }}
+          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_PRD }}
 
 
 
