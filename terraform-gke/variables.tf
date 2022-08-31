@@ -45,3 +45,8 @@ variable "release_channel" {
   description = "The release channel type"
   default     = "REGULAR"
 }
+
+variable "node_pools_name" {
+  description = "Node pool name"
+  default = "tembici-node-pool"
+}

@@ -51,7 +51,7 @@ module "gke" {
   grant_registry_access      = true
   node_pools = [
     {
-      name                      = "tembici-node-pool"
+      name                      = "${var.node_pools_name}"
       machine_type              = "e2-medium"
       min_count                 = 1
       max_count                 = 3
