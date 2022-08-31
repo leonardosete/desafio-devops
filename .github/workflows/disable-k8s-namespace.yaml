@@ -1,0 +1,64 @@
+# name: 2-Manage K8s Namespaces
+# on:
+#   push:
+#     branches: [deploy-infra]
+#   workflow_dispatch:
+#     inputs:
+#       deploy-app-env:
+#         description: 'Select a k8s namespace to create'
+#         required: true
+#         default: 'tembici-sre-apps-dev'
+#         type: choice
+#         options:
+#         - tembici-sre-apps-dev 
+#         - tembici-sre-apps-hlg
+#         - tembici-sre-apps-prod ## Add namespaces here if needed.
+
+# env: ## Variables available in this workflow
+#   NS_ENV: ${{ inputs.deploy-app-env }}
+#   PROJECT_ID: "leosete-devops-4"
+#   CLUSTER_NAME: "tembici-cluster-prod"
+#   REGION: "us-central1"
+
+# jobs:
+#   k8s_namespace:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Actions
+#         uses: actions/checkout@v3
+
+#       - id: auth
+#         name: Authenticate to Google Cloud
+#         uses: google-github-actions/auth@v0
+#         with:
+#           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+
+#       - name: Set up Cloud SDK
+#         uses: google-github-actions/setup-gcloud@v0
+
+#       - name: Get Credentials
+#         uses: 'google-github-actions/get-gke-credentials@v0'
+#         with:
+#           cluster_name: ${{ env.CLUSTER_NAME }}
+#           location: ${{ env.REGION }}
+
+#       - name: Check Namespace
+#         run: |
+#           echo "CHECK_NS=`kubectl get ns $NS_ENV |grep $NS_ENV |awk '{print $1}'`" >> $GITHUB_ENV
+
+#       - name: Create Namespace
+#         if: ${{ env.CHECK_NS != env.NS_ENV }}
+#         continue-on-error: true
+#         run: |
+#           kubectl create ns ${{ inputs.deploy-app-env }}
+
+#       - name: List Namespace
+#         run: |
+#           kubectl get ns ${{ inputs.deploy-app-env }}
+
+#       - name: Create TLS Secret
+#         run: |
+#           cd ./scripts/certs/
+#           KEY=`ls |grep key`
+#           CRT=`ls |grep crt`
+#           kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" --namespace ${{ inputs.deploy-app-env }}

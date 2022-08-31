@@ -24,6 +24,7 @@ jobs:
       PROJECT_ID: "leosete-devops-4"
       CLUSTER_NAME: "tembici-cluster-prod"
       REGION: "us-central1"
+      NS_ENVS: "tembici-sre-apps-dev tembici-sre-apps-hlg tembici-sre-apps-prod"
     ## Add "id-token" with the intended permissions.
     permissions:
       contents: read
@@ -92,5 +93,28 @@ jobs:
         run: |
           gcloud container clusters list
           echo " "
-          echo " "
-          kubectl get nodes
+
+      - name: Check Namespace
+        run: |
+          echo "CHECK_NS=`kubectl get ns $NS_ENVS |grep $NS_ENVS |awk '{print $1}'`" >> $GITHUB_ENV
+
+      - name: Create Namespace
+        if: ${{ env.CHECK_NS != env.NS_ENVS }}
+        continue-on-error: true
+        run: |
+          kubectl create ns ${{ env.NS_ENVS }}
+
+      - name: List Namespace
+        run: |
+          kubectl get ns ${{ env.NS_ENVS }}
+
+      - name: Create TLS Secret
+        run: |
+          cd ./scripts/certs/
+          KEY=`ls |grep key`
+          CRT=`ls |grep crt`
+          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENVS }}
+
+
+
+
