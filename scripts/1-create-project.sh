@@ -1,175 +1,128 @@
 #!/bin/sh
 
-################
-## ENV COLOR####
-################
+## The main goal of this script is: ##
+## Creates a new GCP Project and all sets needed to run this project properly. ##
+
+## /VARS ##
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YEL='\033[0;33m'
 NC='\033[0m' # No Color
+## VARS/ ##
 
-########################
-## INTERACTIVE SCRIPT ##
-########################
+## /FUNCTIONS ##
+create_projects_and_dependencies(){
 
-echo "### ${YEL}First things first!${NC} ###"
-echo " "
-echo "### ${YEL}You need to install the${NC} ${GREEN}gcloud CLI:${NC} ###"
-echo " "
-echo "### ${YEL}Click/open the link:${NC} ${GREEN}https://cloud.google.com/sdk/docs/install${NC} ###"
-echo " "
-echo "### ${YEL}After installation, awswer${NC} ${GREEN}y|Y${NC} ${YEL}to proceed or:${NC} ###"
-echo " "
-echo "### ${YEL}If you do not install gcloud CLI, this script will not run properly!${NC} ###"
-
-########################
-## INTERACTIVE SCRIPT ##
-########################
-
-read -p "Did install the gcloud CLI (y/N)? " answer
-case ${answer:0:1} in
-    y|Y )
-        echo Yes
-    ;;
-    * )
-        echo No
-        exit
-    ;;
-esac
-
-###########
-## VARS ##
-########### 
+## /VARS ##
 LIST_ROLES=`cat ./roles-svc-account.md` ## A list of the needed roles to be added to the new Service Account
 SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be created to run Terraform
 SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description
-TF_BACKEND_FILE="provider.tf"
-TF_BACKEND_PATH="tembici-desafio-devops/terraform-gke/"
+TF_BACKEND_PATH="tembici-desafio-devops/terraform-gke/" ## Terraform file's path
+TF_BACKEND_FILE="provider.tf" ## Terraform provider file
 
-######################
-## GCLOUD EXECUTION ##
-######################
+## VARS/ ##
 
-############################
-## Auth and Config gcloud ##
-############################
-
-    echo " "
-    echo "### ${YEL}1-Auth and Config gcloud${NC} ###"
-    echo " "
+## /AUTH AND CONFIG GCLOUD ##
+echo " "
+echo "### ${YEL}1-Auth and Config gcloud${NC} ###"
+echo " "
     gcloud components update --quiet
     gcloud components install alpha --quiet
     gcloud components install beta --quiet
-    # gcloud auth login ## DESCOMENTAR QUANDO ENVIAR
     gcloud auth login --no-launch-browser
+    # gcloud auth login ## Another option
+## AUTH AND CONFIG GCLOUD/ ##
 
-########################
-## Creating New Project ##
-########################
-
-    echo "### ${YEL}Checking Project availability${NC} ###"
-    echo "### The new ${YEL}PROJECT_ID to create${NC} must be different than: ###"
-    echo " "
+## /CREATING NEW PROJECT ##
+echo "### ${YEL}Checking Project availability${NC} ###"
+echo "### The new ${YEL}PROJECT_ID to create${NC} must be different than: ###"
+echo " "
     gcloud projects list
-    echo " "
+echo " "
+echo " "
+echo "### Please, define the variable below ###"
+echo " "
+echo "### The ${YEL}New Project-Name:${NC} ###"
+read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
+echo " "
 
-    echo " "
-    echo "### Please, define the variable below ###"
-    echo " "
-    echo "### The ${YEL}New Project-Name:${NC} ###"
-    read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
-    echo " "
-
-#################
-## DINAMIC VAR ##
-#################
-## The key/json file to be created to the Service Account
-KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" 
+## /DINAMIC VARS ##
+KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" ## The key/json file to be created to the Service Account
 echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./service_account.md
-#################
+## DINAMIC VARS/ ##
 
-    echo " "
-    echo "### ${YEL}2-Creating New Project${NC} ###"
-    echo " "
+echo " "
+echo "### ${YEL}2-Creating New Project${NC} ###"
+echo " "
     gcloud projects create $NEW_PROJECT_ID
     gcloud config set project $NEW_PROJECT_ID
+## CREATING NEW PROJECT/ ##
 
-############################
-## Creating Service Account ##
-############################
-
-    echo " "
-    echo "### ${YEL}3-Creating Service Account${NC} ###"
-    echo " "
+## /CREATING SERVICE ACCOUNT ##
+echo " "
+echo "### ${YEL}3-Creating Service Account${NC} ###"
+echo " "
     gcloud iam service-accounts create $SERVICE_ACCOUNT_ID \
         --description="$SVC_DESCRIPTION" \
         --display-name="$SERVICE_ACCOUNT_ID"
+## CREATING SERVICE ACCOUNT/ ##
 
-###################################
-## Creating Key to Service Account ##
-###################################
-
-    echo " "
-    echo "### ${YEL}4-Creating Key to Service Account${NC} ###"
-    echo " "
+## /CREATING KEY TO SERVICE ACCOUNT ##
+echo " "
+echo "### ${YEL}4-Creating Key to Service Account${NC} ###"
+echo " "
     gcloud iam service-accounts keys create $KEY_FILE \
         --iam-account="$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com"
+## CREATING KEY TO SERVICE ACCOUNT/ ##
 
-###################################
-## Add roles in Service Account ##
-###################################
-
-    echo " "
-    echo "### ${YEL}5-Add roles in Service Account${NC} ###"
-    echo " "
-
+## /ADD ROLES IN SERVICE ACCOUNT ##
+echo " "
+echo "### ${YEL}5-Add roles in Service Account${NC} ###"
+echo " "
     for ROLES in $LIST_ROLES
         do gcloud projects add-iam-policy-binding $NEW_PROJECT_ID --member="serviceAccount:$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" --role="roles/$ROLES"
     done
+## ADD ROLES IN SERVICE ACCOUNT/ ##
 
-###################################
-## Check Service Account Details ##
-###################################
-
-    echo " "
-    echo "### ${YEL}6-Check Project and Service Account Details${NC} ###"
-    echo " "
+## /CHECK SERVICE ACCOUNT DETAILS ##
+echo " "
+echo "### ${YEL}6-Check Project and Service Account Details${NC} ###"
+echo " "
     gcloud iam service-accounts describe $SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com
-    echo " "
+echo " "
     gcloud iam service-accounts list
-    echo " "
+echo " "
     gcloud projects list
-    echo " "
+echo " "
+## CHECK SERVICE ACCOUNT DETAILS/ ##
 
-################################################
-## Creating Bucket and activate Project Billing ##
-################################################
+## /CREATING BUCKET AND ACTIVATE PROJECT BILLING ##
+echo " "
+echo "### ${YEL}7-Activate Billing Project Account${NC} ###"
 
-    echo " "
-    echo "### ${YEL}7-Activate Billing Project Account${NC} ###"
-    BILLING_ID=`gcloud alpha billing accounts list |tail -n1 |awk '{print $1}'`
-    gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
-
-    echo "### ${YEL}8-Activate Requested APIs${NC} ###"
-    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com domains.googleapis.com
+## /VARS ##
+BILLING_ID=`gcloud alpha billing accounts list |tail -n1 |awk '{print $1}'`
+## VARS/ ##    
     
-    echo " "
-    echo "### The ${YEL}9-New Bucket-Name to keep TFSTATE:${NC} ###"
-    read -p "The BUCKET_NAME to be created is: " BUCKET_NAME
-    echo " "
+    gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
+echo "### ${YEL}8-Activate Requested APIs${NC} ###"
+    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com domains.googleapis.com
+echo " "
+
+echo "### The ${YEL}9-New Bucket-Name to keep TFSTATE:${NC} ###"
+read -p "The BUCKET_NAME to be created is: " BUCKET_NAME
+echo " "
     gcloud alpha storage buckets create gs://$BUCKET_NAME --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
     
-    echo " "
-    echo "### ${YEL}10-Verify the new bucket ${NC} ###"
+echo " "
+echo "### ${YEL}10-Verify the new bucket ${NC} ###"
     gcloud alpha storage ls --project=$NEW_PROJECT_ID
-    echo " "
-    echo " "
-    echo " "
+echo " "
+echo " "
+echo " "
+## CREATING BUCKET AND ACTIVATE PROJECT BILLING/ ##
 
-##################
-## LAST MESSAGE ##
-##################
-
+## /LAST MESSAGE ##
 echo " "
 echo "Ao término da execução do script, será gerado o arquivo ${GREEN}[svc-$NEW_PROJECT_ID-private-key.json]${NC}."
 echo " "
@@ -195,7 +148,46 @@ echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/.github/workflo
 echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/terraform-gke/*.tf${NC} ###"
 echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/k8s/flask-app.yaml${NC} ###"
 echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
+## /LAST MESSAGE ##
+}
 
-###################
-## END OF SCRIPT ##
-###################
+## FUNCTIONS/ ##
+
+### /RUN FUNCTIONS ###
+
+## /FIRST WARNING ##
+echo "### ${YEL}First things first!${NC} ###"
+echo " "
+echo "### ${YEL}You need to install the${NC} ${GREEN}gcloud CLI:${NC} ###"
+echo " "
+echo "### ${YEL}Click/open the link:${NC} ${GREEN}https://cloud.google.com/sdk/docs/install${NC} ###"
+echo " "
+echo "### ${YEL}After installation, awswer${NC} ${GREEN}y|Y${NC} ${YEL}to proceed or:${NC} ###"
+echo " "
+echo "### ${YEL}If you do not install gcloud CLI, this script will not run properly!${NC} ###"
+## FIRST WARNING/ ##
+
+## SCRIPT 1 ##
+read -p "Did install the gcloud CLI (y/N)? " answer
+case ${answer:0:1} in
+    y|Y )
+        echo Yes
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+
+## SCRIPT 2 ##
+read -p "Do you want to create a new GCP Project and its dependencies? (y/N)" answer
+case ${answer:0:1} in
+    y|Y )
+        create_projects_and_dependencies
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+## RUN FUNCTIONS/ ##

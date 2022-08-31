@@ -31,19 +31,16 @@ CSR_FILE="./certs/$DOMAIN_NAME.csr" ## The path to the CSR
 CERTIFICATE_FILE="./certs/$DOMAIN_NAME-crt.pem" ## The path to the certificate file to create
 TERM="365" ## The number of days, from now, during which the certificate should be considered valid by clients that verify it.
 CERTIFICATE_NAME=`echo $DOMAIN_NAME |tr -d "-" |tr -d "."` ## A name for the global SSL certificate
-# DOMAIN_NAME_LIST= " " ## A single domain name or a comma-delimited list of domain names to use for this certificate
 ### VARS/ ###
 
-    echo "###${YEL}5-The Private Key Name to create${NC} ###"
-    echo " "
+echo "###${YEL}5-The Private Key Name to create${NC} ###"
+echo " "
     openssl genrsa 2048 > $PRIVATE_KEY_FILE
 
-    echo "###${YEL}6-The OpenSSL Config file to create${NC} ###"
-    echo " "
+echo "###${YEL}6-The OpenSSL Config file to create${NC} ###"
+echo " "
 
-#######################################
-### Creating a  OpenSSL Config file ###
-#######################################
+## /Creating a  OpenSSL Config file ##
 cat <<EOF > $CONFIG_FILE
 [req]
 default_bits              = 2048
@@ -68,9 +65,7 @@ DNS.1                     = $SUBJECT_ALTERNATIVE_NAME_1
 DNS.2                     = $SUBJECT_ALTERNATIVE_NAME_2
 
 EOF
-#############################################
-### END - Creating a  OpenSSL Config file ###
-#############################################
+## Creating a  OpenSSL Config file/ ##
 
 echo "###${YEL}7-Creating Certificate Signing Request file${NC} ###"
 echo " "
@@ -119,7 +114,7 @@ echo " "
         --ssl-certificates-region=$REGION
 }
 
-### /RUN FUNCTIONS ###
+## /RUN FUNCTIONS ##
 ## SCRIPT 1 ##
 echo " "
 echo "### ${YEL} Checking if already exist a SSL Certificate${NC} ###"
@@ -158,4 +153,4 @@ case ${answer:0:1} in
     ;;
 esac
 
-### END OF FUNCTIONS ###
+## RUN FUNCTIONS/ ##

@@ -1,8 +1,7 @@
 #!/bin/sh
 
 ## The main goal of this script is: ##
-## Sets a External Static IP in GCP and sets in Cloud DNS Provider a DNS Record ##
-## with the new IP created ##
+## Creates a DNS Record ##
 
 ## /vars ##
 RED='\033[0;31m'
@@ -11,8 +10,10 @@ YEL='\033[0;33m'
 NC='\033[0m' # No Color
 ## vars/ ##
 
-### /FUNCTIONS ###
+## /FUNCTIONS ##
+
 create_dns_record_entry(){
+
 ## /vars ##
 # STATIC_EXT_IP=`gcloud compute addresses list |tail -n1 |awk '{print $2}'` ## I'm using my External Static IP on this case
 TTL="300"
@@ -74,14 +75,15 @@ echo " "
 echo "### 4-To execute the transaction ###"
     gcloud dns record-sets list --zone="$MANAGED_ZONE"
 }
+
 ### FUNCTIONS/ ###
 
-### /RUN FUNCTIONS ###
-
-### SCRIPT 1 ###
+## /RUN FUNCTIONS ##
+## SCRIPT 1 ##
 echo " "
 echo "### ${YEL}List Static External IPs Created in Current Project${NC} ###"
     gcloud compute addresses list
+
 echo "### ${YEL}You can set your apps DNS Records now, but remember to change in below file too:${NC} ###"
 echo "### Change the ${GREEN}spec.tls.hosts${NC} in ${GREEN}tembici-desafio-devops/k8s/flask-app.yaml${NC} ###"
 echo " "
@@ -97,4 +99,4 @@ case ${answer:0:1} in
     ;;
 esac
 
-### END OF FUNCTIONS ###
+## RUN FUNCTIONS/ ##

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+## The main goal of this script is: ##
+## Sets a External Static IP in GCP and sets in Cloud DNS Provider a DNS Record ##
+## with the new IP created ##
+
 ## /vars ##
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -123,29 +127,26 @@ case ${answer:0:1} in
         exit
     ;;
 esac
+### /RUN FUNCTIONS ###
 
-### END OF FUNCTIONS ###
-
-#######################################
-### Verify your contact information ###
-#######################################
-
+## /VERIFY YOUR CONTACT INFORMATION ##
 echo " "
 echo "### ${RED}IMPORTANT${NC} ###"
 echo " "
 echo "### ${RED}Verify your contact information${NC} ###"
 echo " "
-echo "After you register your domain, Cloud Domains sends a verification email"
-echo "to the address that you provided in your contact information for the domain."
+echo "${YEL}After you register your domain, Cloud Domains sends a verification email${NC}"
+echo "${YEL}to the address that you provided in your contact information for the domain.${NC}"
 echo " "
-echo "This email includes a subject line that states Action required:"
-echo "Please verify your email address."
+echo "${YEL}This email includes a subject line that states Action required:${NC}"
+echo "${YEL}Please verify your email address.${NC}"
 echo " "
-echo "You must verify your contact information within 15 days or your domain becomes inactive."
-echo "To verify your email address, follow these steps:"
+echo "${YEL}You must verify your contact information within 15 days or your domain becomes inactive.${NC}"
+echo "${YEL}To verify your email address, follow these steps:${NC}"
 echo " "
-echo "1. Open the verification email from domains-noreply@google.com."
-echo "2. Click Verify email now."
+echo "${YEL}1. Open the verification email from domains-noreply@google.com.${NC}"
+echo "${YEL}2. Click Verify email now."
 echo " "
-echo "Once Cloud Domains verifies your contact information, a Google Domains page"
-echo "with the message that your email address has been verified is displayed."
+echo "${YEL}Once Cloud Domains verifies your contact information, a Google Domains page${NC}"
+echo "${YEL}with the message that your email address has been verified is displayed.${NC}"
+## VERIFY YOUR CONTACT INFORMATION/ ##
