@@ -119,9 +119,6 @@ jobs:
           cd /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/scripts/certs
           KEY=`ls |grep key`
           CRT=`ls |grep crt`
-          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_DEV }}
-          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_HLG }}
-          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_PRD }}
-
-
-
+          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_DEV }}
+          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_HLG }}
+          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_PRD }}
