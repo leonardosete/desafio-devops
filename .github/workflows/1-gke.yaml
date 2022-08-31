@@ -105,7 +105,6 @@ jobs:
 
       - name: Create Namespace
         if: ${{ env.CHECK_NS_DEV != env.NS_ENV_DEV && env.CHECK_NS_HLG != env.NS_ENV_HLG && env.CHECK_NS_PRD != env.NS_ENV_PRD }}
-        continue-on-error: true
         run: |
           kubectl create ns ${{ env.NS_ENV_DEV }}
           kubectl create ns ${{ env.NS_ENV_HLG }}
@@ -123,7 +122,6 @@ jobs:
           echo "TLS_PRD=`kubectl get secrets --namespace $NS_ENV_PRD |grep $SECRET_TLS |awk '{print $1}'`" >> $GITHUB_ENV
 
       - name: Create TLS Secret
-        continue-on-error: true
         if: ${{ env.TLS_DEV != env.SECRET_TLS && env.TLS_HLG != env.SECRET_TLS && env.TLS_PRD != env.SECRET_TLS }}
         run: |
           cd /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/scripts/certs
