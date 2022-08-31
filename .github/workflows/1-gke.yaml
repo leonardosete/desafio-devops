@@ -121,9 +121,10 @@ jobs:
           # kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_PRD }}
 
       - name: Create TLS Secret
-        working-directory: $HOME
         run: |
+          cd $HOME
           ls -lhart
           cd ./scripts/certs/
+          ls -lhart
 
 
