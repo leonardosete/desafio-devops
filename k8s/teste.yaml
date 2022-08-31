@@ -66,7 +66,7 @@ spec:
     spec:
       containers:
         - name: flask-app-tembici
-          image: "us-central1-docker.pkg.dev/devops-sre-1/sre-docker-registry/flask-app:latest"
+          image: "us-central1-docker.pkg.dev/leosete-devops-4/sre-docker-registry/flask-app:latest"
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
