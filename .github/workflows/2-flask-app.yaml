@@ -13,6 +13,11 @@ on:
         - tembici-sre-apps-dev 
         - tembici-sre-apps-hlg
         - tembici-sre-apps-prod ## Add namespaces here if needed.
+      build-image:
+        description: 'Run Docker build?'
+        default: false
+        required: false
+        type: boolean
 
 env: ## Variables available in this workflow
   NS_ENV: ${{ inputs.deploy-app-env }}
@@ -45,22 +50,27 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: Build Docker Image
+        if: ${{ inputs.build-image == true }}
         run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Automatic Tagging of Releases
+        if: ${{ inputs.build-image == true }}
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v major
 
       - name: Teste Flask APP
+        if: ${{ inputs.build-image == true }}
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: Configure Docker Client
+        if: ${{ inputs.build-image == true }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Push Docker Image to Artifact Registry
+        if: ${{ inputs.build-image == true }}
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
