@@ -49,8 +49,6 @@ module "gke" {
   http_load_balancing        = true
   horizontal_pod_autoscaling = true
   grant_registry_access      = true
-  # create_service_account     = false
-  # service_account            = "terraform-svc-account@devops-sre-1.iam.gserviceaccount.com"
   node_pools = [
     {
       name                      = "tembici-node-pool"

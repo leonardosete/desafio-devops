@@ -7,16 +7,14 @@ https://cloud.google.com/sdk/docs/install
 
 ### /DETALHE IMPORTANTE ###
 A abordagem adotada nesse projeto, parte do princípio que será utilizada uma [conta_nova] da GCP [recomendado],
-sem projetos/serviços/APIs configurados. Por essa razão, foram criados 5 scripts [bash] para realizar o processo que acredito
-ser o básico para a configuração do ambiente na GCP. 
+sem projetos/serviços/APIs configurados. Por essa razão, foram criados 5 scripts [bash] para realizar o processo que acreditei
+serem básicos para a configuração do ambiente na GCP. 
 ### DETALHE IMPORTANTE/ ###
 
-## CRIAÇÃO DE UM NOVO PROJETO GCP E SERVICE ACCOUNT ##
-Após realizado o fork do projeto/repo, execute em sua máquina o bash script a seguir:
-
-    ./scripts/1-create-project.sh [mandatório]
-        ./scripts/roles-svc-account.md ## arquivo consumido pelo script.
-
+## CRIAÇÃO DE UM NOVO PROJETO GCP E OUTROS SERVIÇOS/APIS NECESSÁRIOS PARA O CENÁRIO DE TESTE ##
+- Após realizado o [fork] do repositório no GitHub, execute em sua máquina o bash script a seguir:
+    * [path:] "./scripts"
+    * 1-create-project.sh [mandatório]
     * 2-buy-domain.sh [extras]
     * 3-external-static-ip.sh [extras]
     * 4-set-dns-records.sh [extras]
@@ -24,10 +22,12 @@ Após realizado o fork do projeto/repo, execute em sua máquina o bash script a 
 
 ## ORIENTAÇÃO DE USO DO SCRIPT - 1-create-project.sh ##
 
-Será necessário interagir com o script em 2 momentos:
-
+Será necessário interagir com o script [1-create-project.sh] em alguns momentos:
 - Confirmação da instalação do gcloud CLI:
-    * Necessário digitar [y/Y] ou apenas a tecla [ENTER] para que o script siga.
+    * Necessário digitar [y/Y] para que o script siga.
+    * Confirmar que deseja prosseguir com a configuração do novo projeto e suas dependências.
+
+- Com isso começará a instalação dos componentes básicos do gcloud CLI.
 
 - Fornecer o valor de 1 variável:
     * [NEW_PROJECT_ID] = Nome do novo projeto que será criado.
@@ -48,6 +48,9 @@ Esse arquivo será utilizado na etapa seguinte:
 
 Feito isso, agora seu projeto/repo terá o acesso necessário para executar os workflows do GitHub Actions.
 
+ ### CONTINUAR A PARTE DOS OUTROS SCRIPTS ###
+
+- 
 
 Foram gerados alguns workflows (pipelines/esteiras) no path:
 
