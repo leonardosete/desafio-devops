@@ -40,88 +40,91 @@ jobs:
       - name: Checkout Actions
         uses: actions/checkout@v3
 
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      # - id: auth
+      #   name: Authenticate to Google Cloud
+      #   uses: google-github-actions/auth@v0
+      #   with:
+      #     credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+      # - name: Set up Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v0
     
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.7 ## Se não definida, usará default: latest
+      # - name: Set up Terraform
+      #   uses: hashicorp/setup-terraform@v2
+      #   with:
+      #     terraform_version: 1.2.7 ## Se não definida, usará default: latest
 
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
+      # - name: Terraform fmt
+      #   id: fmt
+      #   run: terraform fmt -check
+      #   continue-on-error: true
 
-      - name: Terraform Init
-        id: init
-        run: terraform init
+      # - name: Terraform Init
+      #   id: init
+      #   run: terraform init
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate 
+      # - name: Terraform Validate
+      #   id: validate
+      #   run: terraform validate 
 
-      - name: Terraform Plan
-        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-        id: plan
-        run: terraform plan 
-        continue-on-error: true
+      # - name: Terraform Plan
+      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+      #   id: plan
+      #   run: terraform plan 
+      #   continue-on-error: true
 
-      - name: Terraform Apply
-        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-        id: apply
-        run: terraform apply -auto-approve
+      # - name: Terraform Apply
+      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+      #   id: apply
+      #   run: terraform apply -auto-approve
 
-      - name: Terraform Destroy
-        if: ${{ inputs.should-destroy == true && inputs.should-destroy-yes == true }}
-        id: destroy
-        run: terraform destroy -auto-approve 
+      # - name: Terraform Destroy
+      #   if: ${{ inputs.should-destroy == true && inputs.should-destroy-yes == true }}
+      #   id: destroy
+      #   run: terraform destroy -auto-approve 
       
-      - name: Get Kubeconfig Credentials
-        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-        uses: 'google-github-actions/get-gke-credentials@v0'
-        with:
-          cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.REGION }}
+      # - name: Get Kubeconfig Credentials
+      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+      #   uses: 'google-github-actions/get-gke-credentials@v0'
+      #   with:
+      #     cluster_name: ${{ env.CLUSTER_NAME }}
+      #     location: ${{ env.REGION }}
 
-      - name: Check GKE Cluster
-        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-        run: |
-          gcloud container clusters list
-          echo " "
+      # - name: Check GKE Cluster
+      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+      #   run: |
+      #     gcloud container clusters list
+      #     echo " "
 
-      - name: Check Namespace
-        run: |
-          echo "CHECK_NS_DEV=`kubectl get ns $NS_ENV_DEV |grep $NS_ENV_DEV |awk '{print $1}'`" >> $GITHUB_ENV
-          echo "CHECK_NS_HLG=`kubectl get ns $NS_ENV_HLG |grep $NS_ENV_HLG |awk '{print $1}'`" >> $GITHUB_ENV
-          echo "CHECK_NS_PRD=`kubectl get ns $NS_ENV_PRD |grep $NS_ENV_PRD |awk '{print $1}'`" >> $GITHUB_ENV
+      # - name: Check Namespace
+      #   run: |
+      #     echo "CHECK_NS_DEV=`kubectl get ns $NS_ENV_DEV |grep $NS_ENV_DEV |awk '{print $1}'`" >> $GITHUB_ENV
+      #     echo "CHECK_NS_HLG=`kubectl get ns $NS_ENV_HLG |grep $NS_ENV_HLG |awk '{print $1}'`" >> $GITHUB_ENV
+      #     echo "CHECK_NS_PRD=`kubectl get ns $NS_ENV_PRD |grep $NS_ENV_PRD |awk '{print $1}'`" >> $GITHUB_ENV
 
-      - name: Create Namespace
-        if: ${{ env.CHECK_NS_DEV != env.NS_ENV_DEV && env.CHECK_NS_HLG != env.NS_ENV_HLG && env.CHECK_NS_PRD != env.NS_ENV_PRD }}
-        continue-on-error: true
-        run: |
-          kubectl create ns ${{ env.NS_ENV_DEV }}
-          kubectl create ns ${{ env.NS_ENV_HLG }}
-          kubectl create ns ${{ env.NS_ENV_PRD }}
+      # - name: Create Namespace
+      #   if: ${{ env.CHECK_NS_DEV != env.NS_ENV_DEV && env.CHECK_NS_HLG != env.NS_ENV_HLG && env.CHECK_NS_PRD != env.NS_ENV_PRD }}
+      #   continue-on-error: true
+      #   run: |
+      #     kubectl create ns ${{ env.NS_ENV_DEV }}
+      #     kubectl create ns ${{ env.NS_ENV_HLG }}
+      #     kubectl create ns ${{ env.NS_ENV_PRD }}
 
-      - name: List Namespaces
-        run: |
-          kubectl get ns --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
+      # - name: List Namespaces
+      #   run: |
+      #     kubectl get ns --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
+
+          # cd ./scripts/certs/
+          # KEY=`ls |grep key`
+          # CRT=`ls |grep crt`
+          # kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_DEV }}
+          # kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_HLG }}
+          # kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_PRD }}
 
       - name: Create TLS Secret
         run: |
-          cd ./scripts/certs/
-          KEY=`ls |grep key`
-          CRT=`ls |grep crt`
-          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_DEV }}
-          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_HLG }}
-          kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_PRD }}
+          pwd
+          ls -lhart
 
 
 
