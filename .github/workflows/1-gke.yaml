@@ -1,7 +1,7 @@
 name: 1-Infra - GKE
 on:
   pull_request:
-    branches: [master]
+    branches: [deploy-infra]
 
   workflow_dispatch:
     inputs:

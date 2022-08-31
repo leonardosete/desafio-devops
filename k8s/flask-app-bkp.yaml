@@ -1,0 +1,105 @@
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: flask-app-deployment
+#   labels:
+#     app: flask-app
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: flask-app
+#   template:
+#     metadata:
+#       labels:
+#         app: flask-app
+#     spec:
+#       containers:
+#       - name: flask-app
+#         image: "us-central1-docker.pkg.dev/leosete-devops-4/sre-docker-registry/flask-app:latest"
+#         ports:
+#         - name: http-flask-app
+#           containerPort: 8080
+#         env:
+#         - name: "PORT"
+#           value: "8080"
+#         livenessProbe:
+#           failureThreshold: 3
+#           httpGet:
+#             path: /api/ping
+#             port: 8080
+#             scheme: HTTP
+#           initialDelaySeconds: 60
+#           periodSeconds: 10
+#           successThreshold: 1
+#           timeoutSeconds: 2
+#         readinessProbe:
+#           failureThreshold: 3
+#           httpGet:
+#             path: /api/ping
+#             port: 8080
+#             scheme: HTTP
+#           periodSeconds: 10
+#           successThreshold: 3
+#           timeoutSeconds: 2
+#         resources:
+#           limits:
+#             cpu: 100m
+#             memory: 200Mi
+#           requests:
+#             cpu: 50m
+#             memory: 100Mi
+
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: flask-app-service
+# spec:
+#   selector:
+#     app.kubernetes.io/name: flask-app-deployment
+#   ports:
+#   - name: http-flask-app
+#     protocol: TCP
+#     port: 8080
+#     targetPort: http-flask-app
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: external-ingress
+#   annotations:
+#     cloud.google.com/load-balancer-type: "External"
+#     kubernetes.io/ingress.class: "gce"
+#     # ingressclass.kubernetes.io/is-default-class: "true"
+#     # kubernetes.io/ingress.regional-static-ip-name: 35.226.218.111
+# spec:
+#   tls:
+#   - hosts:
+#       - flask-app-tembici-dev.leosete7.com
+#     secretName: my-tls-secret
+#   rules:
+#   - host: flask-app-tembici-dev.leosete7.com
+#     http:
+#       paths:
+#       - path: /api/ping
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: flask-app-service
+#             port:
+#               number: 8080
+# ---
+# apiVersion: autoscaling/v1
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: flask-app-hpa
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: flask-app-deployment
+#   minReplicas: 2
+#   maxReplicas: 6
+#   targetCPUUtilizationPercentage: 75

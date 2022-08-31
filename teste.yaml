@@ -1,0 +1,163 @@
+---
+# Source: flask-app-tembici/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-app-tembici
+  labels:
+    helm.sh/chart: flask-app-tembici-0.0.0-managed
+    app.kubernetes.io/name: flask-app-tembici
+    app.kubernetes.io/instance: flask-app
+    app.kubernetes.io/version: "0.0.0-managed"
+    app.kubernetes.io/managed-by: Helm
+data:
+  {}
+---
+# Source: flask-app-tembici/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app-tembici
+  labels:
+    helm.sh/chart: flask-app-tembici-0.0.0-managed
+    app.kubernetes.io/name: flask-app-tembici
+    app.kubernetes.io/instance: flask-app
+    app.kubernetes.io/version: "0.0.0-managed"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: flask-app-tembici
+    app.kubernetes.io/instance: flask-app
+---
+# Source: flask-app-tembici/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app-tembici
+  labels:
+    helm.sh/chart: flask-app-tembici-0.0.0-managed
+    app.kubernetes.io/name: flask-app-tembici
+    app.kubernetes.io/instance: flask-app
+    app.kubernetes.io/version: "0.0.0-managed"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: flask-app-tembici
+      app.kubernetes.io/instance: flask-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: flask-app-tembici
+        app.kubernetes.io/instance: flask-app
+    spec:
+      containers:
+        - name: flask-app-tembici
+          image: "us-central1-docker.pkg.dev/devops-sre-1/sre-docker-registry/flask-app:0.0.0-managed"
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: flask-app-tembici
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readiness
+              port: 80  
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            successThreshold: 3
+          resources:
+            {}
+          volumeMounts:
+                  - name: flask-app-tembici
+                    mountPath: /app/config
+      volumes:
+      - name: flask-app-tembici
+        configMap:
+          name: flask-app-tembici
+          
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        {}
+      terminationGracePeriodSeconds: 30
+      nodeSelector:
+        app: tembici-node-pool
+---
+# Source: flask-app-tembici/templates/hpa.yaml
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: flask-app-tembici
+spec:
+  minReplicas: map[]
+  maxReplicas: map[]
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: flask-app-tembici
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75
+---
+# Source: flask-app-tembici/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flask-app-tembici-int
+  labels:
+    helm.sh/chart: flask-app-tembici-0.0.0-managed
+    app.kubernetes.io/name: flask-app-tembici
+    app.kubernetes.io/instance: flask-app
+    app.kubernetes.io/version: "0.0.0-managed"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+---
+# Source: flask-app-tembici/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: flask-app-tembici-ext
+  labels:
+    helm.sh/chart: flask-app-tembici-0.0.0-managed
+    app.kubernetes.io/name: flask-app-tembici
+    app.kubernetes.io/instance: flask-app
+    app.kubernetes.io/version: "0.0.0-managed"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    kubernetes.io/ingress.class: nginx-ingress-external
+spec:
+  rules:

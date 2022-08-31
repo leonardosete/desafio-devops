@@ -6,21 +6,23 @@ https://cloud.google.com/sdk/docs/install
 
 
 ### /DETALHE IMPORTANTE ###
-
 A abordagem adotada nesse projeto, parte do princípio que será utilizada uma [conta_nova] da GCP [recomendado],
-sem projetos/serviços/APIs configurados. Por essa razão, foram criados 3 scripts [bash] para realizar o processo
-necessário de configuração do ambiente na GCP.
-
+sem projetos/serviços/APIs configurados. Por essa razão, foram criados 5 scripts [bash] para realizar o processo que acredito
+ser o básico para a configuração do ambiente na GCP. 
 ### DETALHE IMPORTANTE/ ###
 
 ## CRIAÇÃO DE UM NOVO PROJETO GCP E SERVICE ACCOUNT ##
 Após realizado o fork do projeto/repo, execute em sua máquina o bash script a seguir:
 
-sh ./scripts/create-project-and-svc-account.sh
-## OBS - Arquivo consumido pelo script ##
-./scripts/roles-svc-account.md
+    ./scripts/1-create-project.sh [mandatório]
+        ./scripts/roles-svc-account.md ## arquivo consumido pelo script.
 
-## ORIENTAÇÃO DE USO DO SCRIPT - create-project-and-svc-account.sh ##
+    * 2-buy-domain.sh [extras]
+    * 3-external-static-ip.sh [extras]
+    * 4-set-dns-records.sh [extras]
+    * 5-ssl-certs.sh [extras]
+
+## ORIENTAÇÃO DE USO DO SCRIPT - 1-create-project.sh ##
 
 Será necessário interagir com o script em 2 momentos:
 
@@ -46,7 +48,9 @@ Esse arquivo será utilizado na etapa seguinte:
 
 Feito isso, agora seu projeto/repo terá o acesso necessário para executar os workflows do GitHub Actions.
 
+
 Foram gerados alguns workflows (pipelines/esteiras) no path:
+
 -  ./github/workflows:
     * 1-gke.yaml ## Criar/deletar a infraestrutura (cluster GKE) via Terraform.
     * 2-k8s-namespace.yaml ## Criar namespaces dentro do cluster GKE.
@@ -59,10 +63,4 @@ Foram gerados alguns workflows (pipelines/esteiras) no path:
     * Documentações de apoio/referência: 
         https://learnk8s.io/terraform-gke
         https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/private-cluster
-        
 
-## RBAC - IMPORTANTE ##
-https://cloud.google.com/kubernetes-engine/docs/best-practices/rbac
-
-## Referências ##
-https://cloud.google.com/compute/docs/access/iam

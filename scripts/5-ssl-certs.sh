@@ -103,7 +103,11 @@ set_target_https_lb(){
 local check_domain_name=$DOMAIN_NAME
 ## VARS/ ##
 
-echo "###${YEL}10-Associate a regional SSL certificate with a target HTTPS proxy${NC} ###"
+echo "###${YEL}10-Associate a regional SSL certificate with a target HTTP/S Proxy${NC} ###"
+echo " "
+echo "###${YEL}Your project has this target HTTP/S Proxy${NC} ###"
+    gcloud compute target-http-proxies list
+echo " "
 echo " "
 read -p "Choose a TARGET_PROXY_NAME: " TARGET_PROXY_NAME
 echo " "
@@ -130,7 +134,7 @@ echo "### ${YEL} Checking if already exist a SSL Certificate${NC} ###"
     fi
 
 echo " "
-read -p "Do you want to create a new Self-Signed Certificate? (y/n)? " answer
+read -p "Do you want to create a new Self-Signed Certificate? (y/N)? " answer
 echo "### ${YEL} You can skip this step, if you only desire to set SSL on a target HTTPS/LB${NC} ###"
 case ${answer:0:1} in
     y|Y )
@@ -143,7 +147,7 @@ case ${answer:0:1} in
 esac
 
 ## SCRIPT 2 ##
-read -p "Do you want to Associate a regional SSL certificate with a target HTTPS/LB? (y/n)" answer
+read -p "Do you want to Associate a regional SSL certificate with a target HTTPS/LB? (y/N)" answer
 case ${answer:0:1} in
     y|Y )
         set_target_https_lb
