@@ -114,7 +114,6 @@ jobs:
       #   run: |
       #     kubectl get ns --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
 
-          # cd ./scripts/certs/
           # KEY=`ls |grep key`
           # CRT=`ls |grep crt`
           # kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_DEV }}
@@ -122,10 +121,9 @@ jobs:
           # kubectl create secret tls my-tls-secret --key="$KEY" --cert="$CRT" ns ${{ env.NS_ENV_PRD }}
 
       - name: Create TLS Secret
+        working-directory: $HOME
         run: |
-          pwd
           ls -lhart
-
-
+          cd ./scripts/certs/
 
 
