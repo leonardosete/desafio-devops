@@ -66,7 +66,7 @@ spec:
     spec:
       containers:
         - name: flask-app-tembici
-          image: "us-central1-docker.pkg.dev/devops-sre-1/sre-docker-registry/flask-app:0.0.0-managed"
+          image: "us-central1-docker.pkg.dev/devops-sre-1/sre-docker-registry/flask-app:latest"
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
@@ -77,7 +77,7 @@ spec:
           livenessProbe:
             failureThreshold: 3
             httpGet:
-              path: /actuator/health
+              path: /api/ping
               port: 80
             initialDelaySeconds: 10
             periodSeconds: 10
@@ -85,7 +85,7 @@ spec:
           readinessProbe:
             failureThreshold: 3
             httpGet:
-              path: /readiness
+              path: /api/ping
               port: 80  
             initialDelaySeconds: 10
             periodSeconds: 10
@@ -107,8 +107,8 @@ spec:
       securityContext:
         {}
       terminationGracePeriodSeconds: 30
-      nodeSelector:
-        app: tembici-node-pool
+      # nodeSelector:
+      #   app: tembici-node-pool
 ---
 # Source: flask-app-tembici/templates/hpa.yaml
 apiVersion: autoscaling/v1
@@ -116,19 +116,13 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: flask-app-tembici
 spec:
-  minReplicas: map[]
-  maxReplicas: map[]
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: flask-app-tembici
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 75
+    name: flask-app-deployment
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 75
 ---
 # Source: flask-app-tembici/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -144,10 +138,24 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
+  tls:
+  - hosts:
+      - flask-app-tembici-dev.leosete7.com
+    secretName: my-tls-secret
   rules:
+  - host: flask-app-tembici-dev.leosete7.com
+    http:
+      paths:
+      - path: /api/ping
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-app-service
+            port:
+              number: 8080
 ---
 # Source: flask-app-tembici/templates/ingress.yaml
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: flask-app-tembici-ext
@@ -160,4 +168,18 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx-ingress-external
 spec:
+  tls:
+  - hosts:
+      - flask-app-tembici-dev.leosete7.com
+    secretName: my-tls-secret
   rules:
+  - host: flask-app-tembici-dev.leosete7.com
+    http:
+      paths:
+      - path: /api/ping
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-app-service
+            port:
+              number: 8080

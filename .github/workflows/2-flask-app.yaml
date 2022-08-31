@@ -79,16 +79,8 @@ jobs:
           cd k8s
           kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
 
-      ## BUILD >> BUSCAR/PULL DA IMAGEM BASE + COD DO APP
-      ## TEST DO APP
-      ## PUBLISH DO APP >> ENVIAR PARA ARTIFACT REGISTRY - GCP
       ## GERAR VERSIONAMENTO - GIT VERSION???
       ## CONTROLAR RELEASES - DE QUAL FORMA (XLRELEASE)???
-      ## MONITORAÇÃO
-      ## LOGS
-      ## SEGURANÇA DA CONTA GCP - IAM/SERVICE ACCOUNTS?
-      ## SEGURANÇA DO CLUSTER GKE - RBAC???
-
 
       # # Set up kustomize
       # - name: Set up Kustomize
