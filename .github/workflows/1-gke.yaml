@@ -112,7 +112,7 @@ jobs:
 
       - name: List Namespaces
         run: |
-          kubectl get --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
+          kubectl get ns --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
 
       - name: Create TLS Secret
         run: |
