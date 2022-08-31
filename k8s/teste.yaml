@@ -78,16 +78,16 @@ spec:
             failureThreshold: 3
             httpGet:
               path: /api/ping
-              port: 80
-            initialDelaySeconds: 10
+              port: 8080
+            initialDelaySeconds: 25
             periodSeconds: 10
             timeoutSeconds: 2
           readinessProbe:
             failureThreshold: 3
             httpGet:
               path: /api/ping
-              port: 80  
-            initialDelaySeconds: 10
+              port: 8080
+            initialDelaySeconds: 25
             periodSeconds: 10
             timeoutSeconds: 2
             successThreshold: 3
