@@ -129,3 +129,7 @@ jobs:
           kubectl create secret tls $SECRET_TLS --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_DEV }}
           kubectl create secret tls $SECRET_TLS --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_HLG }}
           kubectl create secret tls $SECRET_TLS --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_PRD }}
+
+      - name: List TLS Secret
+        run: |
+          kubectl get secrets --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
