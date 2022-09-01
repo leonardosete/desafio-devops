@@ -41,11 +41,11 @@ jobs:
       #   uses: google-github-actions/setup-gcloud@v0
 
 
-      # - name: Check GKE Cluster - Loadbalancer's Frontend
-      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-      #   run: |
-      #     gcloud compute forwarding-rules list
-      #     echo " "
+      - name: Check GKE Cluster - Loadbalancer's Frontend
+        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+        run: |
+          echo "TARGET_HTTPS=`gcloud compute target-https-proxies list`" >> $GITHUB_ENV
+          echo " "
 
       - uses: danielguedesb/gcp-certbot@v1
         if: ${{ inputs.create-renew-certificate == true }}
