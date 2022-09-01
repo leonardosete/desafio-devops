@@ -31,20 +31,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      # - id: auth
+      #   name: Authenticate to Google Cloud
+      #   uses: google-github-actions/auth@v0
+      #   with:
+      #     credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+      # - name: Set up Cloud SDK
+      #   uses: google-github-actions/setup-gcloud@v0
 
 
-      - name: Check GKE Cluster - Loadbalancer's Frontend
-        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-        run: |
-          echo "TARGET_HTTPS=`gcloud compute target-https-proxies list`" >> $GITHUB_ENV
+      # - name: Check GKE Cluster - Loadbalancer's Frontend
+      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+      #   run: |
+      #     echo "TARGET_HTTPS=`gcloud compute target-https-proxies list`" >> $GITHUB_ENV
 
       - uses: danielguedesb/gcp-certbot@v1
         if: ${{ inputs.create-renew-certificate == true }}
