@@ -114,23 +114,3 @@ jobs:
       - name: List Namespaces
         run: |
           kubectl get ns --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
-
-      # - name: Check TLS Secret
-      #   run: |
-      #     echo "TLS_DEV=`kubectl get secrets --namespace $NS_ENV_DEV |grep $SECRET_TLS |awk '{print $1}'`" >> $GITHUB_ENV
-      #     echo "TLS_HLG=`kubectl get secrets --namespace $NS_ENV_HLG |grep $SECRET_TLS |awk '{print $1}'`" >> $GITHUB_ENV
-      #     echo "TLS_PRD=`kubectl get secrets --namespace $NS_ENV_PRD |grep $SECRET_TLS |awk '{print $1}'`" >> $GITHUB_ENV
-
-      # - name: Create TLS Secret
-      #   if: ${{ env.TLS_DEV != env.SECRET_TLS && env.TLS_HLG != env.SECRET_TLS && env.TLS_PRD != env.SECRET_TLS }}
-      #   run: |
-      #     cd /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/scripts/certs
-      #     KEY=`ls |grep key`
-      #     CRT=`ls |grep crt`
-      #     kubectl create secret tls $SECRET_TLS --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_DEV }}
-      #     kubectl create secret tls $SECRET_TLS --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_HLG }}
-      #     kubectl create secret tls $SECRET_TLS --key="$KEY" --cert="$CRT" --namespace ${{ env.NS_ENV_PRD }}
-
-      # - name: List TLS Secret
-      #   run: |
-      #     kubectl get secrets --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
