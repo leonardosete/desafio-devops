@@ -45,7 +45,6 @@ jobs:
         if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         run: |
           echo "TARGET_HTTPS=`gcloud compute target-https-proxies list`" >> $GITHUB_ENV
-          echo " "
 
       - uses: danielguedesb/gcp-certbot@v1
         if: ${{ inputs.create-renew-certificate == true }}
@@ -55,5 +54,5 @@ jobs:
           gcs-bucket: ${{ env.CERTIFICATE_BUCKET }}
           email: ${{ env.EMAIL }}
           domain: ${{ env.DOMAIN }}
-          front-end: 'k8s2-tp-k46it8i1-default-flask-app-tembici-ext-8qgl80l3'
+          front-end: 'k8s2-ts-k46it8i1-default-flask-app-tembici-ext-8qgl80l3'
           # tar-password: 'my-cert-tar-password'
