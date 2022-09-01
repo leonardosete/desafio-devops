@@ -9,22 +9,22 @@ on:
         default: false
         required: false
         type: boolean
-      app-env:
-        description: 'Select a k8s namespace to deploy'
-        required: true
-        default: 'flask-app-tembici-dev.leosete7.com'
-        type: choice
-        options:
-        - flask-app-tembici-dev.leosete7.com
-        - flask-app-tembici-hlg.leosete7.com
-        - flask-app-tembici-prd.leosete7.com
+      # app-env:
+      #   description: 'Select a k8s namespace to deploy'
+      #   required: true
+      #   default: 'flask-app-tembici-dev.leosete7.com'
+      #   type: choice
+      #   options:
+      #   - flask-app-tembici-dev.leosete7.com
+      #   - flask-app-tembici-hlg.leosete7.com
+      #   - flask-app-tembici-prd.leosete7.com
 
 env: ## Variables available in this workflow
   EMAIL: "seteleonardo7@gmail.com" ## Definir o email do responsável - Let's Encrypt certificado SSL ##
   PROJECT_ID: "leosete-devops-4"
   NS_ENV: ${{ inputs.deploy-app-env }}
   CERTIFICATE_BUCKET: "new-sre-tembici-certificates"
-  DOMAIN: ${{ inputs.app-env }}
+  DOMAIN: leosete7.com
 
 jobs:
   lets-encrypt:
