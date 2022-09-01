@@ -31,14 +31,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # - id: auth
-      #   name: Authenticate to Google Cloud
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
 
       - name: Check GKE Cluster - Loadbalancer's Frontend
@@ -55,5 +55,5 @@ jobs:
           gcs-bucket: ${{ env.CERTIFICATE_BUCKET }}
           email: ${{ env.EMAIL }}
           domain: ${{ env.DOMAIN }}
-          front-end: 'k8s2-ts-k46it8i1-default-flask-app-tembici-ext-8qgl80l3'
+          front-end: 'k8s2-tp-k46it8i1-default-flask-app-tembici-ext-8qgl80l3'
           # tar-password: 'my-cert-tar-password'
