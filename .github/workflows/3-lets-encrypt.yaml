@@ -1,0 +1,42 @@
+name: 3-GCP Lets Encrypt Certificate
+on:
+  schedule:
+    - cron: '0 0 1 * *' ## At 00:00 on day-of-month 1 ## Monthly
+  workflow_dispatch:
+    inputs:
+      create-renew-certificate:
+        description: 'Do you want to create/renew a SSL Certificate - Lets Encrypt?'
+        default: false
+        required: false
+        type: boolean
+      app-env:
+        description: 'Select a k8s namespace to deploy'
+        required: true
+        default: 'flask-app-tembici-dev.leosete7.com'
+        type: choice
+        options:
+        - flask-app-tembici-dev.leosete7.com
+        - flask-app-tembici-hlg.leosete7.com
+        - flask-app-tembici-prd.leosete7.com
+
+env: ## Variables available in this workflow
+  EMAIL: "seteleonardo7@gmail.com" ## Definir o email do responsável - Let's Encrypt certificado SSL ##
+  PROJECT_ID: "leosete-devops-4"
+  NS_ENV: ${{ inputs.deploy-app-env }}
+  CERTIFICATE_BUCKET: "new-sre-tembici-certificates"
+  DOMAIN: ${{ inputs.app-env }}
+
+jobs:
+  lets-encrypt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: danielguedesb/gcp-certbot@v1
+        if: ${{ inputs.create-renew-certificate == true }}
+        with:
+          gcp-project: ${{ env.PROJECT_ID }}
+          gcp-sa: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+          gcs-bucket: ${{ env.CERTIFICATE_BUCKET }}
+          email: ${{ env.EMAIL }}
+          domain: ${{ env.DOMAIN }}
+          front-end: 'lb-https-frontend-name'
+          # tar-password: 'my-cert-tar-password'

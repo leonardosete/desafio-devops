@@ -12,9 +12,14 @@ on:
         options:
         - tembici-sre-apps-dev 
         - tembici-sre-apps-hlg
-        - tembici-sre-apps-prod ## Add namespaces here if needed.
+        - tembici-sre-apps-prod
       build-image:
         description: 'Run Docker build?'
+        default: false
+        required: false
+        type: boolean
+      delete-app:
+        description: 'Delete App K8s Resources?'
         default: false
         required: false
         type: boolean
@@ -50,27 +55,27 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: Build Docker Image
-        if: ${{ inputs.build-image == true }}
+        if: ${{ inputs.delete-app == false && inputs.build-image == true && inputs.deploy-app-env }}
         run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Automatic Tagging of Releases
-        if: ${{ inputs.build-image == true }}
+        if: ${{ inputs.delete-app == false && inputs.build-image == true && inputs.deploy-app-env }}
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v major
 
       - name: Teste Flask APP
-        if: ${{ inputs.build-image == true }}
+        if: ${{ inputs.delete-app == false && inputs.build-image == true && inputs.deploy-app-env }}
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: Configure Docker Client
-        if: ${{ inputs.build-image == true }}
+        if: ${{ inputs.delete-app == false && inputs.build-image == true && inputs.deploy-app-env }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Push Docker Image to Artifact Registry
-        if: ${{ inputs.build-image == true }}
+        if: ${{ inputs.delete-app == false && inputs.build-image == true && inputs.deploy-app-env }}
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
@@ -79,15 +84,23 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-      - name: Namespace to Deploy
+      - name: Namespace to Use
+        if: ${{ inputs.delete-app == false && inputs.build-image == true && inputs.deploy-app-env }}
         run: |
           kubectl get ns ${{ inputs.deploy-app-env }}
-          echo "Namespace to deploy is ${{ inputs.deploy-app-env }}"
+          echo "The current Namespace is ${{ inputs.deploy-app-env }}"
 
       - name: Apply/Create K8s Resources
+        if: ${{ inputs.delete-app == false && inputs.build-image == true && inputs.deploy-app-env }}
         run: |
           cd k8s
           kubectl apply -f '*.yaml' -n ${{ inputs.deploy-app-env }}
+
+      - name: Delete K8s Resources
+        if: ${{ inputs.build-image == false && inputs.delete-app == true && inputs.deploy-app-env }}
+        run: |
+          cd k8s
+          kubectl delete -f '*.yaml' -n ${{ inputs.deploy-app-env }}
 
       ## GERAR VERSIONAMENTO - GIT VERSION???
       ## CONTROLAR RELEASES - DE QUAL FORMA (XLRELEASE)???

@@ -49,6 +49,7 @@ echo " "
 ## /DINAMIC VARS ##
 KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" ## The key/json file to be created to the Service Account
 echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./service_account.md
+BUCKET_NAME="tembici-leosete"
 ## DINAMIC VARS/ ##
 
 echo " "
@@ -109,10 +110,11 @@ echo "### ${YEL}8-Activate Requested APIs${NC} ###"
     gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com domains.googleapis.com
 echo " "
 
-echo "### The ${YEL}9-New Bucket-Name to keep TFSTATE:${NC} ###"
-read -p "The BUCKET_NAME to be created is: " BUCKET_NAME
+echo "### ${YEL}9-Create TFSTATE and SSL CERTIFICATES Buckets:${NC} ###"
+echo "### ${YEL}SSL CERTIFICATES - Lets' Encrypt:${NC} ###"
 echo " "
-    gcloud alpha storage buckets create gs://$BUCKET_NAME --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
+    gcloud alpha storage buckets create gs://$BUCKET_NAME-tfstate --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
+    gcloud alpha storage buckets create gs://$BUCKET_NAME-certificates --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
     
 echo " "
 echo "### ${YEL}10-Verify the new bucket ${NC} ###"

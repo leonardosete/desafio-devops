@@ -31,7 +31,6 @@ Será necessário interagir com o script [1-create-project.sh] em alguns momento
 
 - Fornecer o valor de 1 variável:
     * [NEW_PROJECT_ID] = Nome do novo projeto que será criado.
-    * [BUCKET_NAME] = Nome do novo bucket para armazenar o tfstate do projeto que será criado.
 
 Os valores definidos nas variáveis pré-definidas, não necessitam de alteração - mas é possível alterá-los
 caso deseje.
