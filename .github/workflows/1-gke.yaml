@@ -26,7 +26,6 @@ jobs:
       NS_ENV_DEV: "tembici-sre-apps-dev"
       NS_ENV_HLG: "tembici-sre-apps-hlg"
       NS_ENV_PRD: "tembici-sre-apps-prod"
-      NS_ENV_ING: "external-ingress-tembici"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       SECRET_TLS: "my-tls-secret"
     ## Add "id-token" with the intended permissions.
@@ -103,20 +102,18 @@ jobs:
           echo "CHECK_NS_DEV=`kubectl get ns $NS_ENV_DEV |grep $NS_ENV_DEV |awk '{print $1}'`" >> $GITHUB_ENV
           echo "CHECK_NS_HLG=`kubectl get ns $NS_ENV_HLG |grep $NS_ENV_HLG |awk '{print $1}'`" >> $GITHUB_ENV
           echo "CHECK_NS_PRD=`kubectl get ns $NS_ENV_PRD |grep $NS_ENV_PRD |awk '{print $1}'`" >> $GITHUB_ENV
-          echo "CHECK_NS_ING=`kubectl get ns $NS_ENV_ING |grep $NS_ENV_ING |awk '{print $1}'`" >> $GITHUB_ENV
 
       - name: Create Namespace
-        if: ${{ env.CHECK_NS_DEV != env.NS_ENV_DEV && env.CHECK_NS_HLG != env.NS_ENV_HLG && env.CHECK_NS_PRD != env.NS_ENV_PRD && env.CHECK_NS_ING != env.NS_ENV_ING }}
+        if: ${{ env.CHECK_NS_DEV != env.NS_ENV_DEV && env.CHECK_NS_HLG != env.NS_ENV_HLG && env.CHECK_NS_PRD != env.NS_ENV_PRD }}
 
         run: |
           kubectl create ns ${{ env.NS_ENV_DEV }}
           kubectl create ns ${{ env.NS_ENV_HLG }}
           kubectl create ns ${{ env.NS_ENV_PRD }}
-          kubectl create ns ${{ env.NS_ENV_ING }}
 
       - name: List Namespaces
         run: |
-          kubectl get ns --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}|${{ env.NS_ENV_ING }}"
+          kubectl get ns --all-namespaces |egrep "${{ env.NS_ENV_DEV }}|${{ env.NS_ENV_HLG }}|${{ env.NS_ENV_PRD }}"
 
       # - name: Check TLS Secret
       #   run: |

@@ -19,47 +19,47 @@ create_dns_record_entry(){
 TTL="300"
 MANAGED_ZONE_LIST=`gcloud dns managed-zones list |awk '{print $1}' |egrep -v NAME`
 DOMAIN_NAME_LIST=`gcloud dns managed-zones list |awk '{print $2}' |egrep -v DNS_NAME`
-APP_HOST=`cat ../k8s/flask-app.yaml |grep "host:" |awk '{print $3}'`
 ## vars/ ##
 
 echo " " 
-echo "### ${YEL}One example of ${GREEN}RR_DATA${NC} ${YEL}could be an IP ADDRESS:${NC} ###"
-echo "### ${YEL}from the list above -${NC} ${GREEN}Static External IPs${NC} ###"
+echo "### ${YEL}An example of ${GREEN}RR_DATA${NC} ${YEL}could be an IP ADDRESS:${NC} ###"
+echo "### ${YEL}from the list below -${NC} ${GREEN}Static External IPs${NC} ###"
 echo " " 
-echo "### ${YEL}The example of${NC} ${GREEN}DNS_NAME is:${NC} ${RED}$APP_HOST${NC} ###"
-echo "### ${YEL}But don't type the${NC} ${RED}DOMAIN,${NC} ${YEL}just the${NC} ${GREEN}NAME${NC} ###"
-
+echo "### ${RED}List Static External IPs Created in Current Project${NC} ###"
+    gcloud compute addresses list
 echo " "
-echo "### The default TTL is: ${RED}${TTL}${NC} = equal to 5 minutes ###" 
-echo " "
-echo "### Sets a RECORD_TYPE: ${RED}${RECORD_TYPE}${NC} - Another types: ${RED}AAAA, ALIAS, MX, CNAME, NS, TXT${NC} and etc... ###"
-echo " "
-echo "### The MANAGED_ZONE already created is/are: "
-echo "${GREEN}$MANAGED_ZONE_LIST${NC}"
-echo " "
-echo "### The DOMAIN NAME already created is/are: "
-echo "${GREEN}$DOMAIN_NAME_LIST${NC}"
-
 read -p "The RR_DATA is: " RR_DATA
+echo " "
+echo "### ${YEL}An example of${NC} ${GREEN}FQDN is:${NC} ${RED}my-app.domain${NC} ###"
+echo "### ${YEL}We should only define DNS_NAME = ${GREEN}my-app${NC} - Don't type ${RED}.domain${NC} ###"
 echo " "
 read -p "The DNS_NAME is: " DNS_NAME
 echo " "
+echo "### ${YEL}The default TTL is:${NC} ${RED}${TTL}${NC} ${YEL}= equal to 5 minutes${NC} ###" 
+echo " "
 read -p "The TTL is: " TTL
+echo " "
+echo "### ${YEL}Sets a RECORD_TYPE:${NC} ${RED}${RECORD_TYPE}${NC} ${YEL}- Another types:${NC} ${RED}AAAA, ALIAS, MX, CNAME, NS, TXT${NC} ###"
 echo " "
 read -p "The RECORD_TYPE is: " RECORD_TYPE
 echo " "
+echo "### ${YEL}The MANAGED_ZONE already created is/are:${NC} ###"
+echo "${GREEN}$MANAGED_ZONE_LIST${NC}"
+echo " "
 read -p "The MANAGED_ZONE is: " MANAGED_ZONE
 echo " "
+echo "### ${YEL}The DOMAIN NAME already created is/are:${NC} ###"
+echo "${GREEN}$DOMAIN_NAME_LIST${NC}"
 read -p "The DOMAIN_NAME is: " DOMAIN_NAME
 echo " "
 echo " "
 
-echo "### 1-To start a transaction - DNS Record Registration ###"
+echo "### ${YEL}1-To start a transaction - DNS Record Registration${NC} ###"
     gcloud dns record-sets transaction start \
     --zone="$MANAGED_ZONE"
 echo " "
 echo " "
-echo "### 2-To add a record set as part of a transaction ###"
+echo "### ${YEL}2-To add a record set as part of a transaction${NC} ###"
     gcloud dns record-sets transaction add "$RR_DATA" \
     --name="$DNS_NAME.$DOMAIN_NAME" \
     --ttl="$TTL" \
@@ -68,11 +68,11 @@ echo "### 2-To add a record set as part of a transaction ###"
 echo " "
 
 echo " "
-echo "### 3-To execute the transaction - apply ###"
+echo "### ${YEL}3-To execute the transaction - apply${NC} ###"
     gcloud dns record-sets transaction execute \
     --zone="$MANAGED_ZONE"
 echo " "
-echo "### 4-To execute the transaction ###"
+echo "### ${YEL}4-To execute the transaction${NC} ###"
     gcloud dns record-sets list --zone="$MANAGED_ZONE"
 }
 
@@ -80,12 +80,9 @@ echo "### 4-To execute the transaction ###"
 
 ## /RUN FUNCTIONS ##
 ## SCRIPT 1 ##
-echo " "
-echo "### ${YEL}List Static External IPs Created in Current Project${NC} ###"
-    gcloud compute addresses list
 
-echo "### ${YEL}You can set your apps DNS Records now, but remember to change in below file too:${NC} ###"
-echo "### Change the ${GREEN}spec.tls.hosts${NC} in ${GREEN}tembici-desafio-devops/k8s/flask-app.yaml${NC} ###"
+echo "### ${YEL}You can set your apps DNS Records now, but remember to change values in below files too:${NC} ###"
+echo "### Change the ${GREEN}spec.tls.hosts${NC} in ${GREEN}tembici-desafio-devops/k8s/flask-app-*.yaml${NC} ###"
 echo " "
 echo "### ${RED}2-Create a new DNS Record?${NC} ###"   
 read -p "### Are you sure about this creation? (y/N)" answer
