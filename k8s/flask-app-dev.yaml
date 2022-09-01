@@ -133,6 +133,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici
+    ingressclass.kubernetes.io/is-default-class: "true"
     # kubernetes.io/ingress.allow-http: "false"
 spec:
   # tls:
