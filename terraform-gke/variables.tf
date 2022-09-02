@@ -81,11 +81,6 @@ variable "pvc_ca_crt_auth_default_ca_id" {
   default = "leosete7-com" ## ENTERPRISE or DEVOPS
 }
 
-variable "pvc_ca_crt_auth_default_ca_id" {
-  description = "google_privateca_certificate_authority_default_certificate_authority_id"
-  default = "leosete7-com" ## ENTERPRISE or DEVOPS
-}
-
 variable "pvc_ca_crt_default_lifetime" {
   description = "google_privateca_certificate_default_lifetime"
   default = "2592000s" ## 1 month
