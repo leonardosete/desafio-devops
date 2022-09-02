@@ -66,7 +66,7 @@ variable "tls_cert_org" {
   default = "Leonardo Sete DevOps"
 }
 
-variable "pvc_ca_ca_pool_default_name" {
+variable "pvt_ca_ca_pool_default_name" {
   description = "google_privateca_ca_pool_default_name"
   default = "Leonardo Sete DevOps"
 }
