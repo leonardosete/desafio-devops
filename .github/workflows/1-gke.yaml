@@ -28,7 +28,7 @@ jobs:
       NS_ENV_PRD: "tembici-sre-apps-prod"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       SECRET_TLS: "my-tls-secret"
-      PRIVATE_KEY_FILE: "./certs/private_key.pem"
+      PRIVATE_KEY: "private_key.pem"
     ## Add "id-token" with the intended permissions.
     permissions:
       contents: read
@@ -42,6 +42,11 @@ jobs:
       - name: Checkout Actions
         uses: actions/checkout@v3
 
+      - name: Create key.pem file
+        run: |
+          cd certs/
+          openssl genrsa 4096 > $PRIVATE_KEY
+
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0
@@ -50,10 +55,6 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
-    
-      - name: Create key.pem file
-        run: |
-          openssl genrsa 4096 > $PRIVATE_KEY_FILE
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
