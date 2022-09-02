@@ -68,7 +68,7 @@ variable "tls_cert_org" {
 
 variable "pvt_ca_ca_pool_default_name" {
   description = "google_privateca_ca_pool_default_name"
-  default = "Leonardo Sete DevOps"
+  default = "leosete7-com"
 }
 
 variable "pvt_ca_ca_pool_default_tier" {
