@@ -6,6 +6,8 @@ provider "google" {
   project = var.project_id
   region  = var.region
 }
+provider "tls" {
+}
 
 # https://www.terraform.io/language/settings/backends/gcs
 terraform {
@@ -17,6 +19,10 @@ terraform {
     google = {
       source  = "hashicorp/google"
       version = "~> 4.0"
+    }
+    tls = {
+      source = "hashicorp/tls"
+      version = "4.0.2"
     }
   }
 }
