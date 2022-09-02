@@ -4,7 +4,7 @@
 # }
 
 resource "tls_cert_request" "example" {
-    key_algorithm   = "RSA"
+    # key_algorithm   = "RSA"
     # private_key_pem = tls_private_key.example.private_key_pem
     private_key_pem = file("./certs/private_key.pem")
     subject {
