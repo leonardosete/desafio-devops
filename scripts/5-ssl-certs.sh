@@ -170,7 +170,7 @@ echo "### ${YEL} You can skip this step, if you only desire to set SSL on a targ
 case ${answer:0:1} in
     y|Y )
         # create_self_ssl
-        create_certificate_authority
+        # create_certificate_authority
     ;;
     * )
         echo No
@@ -182,7 +182,7 @@ esac
 read -p "Do you want to Associate a regional SSL certificate with a target HTTPS/LB? (y/N)" answer
 case ${answer:0:1} in
     y|Y )
-        set_target_https_lb
+        # set_target_https_lb
     ;;
     * )
         echo No

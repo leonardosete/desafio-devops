@@ -66,3 +66,8 @@ Foram gerados alguns workflows (pipelines/esteiras) no path:
         https://learnk8s.io/terraform-gke
         https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/private-cluster
 
+
+
+###### NOTAS ####
+## Google Manager Certs SSL ##
+https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs

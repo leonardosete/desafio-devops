@@ -114,7 +114,7 @@ echo "### ${YEL}9-Create TFSTATE and SSL CERTIFICATES Buckets:${NC} ###"
 echo "### ${YEL}SSL CERTIFICATES - Lets' Encrypt:${NC} ###"
 echo " "
     gcloud alpha storage buckets create gs://$BUCKET_NAME-tfstate --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
-    gcloud alpha storage buckets create gs://$BUCKET_NAME-certificates --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
+    # gcloud alpha storage buckets create gs://$BUCKET_NAME-certificates --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
     
 echo " "
 echo "### ${YEL}10-Verify the new bucket ${NC} ###"

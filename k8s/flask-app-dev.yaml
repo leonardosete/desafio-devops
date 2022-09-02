@@ -136,11 +136,12 @@ metadata:
     ingressclass.kubernetes.io/is-default-class: "true"
     # kubernetes.io/ingress.allow-http: "false"
     cloud.google.com/load-balancer-type: "External"
+    networking.gke.io/managed-certificates: managed-cert
 spec:
-  tls:
-  - hosts:
-      - flask-app-tembici-dev.leosete7.com
-    secretName: my-tls-secret
+  # tls:
+  # - hosts:
+  #     - flask-app-tembici-dev.leosete7.com
+    # secretName: my-tls-secret
   rules:
   - host: flask-app-tembici-dev.leosete7.com
     http:
@@ -152,3 +153,11 @@ spec:
             name: flask-app-tembici
             port:
               number: 8080
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: leosete7-com
+spec:
+  domains:
+    - leosete7.com

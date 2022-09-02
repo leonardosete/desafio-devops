@@ -27,7 +27,7 @@ jobs:
       NS_ENV_HLG: "tembici-sre-apps-hlg"
       NS_ENV_PRD: "tembici-sre-apps-prod"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
-      SECRET_TLS: "my-tls-secret"
+      # SECRET_TLS: "my-tls-secret"
       PRIVATE_KEY: "private_key.pem"
     ## Add "id-token" with the intended permissions.
     permissions:
