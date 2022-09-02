@@ -53,9 +53,6 @@ variable "node_pools_name" {
 
 
 ## Certificate Authority ##
-
-
-
 variable "tls_cert_cn" {
   description = "tls_cert_request_example_subject_common_name"
   default = "leosete7.com"
@@ -63,7 +60,7 @@ variable "tls_cert_cn" {
 
 variable "tls_cert_org" {
   description = "tls_cert_request_example_subject_organization"
-  default = "Leonardo Sete DevOps"
+  default = "leosete7-com"
 }
 
 variable "pvt_ca_ca_pool_default_name" {
