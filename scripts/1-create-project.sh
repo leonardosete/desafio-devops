@@ -107,7 +107,7 @@ BILLING_ID=`gcloud alpha billing accounts list |tail -n1 |awk '{print $1}'`
     
     gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
 echo "### ${YEL}8-Activate Requested APIs${NC} ###"
-    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com domains.googleapis.com
+    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com 
 echo " "
 
 echo "### ${YEL}9-Create TFSTATE and SSL CERTIFICATES Buckets:${NC} ###"

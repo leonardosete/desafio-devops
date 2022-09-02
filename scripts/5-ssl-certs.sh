@@ -114,26 +114,63 @@
 #         --ssl-certificates-region=$REGION
 # }
 
+# create_certificate_authority(){
+# ## https://cloud.google.com/certificate-authority-service/docs/request-certificates-gcloud?hl=en_US ##
+# ## /VARS ##
+# local check_domain_name=$DOMAIN_NAME
+# POOL_ID=""
+# LOCATION="us-central1"
+# TIER="devops"
+# CA_ID="leosete-devops"
+# ORG="tembici"
+# ## VARS/ ##
+
+#     gcloud services enable privateca.googleapis.com
+    
+#     gcloud config set privateca/location $LOCATION
+
+#     gcloud privateca pools create $POOL_ID --tier "$TIER"
+
+#     gcloud privateca roots create $CA_ID --pool $POOL_ID --subject "CN=$Example Prod Root CA, O=$ORG"
+
+#     pip install --user "cryptography>=2.2.0"
+
+#     export CLOUDSDK_PYTHON_SITEPACKAGES=1
+
+#     gcloud privateca certificates create \
+#     --issuer-pool POOL_ID \
+#     --subject "CN=Example Prod,O=Google" \
+#     --generate-key \
+#     --key-output-file=./key \
+#     --cert-output-file=./cert.pem
+
+# }
+
+
+
+
 # ## /RUN FUNCTIONS ##
 # ## SCRIPT 1 ##
-# echo " "
-# echo "### ${YEL} Checking if already exist a SSL Certificate${NC} ###"
-#     CHECK_SSL=`gcloud compute ssl-certificates list |head -n2 |awk '{print $2}' |grep "SELF_MANAGED"`
-#     CHECK_SSL_NAMES=`gcloud compute ssl-certificates list |awk '{print $1}' |egrep -v NAME`
+# # echo " "
+# # echo "### ${YEL} Checking if already exist a SSL Certificate${NC} ###"
+# #     CHECK_SSL=`gcloud compute ssl-certificates list |head -n2 |awk '{print $2}' |grep "SELF_MANAGED"`
+# #     CHECK_SSL_NAMES=`gcloud compute ssl-certificates list |awk '{print $1}' |egrep -v NAME`
 
-#     if [[ $CHECK_SSL == "SELF_MANAGED" ]]
-#     then
-#         echo "### ${YEL}Already exist a SSL Certificate in this project =${NC} ${GREEN}$CHECK_SSL_NAMES${NC}"
-#     else
-#         echo "### ${YEL}None SSL Certificate was found in this project${NC}"
-#     fi
+# #     if [[ $CHECK_SSL == "SELF_MANAGED" ]]
+# #     then
+# #         echo "### ${YEL}Already exist a SSL Certificate in this project =${NC} ${GREEN}$CHECK_SSL_NAMES${NC}"
+# #     else
+# #         echo "### ${YEL}None SSL Certificate was found in this project${NC}"
+# #     fi
 
-# echo " "
-# read -p "Do you want to create a new Self-Signed Certificate? (y/N)? " answer
+# # echo " "
+# # read -p "Do you want to create a new Self-Signed Certificate? (y/N)? " answer
+# read -p "Do you want to create Certificate Authority and a new SSL Certificate? (y/N)? " answer
 # echo "### ${YEL} You can skip this step, if you only desire to set SSL on a target HTTPS/LB${NC} ###"
 # case ${answer:0:1} in
 #     y|Y )
-#         create_self_ssl
+#         # create_self_ssl
+#         create_certificate_authority
 #     ;;
 #     * )
 #         echo No

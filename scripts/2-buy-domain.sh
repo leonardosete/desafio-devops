@@ -18,6 +18,7 @@ echo "### ${YEL}1-Check Domain Name's Availability${NC} ###"
 echo " "
 read -p "The DOMAIN_NAME is: " DOMAIN_NAME
 echo " "
+    gcloud services enable dns.googleapis.com domains.googleapis.com
     gcloud domains registrations search-domains $DOMAIN_NAME
 
 ## /VARS ##
