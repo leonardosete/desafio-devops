@@ -71,22 +71,22 @@ variable "pvt_ca_ca_pool_default_name" {
   default = "Leonardo Sete DevOps"
 }
 
-variable "pvc_ca_ca_pool_default_tier" {
+variable "pvt_ca_ca_pool_default_tier" {
   description = "google_privateca_ca_pool_default_tier"
   default = "ENTERPRISE" ## ENTERPRISE or DEVOPS
 }
 
-variable "pvc_ca_crt_auth_default_ca_id" {
+variable "pvt_ca_crt_auth_default_ca_id" {
   description = "google_privateca_certificate_authority_default_certificate_authority_id"
   default = "leosete7-com" ## ENTERPRISE or DEVOPS
 }
 
-variable "pvc_ca_crt_default_lifetime" {
+variable "pvt_ca_crt_default_lifetime" {
   description = "google_privateca_certificate_default_lifetime"
   default = "2592000s" ## 1 month
 }
 
-variable "pvc_ca_crt_default_name" {
+variable "pvt_ca_crt_default_name" {
   description = "google_privateca_certificate_default_name"
   default = "leosete7-com" ## ENTERPRISE or DEVOPS
 }

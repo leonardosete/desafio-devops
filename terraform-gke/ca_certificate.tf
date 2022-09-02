@@ -1,7 +1,7 @@
 provider tls{}
 
 resource "tls_private_key" "example" {
-#   algorithm   = "RSA"
+  algorithm   = "RSA"
 }
 
 resource "tls_cert_request" "example" {
