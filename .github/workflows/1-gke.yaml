@@ -53,7 +53,7 @@ jobs:
     
       - name: Create key.pem file
         run: |
-          cd /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/terraform-gke/certs    
+          cd /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/terraform-gke/certs/
           openssl genrsa 4096 > $PRIVATE_KEY_FILE
 
       - name: Set up Terraform
