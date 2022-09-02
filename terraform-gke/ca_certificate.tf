@@ -2,6 +2,7 @@ provider tls{}
 
 resource "tls_private_key" "example" {
   algorithm   = "RSA"
+  rsa_bits  = 4096
 }
 
 resource "tls_cert_request" "example" {
