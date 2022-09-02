@@ -81,11 +81,11 @@ resource "google_privateca_certificate_authority" "default" {
 }
 
 resource "google_privateca_certificate" "default" {
-  pool = var.pvc_ca_ca_pool_default_name
-  certificate_authority = var.pvc_ca_crt_auth_default_ca_id
+  pool = var.pvt_ca_ca_pool_default_name
+  certificate_authority = var.pvt_ca_crt_auth_default_ca_id
   project = var.project_id
   location = var.region
-  lifetime = var.pvc_ca_crt_default_lifetime
-  name = var.pvc_ca_crt_default_name
+  lifetime = var.pvt_ca_crt_default_lifetime
+  name = var.pvt_ca_crt_default_name
   pem_csr = tls_cert_request.example.cert_request_pem
 }
