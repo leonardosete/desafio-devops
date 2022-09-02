@@ -1,16 +1,16 @@
-resource "tls_private_key" "example" {
-    key_algorithm   = "RSA"
-    rsa_bits  = 4096
-}
+# resource "tls_private_key" "example" {
+#     algorithm   = "RSA"
+#     rsa_bits  = 4096
+# }
 
 resource "tls_cert_request" "example" {
-  key_algorithm   = "RSA"
-  private_key_pem = tls_private_key.example.private_key_pem
-
-  subject {
-    common_name  = var.tls_cert_cn
-    organization = var.tls_cert_org
-  }
+    key_algorithm   = "RSA"
+    # private_key_pem = tls_private_key.example.private_key_pem
+    private_key_pem = file("./certs/private_key.pem")
+    subject {
+        common_name  = var.tls_cert_cn
+        organization = var.tls_cert_org
+    }
 }
 
 resource "google_privateca_ca_pool" "default" {
