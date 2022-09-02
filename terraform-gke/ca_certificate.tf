@@ -1,4 +1,3 @@
-provider google{}
 provider tls{}
 
 resource "tls_private_key" "example" {
