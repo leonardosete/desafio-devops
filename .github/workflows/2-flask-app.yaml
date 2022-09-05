@@ -26,45 +26,45 @@ jobs:
     env:
       APP_ENV: "dev"
     steps:
-      - name: Checkout Actions
+      - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
 
       - id: auth
-        name: Authenticate to Google Cloud
+        name: 2-AUTHENTICATE TO GOOGLE CLOUD
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: Set up Cloud SDK
+      - name: 3-SETUP CLOUD SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: Get Credentials
+      - name: 4-GET CREDENTIALS
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: Build Docker Image
+      - name: 5-BUILD DOCKER IMAGE
         if: ${{ inputs.build-push-image == true }}
         run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
-      - name: Automatic Tagging of Releases
+      - name: 6-AUTOMATIC TAGGING OF RELEASES
         if: ${{ inputs.build-push-image == true }}
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v major
 
-      - name: Teste Flask APP
+      - name: 7-TESTE FLASK APP
         if: ${{ inputs.build-push-image == true }}
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
-      - name: Configure Docker Client
+      - name: 8-CONFIGURE DOCKER CLIENT
         if: ${{ inputs.build-push-image == true }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      - name: Push Docker Image to Artifact Registry
+      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
         if: ${{ inputs.build-push-image == true }}
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
@@ -74,15 +74,7 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-
-      # - uses: imranismail/setup-kustomize@v1
-      # - run: |
-      #     kustomize edit set image app:${GITHUB_SHA}
-      #     git add .
-      #     git commit -m "Set `app` image tag to `${GITHUB_SHA}`"
-      #     git push
-
-      - name: Setup Kustomize
+      - name: 10-SETUP KUSTOMIZE
         if: ${{ inputs.build-push-image == true }}
         uses: imranismail/setup-kustomize@v1
       
@@ -90,8 +82,8 @@ jobs:
         if: ${{ inputs.build-push-image == true }}
         run: |
           cd k8s/kustomize/base
-          kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
-          cat deploy-app${{ env.APP_ENV }}.yaml
+          kubectl kustomize ./ > deploy-app-${{ env.APP_ENV }}.yaml
+          cat deploy-app-${{ env.APP_ENV }}.yaml
 
   deploy_app_dev:
     runs-on: ubuntu-latest
@@ -106,51 +98,48 @@ jobs:
 
     steps:
 
-      - name: Checkout Actions
+      - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
 
-      - name: Verify Issues to Approve or Deny Deploy
+      - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
         run: echo Waiting approval to deploy in ${{ env.NS_APP }}
 
-      - name: Setup Manual Approval
+      - name: 3-SETUP MANUAL APPROVAL
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS_DEV }}
           
-      - name: Deploy to Development
+      - name: 4-DEPLOY TO DEVELOPMENT
         run: echo deploying in ${{ env.NS_APP }}
 
-      - name: Checkout Actions
-        uses: actions/checkout@v3
-
       - id: auth
-        name: Authenticate to Google Cloud
+        name: 5-AUTHENTICATE TO GOOGLE CLOUD
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: Set up Cloud SDK
+      - name: 6-SETUP CLOUD SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: Get Credentials
+      - name: 7-GET CREDENTIALS
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: Namespace to Use
+      - name: 8-NAMESPACE TO USE
         run: |
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: Setup Kustomize
+      - name: 9-SETUP KUSTOMIZE
         uses: imranismail/setup-kustomize@v1
 
-      - name: Deploy Flask App in DEV
+      - name: 10-DEPLOY FLASK APP IN DEV
         run: |
-          kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
-          cat deploy-app${{ env.APP_ENV }}.yaml
+          kubectl kustomize ./ > deploy-app-${{ env.APP_ENV }}.yaml
+          cat deploy-app-${{ env.APP_ENV }}.yaml
           kubectl apply -k ./ -n ${{ env.NS_APP }}
 
   deploy_app_hlg:
@@ -166,109 +155,46 @@ jobs:
 
     steps:
 
-      - name: Checkout Actions
+      - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
 
-      - name: Verify Issues to Approve or Deny Deploy
+      - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
         run: echo Waiting approval to deploy in ${{ env.NS_APP }}
 
-      - name: Setup Manual Approval
+      - name: 3-SETUP MANUAL APPROVAL
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS_HLG }}
           
-      - name: Deploy to Homolog
+      - name: 4-DEPLOY TO HOMOLOG
         run: echo deploying in ${{ env.NS_APP }}
 
-      - name: Checkout Actions
-        uses: actions/checkout@v3
-
       - id: auth
-        name: Authenticate to Google Cloud
+        name: 5-AUTHENTICATE TO GOOGLE CLOUD
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: Set up Cloud SDK
+      - name: 6-SETUP CLOUD SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: Get Credentials
+      - name: 7-GET CREDENTIALS
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: Namespace to Use
+      - name: 8-NAMESPACE TO USE
         run: |
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: Setup Kustomize
+      - name: 9-SETUP KUSTOMIZE
         uses: imranismail/setup-kustomize@v1
 
-      - name: Deploy Flask App in HLG
+      - name: 10-DEPLOY FLASK APP IN HLG
         run: |
-          kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
-          cat deploy-app${{ env.APP_ENV }}.yaml
-          kubectl apply -k ./ -n ${{ env.NS_APP }}
-
-  deploy_app_prd:
-    runs-on: ubuntu-latest
-    needs: deploy_app_hlg
-    env:
-      NS_APP: "tembici-sre-apps-prd"
-      WORK_DIR: "./k8s/kustomize/overlays/prd"
-      APP_ENV: "prd"
-    defaults:
-      run:
-        working-directory: ${{ env.WORK_DIR }}
-
-    steps:
-
-      - name: Checkout Actions
-        uses: actions/checkout@v3
-
-      - name: Verify Issues to Approve or Deny Deploy
-        run: echo Waiting approval to deploy in ${{ env.NS_APP }}
-
-      - name: Setup Manual Approval
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS_PRD }}
-          
-      - name: Deploy to Production
-        run: echo deploying in ${{ env.NS_APP }}
-
-      - name: Checkout Actions
-        uses: actions/checkout@v3
-
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
-
-      - name: Get Credentials
-        uses: 'google-github-actions/get-gke-credentials@v0'
-        with:
-          cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.REGION }}
-
-      - name: Namespace to Use
-        run: |
-          kubectl get ns ${{ env.NS_APP }}
-          echo "The current Namespace is ${{ env.NS_APP }}"
-
-      - name: Setup Kustomize
-        uses: imranismail/setup-kustomize@v1
-
-      - name: Deploy Flask App in PRD
-        run: |
-          kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
-          cat deploy-app${{ env.APP_ENV }}.yaml
+          kubectl kustomize ./ > deploy-app$-{{ env.APP_ENV }}.yaml
+          cat deploy-app-${{ env.APP_ENV }}.yaml
           kubectl apply -k ./ -n ${{ env.NS_APP }}
