@@ -164,6 +164,6 @@ jobs:
         run: |
           kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
           cat deploy-app${{ env.APP_ENV }}.yaml
-          kubectl apply -k -n ${{ env.NS_APP }}
+          kubectl apply -k ./ -n ${{ env.NS_APP }}
 
 
