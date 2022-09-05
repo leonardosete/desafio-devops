@@ -104,7 +104,7 @@ jobs:
     needs: build_app
     env:
       NS_APP: "tembici-sre-apps-dev"
-      WORK_DIR: "k8s/kustomize/base"
+      WORK_DIR: "./k8s/kustomize/base/"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
