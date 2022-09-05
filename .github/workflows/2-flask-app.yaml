@@ -105,15 +105,9 @@ jobs:
     env:
       NS_APP: "tembici-sre-apps-dev"
       # WORK_DIR: "terraform-gke/"
-      TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
-    ## Add "id-token" with the intended permissions.
-    permissions:
-      contents: read
-      id-token: write
-
-    defaults:
-      run:
-        working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+    # defaults:
+    #   run:
+    #     working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
 
     steps:
 
