@@ -6,7 +6,7 @@ metadata:
       name: flask-app-tembici
   annotations:
     kubernetes.io/ingress.class: gce ## GCP External LB - Ingress Controller
-    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici
+    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici-prd
     ingressclass.kubernetes.io/is-default-class: "true"
     networking.gke.io/managed-certificates: prd-leosete7-com
     # kubernetes.io/ingress.allow-http: "false" ## Only available after LB is fully programmed.

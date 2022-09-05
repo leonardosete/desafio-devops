@@ -198,3 +198,60 @@ jobs:
           kubectl kustomize ./ > deploy-app$-{{ env.APP_ENV }}.yaml
           cat deploy-app-${{ env.APP_ENV }}.yaml
           kubectl apply -k ./ -n ${{ env.NS_APP }}
+
+  deploy_app_prd:
+    runs-on: ubuntu-latest
+    needs: deploy_app_hlg
+    env:
+      NS_APP: "tembici-sre-apps-prd"
+      WORK_DIR: "./k8s/kustomize/overlays/prd"
+      APP_ENV: "hlg"
+    defaults:
+      run:
+        working-directory: ${{ env.WORK_DIR }}
+
+    steps:
+
+      - name: 1-CHECKOUT ACTIONS
+        uses: actions/checkout@v3
+
+      - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
+        run: echo Waiting approval to deploy in ${{ env.NS_APP }}
+
+      - name: 3-SETUP MANUAL APPROVAL
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: ${{ env.APPROVERS_HLG }}
+          
+      - name: 4-DEPLOY TO PRODUCTION
+        run: echo deploying in ${{ env.NS_APP }}
+
+      - id: auth
+        name: 5-AUTHENTICATE TO GOOGLE CLOUD
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+
+      - name: 6-SETUP CLOUD SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: 7-GET CREDENTIALS
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
+
+      - name: 8-NAMESPACE TO USE
+        run: |
+          kubectl get ns ${{ env.NS_APP }}
+          echo "The current Namespace is ${{ env.NS_APP }}"
+
+      - name: 9-SETUP KUSTOMIZE
+        uses: imranismail/setup-kustomize@v1
+
+      - name: 10-DEPLOY FLASK APP IN HLG
+        run: |
+          kubectl kustomize ./ > deploy-app$-{{ env.APP_ENV }}.yaml
+          cat deploy-app-${{ env.APP_ENV }}.yaml
+          kubectl apply -k ./ -n ${{ env.NS_APP }}
