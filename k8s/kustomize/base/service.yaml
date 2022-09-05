@@ -4,6 +4,7 @@ metadata:
   name: flask-app-tembici
   labels:
       name: flask-app-tembici
+spec:
   ports:
     - name: flask
       port: 8080

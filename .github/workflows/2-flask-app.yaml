@@ -160,10 +160,17 @@ jobs:
       - name: Setup Kustomize
         uses: imranismail/setup-kustomize@v1
 
+          # kubectl apply -k ./ -n ${{ env.NS_APP }}
+
       - name: Deploy Flask App in DEV
         run: |
+          kustomize edit set image app:${GITHUB_SHA}
+          git add .
+          git commit -m "Set `app` image tag to `${GITHUB_SHA}`"
+          git push
+
           kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
           cat deploy-app${{ env.APP_ENV }}.yaml
-          kubectl apply -k ./ -n ${{ env.NS_APP }}
+
 
 
