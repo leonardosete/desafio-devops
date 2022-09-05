@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - id: auth
         name: 2-AUTHENTICATE TO GOOGLE CLOUD
@@ -44,45 +46,56 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: 5-BUILD DOCKER IMAGE
-        if: ${{ inputs.build-push-image == true }}
-        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+      # - name: Login to Artifact Registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ${{ env.REGION }}-docker.pkg.dev
+      #     username: oauth2accesstoken
+      #     password: ${{ steps.auth.outputs.access_token }}
 
-      - name: 6-AUTOMATIC TAGGING OF RELEASES
-        if: ${{ inputs.build-push-image == true }}
-        id: increment-git-tag
-        run: |
-          bash ./scripts/git_update.sh -v major
+      - name: Get tag
+        id: get-tag
+        run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
+
+      - id: docker-push-tagged
+        name: Tag Docker image and push to Google Artifact Registry
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: |
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.get-tag.outputs.short_ref }}
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+
+
+      # - name: 5-BUILD DOCKER IMAGE
+      #   if: ${{ inputs.build-push-image == true }}
+      #   run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+
+      # - name: 6-AUTOMATIC TAGGING OF RELEASES
+      #   if: ${{ inputs.build-push-image == true }}
+      #   id: increment-git-tag
+      #   run: |
+      #     bash ./scripts/git_update.sh -v major
 
       - name: 7-TESTE FLASK APP
         if: ${{ inputs.build-push-image == true }}
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
-      - name: 8-CONFIGURE DOCKER CLIENT
-        if: ${{ inputs.build-push-image == true }}
-        run: |
-          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
-
-      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-        if: ${{ inputs.build-push-image == true }}
-        env:
-          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-
-      # - name: 10-SETUP KUSTOMIZE
-      #   if: ${{ inputs.build-push-image == true }}
-      #   uses: imranismail/setup-kustomize@v1
-      
-      # - name: Check Deploy Flask App in DEV
+      # - name: 8-CONFIGURE DOCKER CLIENT
       #   if: ${{ inputs.build-push-image == true }}
       #   run: |
-      #     cd k8s
-      #     kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
+      #     gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      #   if: ${{ inputs.build-push-image == true }}
+      #   env:
+      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+      #   run: |
+      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_app_dev:
     runs-on: ubuntu-latest
@@ -99,6 +112,8 @@ jobs:
 
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
         run: echo Waiting approval to deploy in ${{ env.NS_APP }}
@@ -155,6 +170,8 @@ jobs:
 
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
         run: echo Waiting approval to deploy in ${{ env.NS_APP }}

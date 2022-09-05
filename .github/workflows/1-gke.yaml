@@ -41,7 +41,9 @@ jobs:
     steps:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
-
+        with:
+          fetch-depth: 0
+          
       - name: 2-CREATE KEY.PEM FILE
         run: |
           cd certs/
