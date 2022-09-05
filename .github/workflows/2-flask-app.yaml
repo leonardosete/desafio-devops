@@ -147,7 +147,6 @@ jobs:
 
       - name: Namespace to Use
         run: |
-          cd kustomize/base/
           kubectl get ns ${{ env.NS_DEV }}
           echo "The current Namespace is ${{ env.NS_DEV }}"
 
