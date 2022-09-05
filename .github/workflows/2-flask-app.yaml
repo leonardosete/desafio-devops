@@ -105,18 +105,11 @@ jobs:
     env:
       NS_APP: "tembici-sre-apps-dev"
       WORK_DIR: "terraform-gke/"
-
-    permissions:
-      contents: read
-      id-token: write
-
-    defaults:
-      run:
-        working-directory: ${{ env.WORK_DIR }}
     steps:
 
       - name: Verify Issues to Approve or Deny Deploy
         run: |
+          cd ${{ env.WORK_DIR }}}
           pwd
           ls -lhart
 
