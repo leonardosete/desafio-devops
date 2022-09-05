@@ -104,68 +104,67 @@ jobs:
     # needs: build_app
     env:
       NS_APP: "tembici-sre-apps-dev"
-      # WORK_DIR: "terraform-gke/"
-    # defaults:
-    #   run:
-    #     working-directory: ${{ env.TF_ACTIONS_WORKING_DIR }}
+      WORK_DIR: "./k8s/kustomize/base/"
+    
+    defaults:
+      run:
+        working-directory: ${{ env.WORK_DIR }}
 
     steps:
 
+      - name: Checkout Actions
+        uses: actions/checkout@v3
+
       - name: Verify Issues to Approve or Deny Deploy
-        run: |
-          pwd
-          ls -lhart
+        run: echo Waiting approval to deploy in ${{ env.NS_APP }}
 
-      # - name: Verify Issues to Approve or Deny Deploy
-      #   run: echo Waiting approval to deploy in ${{ env.NS_APP }}
-
-      # - name: Setup Manual Approval
-      #   uses: trstringer/manual-approval@v1
-      #   with:
-      #     secret: ${{ github.token }}
-      #     approvers: ${{ env.APPROVERS_DEV }}
+      - name: Setup Manual Approval
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: ${{ env.APPROVERS_DEV }}
           
-      # - name: Deploy to Development
-      #   run: echo deploying in ${{ env.NS_APP }}
+      - name: Deploy to Development
+        run: echo deploying in ${{ env.NS_APP }}
 
-      # - name: Checkout Actions
-      #   uses: actions/checkout@v3
+      - name: Checkout Actions
+        uses: actions/checkout@v3
 
-      # - id: auth
-      #   name: Authenticate to Google Cloud
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: Get Credentials
-      #   uses: 'google-github-actions/get-gke-credentials@v0'
-      #   with:
-      #     cluster_name: ${{ env.CLUSTER_NAME }}
-      #     location: ${{ env.REGION }}
+      - name: Get Credentials
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
 
-      # - name: Namespace to Use
-      #   run: |
-      #     cd kustomize/base/
-      #     kubectl get ns ${{ env.NS_DEV }}
-      #     echo "The current Namespace is ${{ env.NS_DEV }}"
+      - name: Namespace to Use
+        run: |
+          cd kustomize/base/
+          kubectl get ns ${{ env.NS_DEV }}
+          echo "The current Namespace is ${{ env.NS_DEV }}"
 
-      # # - uses: imranismail/setup-kustomize@v1
-      # # - run: |
-      # #     kustomize edit set image app:${GITHUB_SHA}
-      # #     git add .
-      # #     git commit -m "Set `app` image tag to `${GITHUB_SHA}`"
-      # #     git push
+      # - uses: imranismail/setup-kustomize@v1
+      # - run: |
+      #     kustomize edit set image app:${GITHUB_SHA}
+      #     git add .
+      #     git commit -m "Set `app` image tag to `${GITHUB_SHA}`"
+      #     git push
 
-      # - name: Setup Kustomize
-      #   uses: imranismail/setup-kustomize@v1
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v1
 
-      # - name: Deploy Flask App in DEV
-      #   run: |
-      #     kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
-      #     cat deploy-app${{ env.APP_ENV }}.yaml
-      #     kubectl apply -k -n ${{ env.NS_DEV }}
+      - name: Deploy Flask App in DEV
+        run: |
+          kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
+          cat deploy-app${{ env.APP_ENV }}.yaml
+          kubectl apply -k -n ${{ env.NS_DEV }}
 
 
