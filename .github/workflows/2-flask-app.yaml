@@ -158,7 +158,7 @@ jobs:
     needs: deploy_app_dev
     env:
       NS_APP: "tembici-sre-apps-hlg"
-      WORK_DIR: "./k8s/kustomize/base/"
+      WORK_DIR: "./k8s/kustomize/overlays/hlg"
     
     defaults:
       run:
@@ -218,7 +218,7 @@ jobs:
     needs: deploy_app_hlg
     env:
       NS_APP: "tembici-sre-apps-prd"
-      WORK_DIR: "./k8s/kustomize/base/"
+      WORK_DIR: "./k8s/kustomize/overlays/prd"
     
     defaults:
       run:
