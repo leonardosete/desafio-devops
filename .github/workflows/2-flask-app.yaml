@@ -1,4 +1,4 @@
-name: 2-Flask App Deploy
+name: 2-DEPLOY-FLASK-APP
 on:
   push:
     branches: [release, feature, hotfix, task]

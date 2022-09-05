@@ -1,4 +1,4 @@
-name: 1-Infra - GKE
+name: 1-CREATE-INFRA-GKE
 on:
   pull_request:
     branches: [deploy-infra]
