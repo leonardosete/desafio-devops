@@ -25,7 +25,7 @@ jobs:
       CLUSTER_NAME: "tembici-cluster-prod"
       NS_ENV_DEV: "tembici-sre-apps-dev"
       NS_ENV_HLG: "tembici-sre-apps-hlg"
-      NS_ENV_PRD: "tembici-sre-apps-prod"
+      NS_ENV_PRD: "tembici-sre-apps-prd"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       # SECRET_TLS: "my-tls-secret"
       PRIVATE_KEY: "private_key.pem"

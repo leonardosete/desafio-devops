@@ -1,0 +1,9 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: prd-leosete7-com
+  labels:
+      name: flask-app-tembici
+spec:
+  domains:
+    - flask-app-tembici-prd.leosete7.com

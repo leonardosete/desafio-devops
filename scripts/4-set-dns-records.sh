@@ -16,26 +16,29 @@ create_dns_record_entry(){
 
 ## /vars ##
 # STATIC_EXT_IP=`gcloud compute addresses list |tail -n1 |awk '{print $2}'` ## I'm using my External Static IP on this case
-TTL="300"
 MANAGED_ZONE_LIST=`gcloud dns managed-zones list |awk '{print $1}' |egrep -v NAME`
 DOMAIN_NAME_LIST=`gcloud dns managed-zones list |awk '{print $2}' |egrep -v DNS_NAME`
 ## vars/ ##
 
-echo " " 
+echo "### ${YEL}Your MANAGED ZONE${NC} ${GREEN}$MANAGED_ZONE_LIST${NC} ${YEL} records are:${NC} ###"
+echo " "
+    gcloud dns record-sets list -z $MANAGED_ZONE_LIST
+echo " "
 echo "### ${YEL}An example of ${GREEN}RR_DATA${NC} ${YEL}could be an IP ADDRESS:${NC} ###"
 echo "### ${YEL}from the list below -${NC} ${GREEN}Static External IPs${NC} ###"
 echo " " 
 echo "### ${RED}List Static External IPs Created in Current Project${NC} ###"
     gcloud compute addresses list
+
 echo " "
 read -p "The RR_DATA is: " RR_DATA
 echo " "
 echo "### ${YEL}An example of${NC} ${GREEN}FQDN is:${NC} ${RED}my-app.domain${NC} ###"
 echo "### ${YEL}We should only define DNS_NAME = ${GREEN}my-app${NC} - Don't type ${RED}.domain${NC} ###"
 echo " "
-read -p "The DNS_NAME is: " DNS_NAME
+read -p "The Record Set is: " DNS_NAME
 echo " "
-echo "### ${YEL}The default TTL is:${NC} ${RED}${TTL}${NC} ${YEL}= equal to 5 minutes${NC} ###" 
+echo "### ${YEL}An example of TTL is 300= equal to 5 minutes${NC} ###"
 echo " "
 read -p "The TTL is: " TTL
 echo " "
