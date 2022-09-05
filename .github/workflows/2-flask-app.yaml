@@ -99,7 +99,7 @@ jobs:
     env:
       NS_APP: "tembici-sre-apps-dev"
       WORK_DIR: "./k8s/kustomize/base/"
-    
+      APP_ENV: "dev"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
@@ -159,7 +159,7 @@ jobs:
     env:
       NS_APP: "tembici-sre-apps-hlg"
       WORK_DIR: "./k8s/kustomize/overlays/hlg"
-    
+      APP_ENV: "hlg"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
@@ -219,7 +219,7 @@ jobs:
     env:
       NS_APP: "tembici-sre-apps-prd"
       WORK_DIR: "./k8s/kustomize/overlays/prd"
-    
+      APP_ENV: "prd"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
@@ -238,7 +238,7 @@ jobs:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS_PRD }}
           
-      - name: Deploy to Development
+      - name: Deploy to Production
         run: echo deploying in ${{ env.NS_APP }}
 
       - name: Checkout Actions
