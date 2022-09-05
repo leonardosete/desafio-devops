@@ -147,8 +147,8 @@ jobs:
 
       - name: Namespace to Use
         run: |
-          kubectl get ns ${{ env.NS_DEV }}
-          echo "The current Namespace is ${{ env.NS_DEV }}"
+          kubectl get ns ${{ env.NS_APP }}
+          echo "The current Namespace is ${{ env.NS_APP }}"
 
       # - uses: imranismail/setup-kustomize@v1
       # - run: |
@@ -164,6 +164,6 @@ jobs:
         run: |
           kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
           cat deploy-app${{ env.APP_ENV }}.yaml
-          kubectl apply -k -n ${{ env.NS_DEV }}
+          kubectl apply -k -n ${{ env.NS_APP }}
 
 
