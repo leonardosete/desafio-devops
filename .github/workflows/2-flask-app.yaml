@@ -104,7 +104,7 @@ jobs:
     # needs: build_app
     env:
       NS_APP: "tembici-sre-apps-dev"
-      WORK_DIR: "./terraform-gke/"
+      WORK_DIR: "terraform-gke/"
 
     permissions:
       contents: read
