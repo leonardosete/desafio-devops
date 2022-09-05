@@ -27,81 +27,81 @@ env: ## Variables available in this workflow
   APPROVERS_PRD: "7700472077"
 
 jobs:
-  # build_app:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     APP_ENV: "dev"
-  #   steps:
-  #     - name: Checkout Actions
-  #       uses: actions/checkout@v3
+  build_app:
+    runs-on: ubuntu-latest
+    env:
+      APP_ENV: "dev"
+    steps:
+      - name: Checkout Actions
+        uses: actions/checkout@v3
 
-  #     - id: auth
-  #       name: Authenticate to Google Cloud
-  #       uses: google-github-actions/auth@v0
-  #       with:
-  #         credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-  #     - name: Set up Cloud SDK
-  #       uses: google-github-actions/setup-gcloud@v0
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-  #     - name: Get Credentials
-  #       uses: 'google-github-actions/get-gke-credentials@v0'
-  #       with:
-  #         cluster_name: ${{ env.CLUSTER_NAME }}
-  #         location: ${{ env.REGION }}
+      - name: Get Credentials
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
 
-  #     - name: Build Docker Image
-  #       if: ${{ inputs.build-push-image == true }}
-  #       run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+      - name: Build Docker Image
+        if: ${{ inputs.build-push-image == true }}
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
-  #     - name: Automatic Tagging of Releases
-  #       if: ${{ inputs.build-push-image == true }}
-  #       id: increment-git-tag
-  #       run: |
-  #         bash ./scripts/git_update.sh -v major
+      - name: Automatic Tagging of Releases
+        if: ${{ inputs.build-push-image == true }}
+        id: increment-git-tag
+        run: |
+          bash ./scripts/git_update.sh -v major
 
-  #     - name: Teste Flask APP
-  #       if: ${{ inputs.build-push-image == true }}
-  #       run: |
-  #         docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
+      - name: Teste Flask APP
+        if: ${{ inputs.build-push-image == true }}
+        run: |
+          docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
-  #     - name: Configure Docker Client
-  #       if: ${{ inputs.build-push-image == true }}
-  #       run: |
-  #         gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+      - name: Configure Docker Client
+        if: ${{ inputs.build-push-image == true }}
+        run: |
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-  #     - name: Push Docker Image to Artifact Registry
-  #       if: ${{ inputs.build-push-image == true }}
-  #       env:
-  #         GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-  #       run: |
-  #         docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-  #         docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-  #         docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-  #         docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+      - name: Push Docker Image to Artifact Registry
+        if: ${{ inputs.build-push-image == true }}
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
 
-  #     # - uses: imranismail/setup-kustomize@v1
-  #     # - run: |
-  #     #     kustomize edit set image app:${GITHUB_SHA}
-  #     #     git add .
-  #     #     git commit -m "Set `app` image tag to `${GITHUB_SHA}`"
-  #     #     git push
+      # - uses: imranismail/setup-kustomize@v1
+      # - run: |
+      #     kustomize edit set image app:${GITHUB_SHA}
+      #     git add .
+      #     git commit -m "Set `app` image tag to `${GITHUB_SHA}`"
+      #     git push
 
-  #     - name: Setup Kustomize
-  #       if: ${{ inputs.build-push-image == true }}
-  #       uses: imranismail/setup-kustomize@v1
+      - name: Setup Kustomize
+        if: ${{ inputs.build-push-image == true }}
+        uses: imranismail/setup-kustomize@v1
       
-  #     - name: Check Deploy Flask App in DEV
-  #       if: ${{ inputs.build-push-image == true }}
-  #       run: |
-  #         cd k8s/kustomize/base
-  #         kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
-  #         cat deploy-app${{ env.APP_ENV }}.yaml
+      - name: Check Deploy Flask App in DEV
+        if: ${{ inputs.build-push-image == true }}
+        run: |
+          cd k8s/kustomize/base
+          kubectl kustomize ./ > deploy-app${{ env.APP_ENV }}.yaml
+          cat deploy-app${{ env.APP_ENV }}.yaml
 
   deploy_app_dev:
     runs-on: ubuntu-latest
-    # needs: build_app
+    needs: build_app
     env:
       NS_APP: "tembici-sre-apps-dev"
       WORK_DIR: "./k8s/kustomize/base/"
