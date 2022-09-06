@@ -177,7 +177,7 @@ jobs:
     env:
       NS_APP: "tembici-sre-apps-prd"
       WORK_DIR: "./k8s"
-      APP_ENV: "hlg"
+      APP_ENV: "prd"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
@@ -219,6 +219,6 @@ jobs:
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 9-DEPLOY FLASK APP IN HLG
+      - name: 9-DEPLOY FLASK APP IN PRD
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
