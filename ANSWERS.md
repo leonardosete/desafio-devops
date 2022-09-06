@@ -53,14 +53,14 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
             
    - 3 IPs = 3 Load Balancers = 1 para cada ambiente (dev/hlg/prd)
 
-## SCRIPT 3 ##
+## SCRIPT 3 - Apesar de opcional, recomendo que seja executado para garantir o funcionamento de todo fluxo ##
   * 3-buy-domain.sh [opcional] - Fará a compra de um domínio através da GCP e ativará o serviço Cloud DNS do Google.
         
     - Escolha um domínio para que seja verificado e estando disponível, basta seguir com o processo de configuração
             do Cloud DNS e posteriormente, a compra do domínio.
             * Caso não queria adquirir um domínio [usando_uma_conta_free_da_GCP], é possível utilizar o que já possuir.
     
-## SCRIPT 4 ##
+## SCRIPT 4 - Apesar de opcional, recomendo que seja executado para garantir o funcionamento de todo fluxo ##
    * 4-set-dns-records.sh [opcional] - Criará registros na zona de DNS do Google - Cloud DNS.
 
        - Caso não tenha executado o script 3 e não queira ativar esse serviço, precisará configurar em uma zona já existente

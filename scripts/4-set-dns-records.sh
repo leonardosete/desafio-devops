@@ -46,12 +46,12 @@ echo "### ${YEL}Sets a RECORD_TYPE:${NC} ${RED}${RECORD_TYPE}${NC} ${YEL}- Anoth
 echo " "
 read -p "The RECORD_TYPE is: " RECORD_TYPE
 echo " "
-echo "### ${YEL}The MANAGED_ZONE already created is/are:${NC} ###"
+echo "### ${YEL}The MANAGED_ZONE already created is/are - copy/paste it:${NC} ###"
 echo "${GREEN}$MANAGED_ZONE_LIST${NC}"
 echo " "
 read -p "The MANAGED_ZONE is: " MANAGED_ZONE
 echo " "
-echo "### ${YEL}The DOMAIN NAME already created is/are:${NC} ###"
+echo "### ${YEL}The DOMAIN NAME already created is/are - copy/paste it:${NC} ###"
 echo "${GREEN}$DOMAIN_NAME_LIST${NC}"
 read -p "The DOMAIN_NAME is: " DOMAIN_NAME
 echo " "
