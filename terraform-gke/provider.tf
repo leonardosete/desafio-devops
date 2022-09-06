@@ -10,7 +10,7 @@ provider "google" {
 # https://www.terraform.io/language/settings/backends/gcs
 terraform {
   backend "gcs" {
-    bucket = "desafio-tembici-sre-1"
+    bucket = "desafio-tembici-sre-1-tfstate"
     prefix = "terraform/state"
   }
   required_providers {
