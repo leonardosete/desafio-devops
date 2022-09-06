@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env: ## Variables available in this workflow
-  PROJECT_ID: "fork-project-1"
+  PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
