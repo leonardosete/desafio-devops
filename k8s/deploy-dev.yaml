@@ -22,7 +22,7 @@ spec:
   selector:
     app: flask-app
     env: dev
-  type: NodePort
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
