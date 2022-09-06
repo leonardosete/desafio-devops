@@ -8,7 +8,10 @@ https://cloud.google.com/sdk/docs/install
 ### /DETALHE IMPORTANTE ###
 A abordagem adotada nesse projeto, parte do princípio que será utilizada uma [conta_nova] da GCP [recomendado],
 sem projetos/serviços/APIs configurados. Por essa razão, foram criados 5 scripts [bash] para realizar o processo que acreditei
-serem básicos para a configuração do ambiente na GCP. 
+serem básicos para a configuração do ambiente na GCP.
+
+Poderia ter adotado uma abordagem maior com terraform, mas acabei realizando um misto com bash + gcloud também.
+
 ### DETALHE IMPORTANTE/ ###
 
 ## CRIAÇÃO DE UM NOVO PROJETO GCP E OUTROS SERVIÇOS/APIS NECESSÁRIOS PARA O CENÁRIO DE TESTE ##
@@ -16,29 +19,33 @@ serem básicos para a configuração do ambiente na GCP.
     * Path = "./scripts"
 
     * 1-create-project.sh [mandatório] - Criará os primeiros recursos necessários para dar início ao projeto.
-         * 2-external-static-ip.sh [mandatório] - Definirá 3 IPs estáticos (externos) - usará nos LBs do GKE/Ingress Controller.
-            - 3 IPs = 3 Load Balancers = 1 para cada ambiente (dev/hlg/prd)
+    
+    * 2-external-static-ip.sh [mandatório] - Definirá 3 IPs estáticos (externos) - usará nos LBs do GKE/Ingress Controller.
+            
+        - 3 IPs = 3 Load Balancers = 1 para cada ambiente (dev/hlg/prd)
 
     * 3-buy-domain.sh [opcional] - Fará a compra de um domínio através da GCP e ativará o serviço Cloud DNS do Google.
-        - Defina um domínio para que seja verificado e estando disponível, basta seguir com o processo de configuração
+        
+        - Escolha um domínio para que seja verificado e estando disponível, basta seguir com o processo de configuração
             do Cloud DNS e posteriormente, a compra do domínio.
-            * Caso não queria adquirir um domínio (usando uma conta free da GCP), é possível utilizar o que já possuir.
+            * Caso não queria adquirir um domínio [usando_uma_conta_free_da_GCP], é possível utilizar o que já possuir.
     
     * 4-set-dns-records.sh [opcional] - Criará registros na zona de DNS do Google - Cloud DNS.
+
+        - Caso não tenha executado o script 3 e não queira ativar esse serviço, precisará configurar em uma zona já existente
+        [manualmente] o registro dos 3 IPs estáticos, para que possamos acessar a aplicação de teste no final por [hostname].
+            Seguirá a mesma lógica sobre a definição dentro dos arquivos/manifestos, quanto na zona de DNS.
+
         - Execute o script 3 vezes para definir as 3 entradas/registros necessárias.
             * entradas a serem definidas, por exemplo:
                 - flask-app-tembici-dev.[dominio]
                 - flask-app-tembici-hlg.[dominio]
                 - flask-app-tembici-prd.[dominio]
             
-            * Esses hostnames estão pré-definidos nos arquivos/manifestos do k8s:
-                - tembici-desafio-devops/k8s/deploy-dev.yaml -> definir o mesmo valor que for atribuído no DNS
-                - tembici-desafio-devops/k8s/deploy-hlg.yaml -> definir o mesmo valor que for atribuído no DNS
-                - tembici-desafio-devops/k8s/deploy-prd.yaml -> definir o mesmo valor que for atribuído no DNS
-
-        - Caso não tenha executado o script 3 e não queira ativar esse serviço, precisará configurar em uma zona já existente
-        [manualmente] o registro dos 3 IPs estáticos, para que possamos acessar a aplicação de teste no final, via hostname.
-            Seguirá a mesma lógica sobre a definição dentro dos arquivos/manifestos, quanto na zona de DNS.
+        - Esses hostnames estão pré-definidos nos arquivos/manifestos do k8s:
+            - tembici-desafio-devops/k8s/deploy-dev.yaml -> definir o mesmo valor que for atribuído no DNS
+            - tembici-desafio-devops/k8s/deploy-hlg.yaml -> definir o mesmo valor que for atribuído no DNS
+            - tembici-desafio-devops/k8s/deploy-prd.yaml -> definir o mesmo valor que for atribuído no DNS
 
         - A definição do registro será preciso para a etapa de geração de certificado SSL
              que está na parte do deploy/criação dos recursos do K8s (GKE).
@@ -52,7 +59,7 @@ serem básicos para a configuração do ambiente na GCP.
     ao término do script, sobre os arquivos que precisam estar com essa mesma informação para tudo funcionar
     corretamente.
     
-    * [BUCKET_NAME] = Por padrão, será o mesmo nome do projeto [NEW_PROJECT_ID], mas caso dê algum erro (nome de bucket já em uso),
+    * [BUCKET_NAME] = Por padrão, será o mesmo nome do projeto [NEW_PROJECT_ID]-tfstate, mas caso dê algum erro (nome de bucket já em uso),
     basta alterá-la dentro do script [1-create-project.sh].
 
 Ao término da execução do script, será gerado o arquivo [svc-$NEW_PROJECT_ID-private-key.json].
@@ -69,7 +76,8 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
 
 
 ### NOTA IMPORTANTE ###
- Os arquivos abaixo, todos [DEVEM] estar com o mesmo valor que foi definido na variável [$NEW_PROJECT_ID]
+ Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido na variável [$NEW_PROJECT_ID]:
+
  * tembici-desafio-devops/.github/workflows/1-gke.yaml ->> PROJECT_ID: [colocar_nome_do_projeto]
  * tembici-desafio-devops/.github/workflows/2-flasp-app.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
  * tembici-desafio-devops/k8s/deploy-dev.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
@@ -82,52 +90,46 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
 ## Esse comando pode ajudar na substituição dos valores antigos pelos novos ###
 find ** -type f -print0 | xargs -0 sed -i "" "s/OLD_VALUE/NEW_PROJECT_ID/g"
                                                 [valor_antigo]/[novo_nome_do_projeto]
+## VSCODE ##
+Ou utilizar o find VSCODE e realizar a substituição.
 ### FIM DA NOTA ###
 
-### GITHUB ACTIONS FILES ###
+## PROXIMA ETAPA ##
+- Criação da infra do GKE via Terraform:
+    * Será executado através do Github Actions
 
-Foram gerados alguns workflows (pipelines/esteiras) no path:
+### BREVE ENTENDIMENTO DOS ARQUIVOS DE WORKFLOW DO GITHUB ACTIONS ###
+
+Foram gerados 2 workflows (pipelines/esteiras) no path:
 
 -  ./github/workflows:
-    * 1-gke.yaml 
-    * 2-flask-app.yaml
+    * 1-gke.yaml ->> Responsável por executar o Terraform que criará o cluster GKE.
+    * 2-flask-app.yaml  ->> Responsável por realizar o fluxo de CI/CD do App.
 
+    [extra]
+- ./github/workflows:
+    * CODEOWNERS >> Esse arquivo define permissões no repositório, é indicado colocar ao menos o seu usuário nele.
+        [exemplo]: "* @leonardosete" >> exatamente conforme dentro das " ", o * significa permissão em todos os arquivos.            
 
-## OBSERVAÇÃO SOBRE OS WORKFLOWS ##
-* Ambos foram definidos para serem executados somente em cenários específicos:
+### EXECUTANDO GITHUB ACTIONS - WORKFLOWS ###
 
-## Será executado apenas de forma manual ou via pull request para o branch deploy-infra ##
-name: 1-CREATE-INFRA-GKE
-on:
-  pull_request:
-    branches: [deploy-infra]
-  workflow_dispatch:
+- Pela console do github [web], na aba de [Actions], e será preciso ativar os workflows clicando no botão
+    verde no centro da tela: [I_understand_my_workflows,_go_ahead_and_enable_them]. Após isso, haverá duas 
+        opções de workflows conforme descrito acima.
+    
+    * Execução do primeiro workflow:
 
-## Será executado apenas de forma manual ou via push para os branches = release, feature, hotfix, taska ##
-name: 2-DEPLOY-FLASK-APP
-on:
-  push:
-    branches: [release, feature, hotfix, task]
-  workflow_dispatch:
-
-
-* Essa abordagem pode ser modificada de acordo com a necessidade/entendimento de cada projeto.
-  Deixei dessa forma para "dificultar" um pouco no caso da criação/destruição da infra e 
-  no caso do deploy, baseado em minha experiência com os times que atuei.
-
-### EXECUTANDO GITHUB ACTIONS WORKFLOWS ###
-    Pela console do github (web), na aba de "Actions", haverá 2 opções de workflows conforme descrito acima:
-
-- 1-CREATE-INFRA-GKE ->> Responsável por executar o Terraform que criará o cluster GKE.
+- [1-CREATE-INFRA-GKE]
     * Para executar, basta selecionar o workflow e ir em [Run_workflow]
     * Deixar no branch master e clicar em [Run_workflow] na caixinha verde.
 
     - Existe duas opções de checkbox que servem para [destruir] o cluster, portanto use somente
-    se for essa a intenção.
+    se for essa a intenção. [recomendado] após finalizar os testes.
 
-- 2-DEPLOY-FLASK-APP ->> Responsável por realizar o fluxo de CI/CD do App.  
-    * Ao término da criação do cluster, ja será possível executar o segundo workflow [2-DEPLOY-FLASK-APP]
-        * Com isso, será possível realizar a criação dos recursos necessários para rodar o app:
+- Após a criação da infra do GKE (aguarde o terraform finalizar), e então é possível rodar o segundo workflow:
+
+- [2-DEPLOY-FLASK-APP]
+    * Com isso, será possível realizar a criação dos recursos necessários para rodar o app:
         - build
         - teste
         - publish
@@ -136,7 +138,31 @@ on:
                 - Load Balancers através do ingress controller [gce]
                 - criará os namespaces, deployments, services, hpa, ingress resources, managed certificate [criará_os_certificados_no_GCP]
     * deploy ->> aprovação:
-        - é necessário configurar no arquivo "CODEOWNERS" os usuários que podem aprovar ou negar o fluxo de deploy.
+        - é necessário configurar no arquivo [CODEOWNERS] os usuários que podem aprovar ou negar o fluxo de deploy.
+
+## OBSERVAÇÃO SOBRE OS WORKFLOWS ##
+* Ambos foram definidos para serem executados somente em cenários específicos:
+
+## Será executado de forma manual (Run workflow) ou via pull request para o branch deploy-infra ##
+* O branch [deploy-infra] não existe no projeto, mas caso deseje testar através do pull request, ele deverá ser criado.
+    * Não adotei essa abordagem, apesar de deixar disponível - usei mais a forma "manual" [Run_workflow].
+## WORKFLOW 1 ##
+name: 1-CREATE-INFRA-GKE
+on:
+  pull_request:
+    branches: [deploy-infra]
+  workflow_dispatch:
+
+## Será executado forma manual (Run workflow) ou via push para os branches = release, feature, hotfix, task ##
+## WORKFLOW 2 ##
+name: 2-DEPLOY-FLASK-APP
+on:
+  push:
+    branches: [release, feature, hotfix, task]
+  workflow_dispatch:
+
+## OBS ##
+* Essa abordagem pode ser modificada de acordo com a necessidade/entendimento de cada projeto.
 
 ###### NOTAS ####
 ## Construção do Cluster GKE ##

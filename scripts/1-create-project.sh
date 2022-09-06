@@ -122,20 +122,7 @@ echo "    * Clique em ${RED}[New Repository Secret]${NC} >> Crie um nome baseado
 echo "        - Defina: ${RED}[GCP_TERRAFORM_SVC_ACCOUNT]${NC} ## Esse é o valor configurado nos arquivos de workflows."
 echo "    * Em ${RED}[Value]${NC}, cole o conteúdo do arquivo ${GREEN}[svc-$NEW_PROJECT_ID-private-key.json]${NC} e clique em ${RED}[Add Secret]${NC}."
 echo " "
-echo " "
-echo "### ${YEL}MUITO IMPORTANTE${NC} ###"
-echo "### ${YEL}SALVE O NOME DO BUCKET NOVO: ${NC} ${GREEN}$BUCKET_NAME${NC} ###"
-echo "### ${YEL}IREMOS PRECISAR USAR NO ARQUIVO DO TERRAFORM${NC} ${GREEN}$TF_BACKEND_FILE${NC} ###"
-echo "### ${YEL}NO CAMINHO:${NC} ${GREEN}$TF_BACKEND_PATH/$TF_BACKEND_FILE${NC} ###"
-echo "### ${YEL}ALTERE O VALOR QUE ESTIVER NO ARQUIVO ATUALMENTE:${NC} bucket = ${RED}"valor_atual"${NC} ###"
-echo "### ${YEL}PELO NOME DO BUCKET QUE FOI CRIADO AGORA:${NC} bucket = ${GREEN}$BUCKET_NAME${NC} ###"
-echo " "
-echo "### ${YEL}TAMBÉM PRECISAREMOS MODIFICAR O VALOR ABAIXO NOS SEGUINTES ARQUIVOS:${NC} ###"
-echo "### ${GREEN}$NEW_PROJECT_ID${NC} ###"
-echo "### ${RED}PROJECT_ID:${NC} ${GREEN}tembici-desafio-devops/.github/workflows/*yaml${NC} ###"
-echo "### ${RED}project_id:${NC} ${GREEN}tembici-desafio-devops/terraform-gke/variables.tf${NC} ###"
-echo "### ${RED}image:${NC} ${GREEN}tembici-desafio-devops/k8s/deploy-*.yaml${NC} ###"
-echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
+echo "### ${RED} Continue a leitura do arquivo${NC} ${YEL}ANSWER.md${NC} ###"
 ## /LAST MESSAGE ##
 }
 
@@ -172,18 +159,6 @@ read -p "Do you want to create a new GCP Project and its dependencies? (y/N)" an
 case ${answer:0:1} in
     y|Y )
         create_projects_and_dependencies
-    ;;
-    * )
-        echo No
-        exit
-    ;;
-esac
-
-echo "### ${YEL}Em seguida, será necessário definir os IPs dos LBs que usaremos no Ingress - GKE${NC} ###"
-read -p "Deseja executar o script para criar os IPs dos LBs? (y/N)" answer
-case ${answer:0:1} in
-    y|Y )
-        sh ./2-external-static-ip.sh
     ;;
     * )
         echo No
