@@ -23,9 +23,6 @@ jobs:
       PROJECT_ID: "desafio-tembici-sre-1"
       REGION: "us-central1"
       CLUSTER_NAME: "tembici-cluster-prod"
-      # NS_ENV_DEV: "tembici-sre-apps-dev"
-      # NS_ENV_HLG: "tembici-sre-apps-hlg"
-      # NS_ENV_PRD: "tembici-sre-apps-prd"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       PRIVATE_KEY: "private_key.pem"
 
@@ -41,8 +38,6 @@ jobs:
     steps:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
           
       - name: 2-CREATE KEY.PEM FILE
         run: |
