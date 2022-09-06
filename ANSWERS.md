@@ -155,14 +155,7 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
         https://flask-app-tembici-prd.[dominio_definido]/api/ping
 
 ## FIM DO TESTE ##
-## EXTRAS ##
 
-## Listar os projetos criados ##
-gcloud projects list
-## Para deletar um projeto ##
-* Com esse comando, apagará todos os recursos criados, tanto pelo terraform quanto pelo gcloud + github actions.
-
-gcloud projects delete [nome_do_projeto]
 ## OBSERVAÇÃO SOBRE OS WORKFLOWS ##
 * Ambos foram definidos para serem executados somente em cenários específicos:
 
@@ -197,6 +190,7 @@ on:
 ## gcloud CLI ##
 https://cloud.google.com/sdk/gcloud
 
-
+## ManagedCertificate ##
+https://github.com/GoogleCloudPlatform/gke-managed-certs
 ## Github Actions ##
 https://trstringer.com/github-actions-manual-approval/
