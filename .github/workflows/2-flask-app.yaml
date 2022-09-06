@@ -70,9 +70,9 @@ jobs:
       max-parallel: 1
     runs-on: ubuntu-latest
     env:
-      NS_APP: "tembici-sre-apps-${{ matrix.app-env }}"
+      NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
       WORK_DIR: "./k8s"
-      APP_ENV: "${{ matrix.app-env }}"
+      APP_ENV: "${{ matrix.app_env }}"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
@@ -89,7 +89,7 @@ jobs:
         with:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS }}
-          issue-title: "Deploying flask-app in ${{ matrix.app-env }}"
+          issue-title: "Deploying flask-app in ${{ matrix.app_env }}"
           
       - name: 4-DEPLOY TO PRODUCTION
         run: echo deploying in ${{ env.NS_APP }}
@@ -115,6 +115,6 @@ jobs:
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 9-DEPLOY FLASK APP IN ${{ matrix.app-env }}
+      - name: 9-DEPLOY FLASK APP IN ${{ matrix.app_env }}
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
