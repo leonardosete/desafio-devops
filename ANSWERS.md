@@ -147,3 +147,7 @@ on:
 
 ## gcloud CLI ##
 https://cloud.google.com/sdk/gcloud
+
+
+## Github Actions ##
+https://trstringer.com/github-actions-manual-approval/

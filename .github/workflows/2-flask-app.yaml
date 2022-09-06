@@ -120,6 +120,7 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 8-NAMESPACE TO USE
+        continue-on-error: true
         run: |
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
