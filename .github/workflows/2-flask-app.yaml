@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env: ## Variables available in this workflow
-  PROJECT_ID: "desafio-tembici-sre-1"
+  PROJECT_ID: "desafio-leosete-sre"
   CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
@@ -88,6 +88,7 @@ jobs:
         with:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS_DEV }}
+          issue-title: "Deploying flask-app in DEV"
           
       - name: 4-DEPLOY TO DEVELOPMENT
         run: echo deploying in ${{ env.NS_APP }}
@@ -142,6 +143,7 @@ jobs:
         with:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS_HLG }}
+          issue-title: "Deploying flask-app in HLG"
           
       - name: 4-DEPLOY TO HOMOLOG
         run: echo deploying in ${{ env.NS_APP }}
@@ -193,7 +195,8 @@ jobs:
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS_HLG }}
+          approvers: ${{ env.APPROVERS_PRD }}
+          issue-title: "Deploying flask-app in PRD"
           
       - name: 4-DEPLOY TO PRODUCTION
         run: echo deploying in ${{ env.NS_APP }}

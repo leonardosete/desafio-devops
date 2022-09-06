@@ -72,8 +72,12 @@ Esse arquivo será utilizado na etapa seguinte:
         - Defina: [GCP_TERRAFORM_SVC_ACCOUNT] ## Esse é o valor configurado nos arquivos de workflows.
     * Em [Value], cole o conteúdo do arquivo [svc-$NEW_PROJECT_ID-private-key.json] e clique em [Add Secret].
 
-Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
+- Ativando Issues no repositório:
+    * No github, na home do projeto/repositório que foi realizado o fork, clique na opção [Settings] >> [Features] >> [Issues]
+        - Deixa marcado a opção dentro de [Issues] para que seja possível utilizar esse recurso na esteira, pois será preciso
+            para realizar a aprovação no fluxo de deploys.
 
+Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
 
 ### NOTA IMPORTANTE ###
  Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido na variável [$NEW_PROJECT_ID]:
@@ -109,7 +113,7 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
     [extra]
 - ./github/workflows:
     * CODEOWNERS >> Esse arquivo define permissões no repositório, é indicado colocar ao menos o seu usuário nele.
-        [exemplo]: "* @leonardosete" >> exatamente conforme dentro das " ", o * significa permissão em todos os arquivos.            
+        [exemplo]: "* @leonardosete" >> exatamente conforme dentro das " ", o * significa permissão em todos os arquivos.       
 
 ### EXECUTANDO GITHUB ACTIONS - WORKFLOWS ###
 
