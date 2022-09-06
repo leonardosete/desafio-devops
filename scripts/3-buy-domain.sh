@@ -28,9 +28,9 @@ PRICE=`gcloud domains registrations search-domains $DOMAIN_NAME |head -n2 |awk '
 
     if [[ $AVAILABILITY == "availability: AVAILABLE" ]]
     then
-        echo "### The ${GREEN}$DOMAIN_NAME${NC} is ${GREEN}AVAILABLE${NC} for ${YEL}$PRICE USD${NC} ###"
+        echo "### ${GREEN}$DOMAIN_NAME${NC} is ${GREEN}AVAILABLE${NC} for ${YEL}$PRICE USD${NC} ###"
     else
-        echo "### The ${RED}$DOMAIN_NAME${NC} is ${RED}UNAVAILABLE${NC} ###"
+        echo "### ${RED}$DOMAIN_NAME${NC} is ${RED}UNAVAILABLE${NC} ###"
         echo " "
         echo "### Choose another ${RED}DOMAIN NAME${NC} and run this scripts again ###"
         exit
@@ -54,7 +54,7 @@ echo "### ${YEL}2-Create a Managed Public Zone${NC} ###"
 echo " "
     gcloud dns managed-zones create $CLOUD_DNS_ZONE_NAME \
         --description="$DESCRIPTION" \
-        --dns-name=$DOMAIN_NAME
+        --dns-name="$DOMAIN_NAME"
 }
 
 buy_domain_name(){

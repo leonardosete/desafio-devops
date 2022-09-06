@@ -85,7 +85,9 @@ echo "### ${YEL}4-To execute the transaction${NC} ###"
 ## SCRIPT 1 ##
 
 echo "### ${YEL}You can set your apps DNS Records now, but remember to change values in below files too:${NC} ###"
-echo "### Change the ${GREEN}spec.tls.hosts${NC} in ${GREEN}tembici-desafio-devops/k8s/flask-app-*.yaml${NC} ###"
+echo "### Change the ${GREEN}spec.domains${NC} value in ${GREEN}tembici-desafio-devops/k8s/deploy-*.yaml${NC} ###"
+echo " "
+echo "### Change the ${GREEN}spec.rules.host${NC} value in ${GREEN}tembici-desafio-devops/k8s/deploy-*.yaml${NC} ###"
 echo " "
 echo "### ${RED}2-Create a new DNS Record?${NC} ###"   
 read -p "### Are you sure about this creation? (y/N)" answer

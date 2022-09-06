@@ -32,10 +32,12 @@ echo "### ${YEL}2-Listing your new IP ADDRESS${NC} ###"
     gcloud compute addresses list
 
 echo " "
-echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo a mesma annotation: kubernetes.io/ingress.global-static-ip-name: ${RED}$ADDRESS_NAME_DEV${NC} ###"
-echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo a mesma annotation: kubernetes.io/ingress.global-static-ip-name: ${RED}$ADDRESS_NAME_HLG${NC} ###"
-echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo a mesma annotation: kubernetes.io/ingress.global-static-ip-name: ${RED}$ADDRESS_NAME_PRD${NC} ###"
-echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}../k8s/devops-*.yaml${NC} ###"
+echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: kubernetes.io/ingress.global-static-ip-name: ${RED}$ADDRESS_NAME_DEV${NC} ###"
+echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: kubernetes.io/ingress.global-static-ip-name: ${RED}$ADDRESS_NAME_HLG${NC} ###"
+echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: kubernetes.io/ingress.global-static-ip-name: ${RED}$ADDRESS_NAME_PRD${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}tembici-desafio-devops/k8s/deploy-dev.yaml${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${YEL}tembici-desafio-devops/k8s/deploy-hlg.yaml${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${RED}tembici-desafio-devops/k8s/deploy-prd.yaml${NC} ###"
 
 }
 ### FUNCTIONS/ ###
