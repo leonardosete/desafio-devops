@@ -19,20 +19,51 @@ Poderia ter adotado uma abordagem maior com terraform, mas acabei realizando um 
     * Path = "./scripts"
 
     * 1-create-project.sh [mandatório] - Criará os primeiros recursos necessários para dar início ao projeto.
-    
-    * 2-external-static-ip.sh [mandatório] - Definirá 3 IPs estáticos (externos) - usará nos LBs do GKE/Ingress Controller.
-            
-        - 3 IPs = 3 Load Balancers = 1 para cada ambiente (dev/hlg/prd)
+## ORIENTAÇÃO DE EXECUÇÃO DOS SCRIPTS ##
 
-    * 3-buy-domain.sh [opcional] - Fará a compra de um domínio através da GCP e ativará o serviço Cloud DNS do Google.
+[1-create-project.sh]
+
+- Variáveis importantes:
+    * [NEW_PROJECT_ID] = Essa variável já está definida, mas se desejar alterar, é importante ler as orientações
+    ao término do script, sobre os arquivos que precisam estar com essa mesma informação para tudo funcionar
+    corretamente.
+    
+    * [BUCKET_NAME] = Por padrão, será o mesmo nome do projeto [NEW_PROJECT_ID]-tfstate, mas caso dê algum erro (nome de bucket já em uso),
+    basta alterá-la dentro do script [1-create-project.sh].
+
+Ao término da execução do script, será gerado o arquivo [svc-$NEW_PROJECT_ID-private-key.json].
+
+Esse arquivo será utilizado na etapa seguinte:
+- Configurando Secrets no Repositório:
+    * No github, na home do projeto/repositório que foi realizado o fork, clique na opção [Settings] que fica ao lado de [Insights];
+    * Dentro das opções na coluna [General], navegue na sessão até chegar na opção "Actions": [Security] >> [Secrets] >> [Actions];
+    * Clique em [New Repository Secret] >> Crie um nome baseado na finalidade dessa secret:
+        - Defina: [GCP_TERRAFORM_SVC_ACCOUNT] ## Esse é o valor configurado nos arquivos de workflows.
+    * Em [Value], cole o conteúdo do arquivo [svc-$NEW_PROJECT_ID-private-key.json] e clique em [Add Secret].
+
+- Ativando Issues no repositório:
+    * No github, na home do projeto/repositório que foi realizado o fork, clique na opção [Settings] >> [Features] >> [Issues]
+        - Deixa marcado a opção dentro de [Issues] para que seja possível utilizar esse recurso na esteira, pois será preciso
+            para realizar a aprovação no fluxo de deploys.
+
+Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
+
+## SCRIPT 2 ##
+  * 2-external-static-ip.sh [mandatório] - Definirá 3 IPs estáticos (externos) - usará nos LBs do GKE/Ingress Controller.
+            
+   - 3 IPs = 3 Load Balancers = 1 para cada ambiente (dev/hlg/prd)
+
+## SCRIPT 3 ##
+  * 3-buy-domain.sh [opcional] - Fará a compra de um domínio através da GCP e ativará o serviço Cloud DNS do Google.
         
-        - Escolha um domínio para que seja verificado e estando disponível, basta seguir com o processo de configuração
+    - Escolha um domínio para que seja verificado e estando disponível, basta seguir com o processo de configuração
             do Cloud DNS e posteriormente, a compra do domínio.
             * Caso não queria adquirir um domínio [usando_uma_conta_free_da_GCP], é possível utilizar o que já possuir.
     
-    * 4-set-dns-records.sh [opcional] - Criará registros na zona de DNS do Google - Cloud DNS.
+## SCRIPT 4 ##
+   * 4-set-dns-records.sh [opcional] - Criará registros na zona de DNS do Google - Cloud DNS.
 
-        - Caso não tenha executado o script 3 e não queira ativar esse serviço, precisará configurar em uma zona já existente
+       - Caso não tenha executado o script 3 e não queira ativar esse serviço, precisará configurar em uma zona já existente
         [manualmente] o registro dos 3 IPs estáticos, para que possamos acessar a aplicação de teste no final por [hostname].
             Seguirá a mesma lógica sobre a definição dentro dos arquivos/manifestos, quanto na zona de DNS.
 
@@ -70,35 +101,6 @@ find ** -type f -print0 | xargs -0 sed -i "" "s/OLD_VALUE/NEW_PROJECT_ID/g"
 ## VSCODE ##
 Ou utilizar o find VSCODE e realizar a substituição.
 ### FIM DA NOTA ###
-## ORIENTAÇÃO PÓS USO DOS SCRIPTS ##
-
-[1-create-project.sh]
-
-- Variáveis importantes:
-    * [NEW_PROJECT_ID] = Essa variável já está definida, mas se desejar alterar, é importante ler as orientações
-    ao término do script, sobre os arquivos que precisam estar com essa mesma informação para tudo funcionar
-    corretamente.
-    
-    * [BUCKET_NAME] = Por padrão, será o mesmo nome do projeto [NEW_PROJECT_ID]-tfstate, mas caso dê algum erro (nome de bucket já em uso),
-    basta alterá-la dentro do script [1-create-project.sh].
-
-Ao término da execução do script, será gerado o arquivo [svc-$NEW_PROJECT_ID-private-key.json].
-
-Esse arquivo será utilizado na etapa seguinte:
-- Configurando Secrets no Repositório:
-    * No github, na home do projeto/repositório que foi realizado o fork, clique na opção [Settings] que fica ao lado de [Insights];
-    * Dentro das opções na coluna [General], navegue na sessão até chegar na opção "Actions": [Security] >> [Secrets] >> [Actions];
-    * Clique em [New Repository Secret] >> Crie um nome baseado na finalidade dessa secret:
-        - Defina: [GCP_TERRAFORM_SVC_ACCOUNT] ## Esse é o valor configurado nos arquivos de workflows.
-    * Em [Value], cole o conteúdo do arquivo [svc-$NEW_PROJECT_ID-private-key.json] e clique em [Add Secret].
-
-- Ativando Issues no repositório:
-    * No github, na home do projeto/repositório que foi realizado o fork, clique na opção [Settings] >> [Features] >> [Issues]
-        - Deixa marcado a opção dentro de [Issues] para que seja possível utilizar esse recurso na esteira, pois será preciso
-            para realizar a aprovação no fluxo de deploys.
-
-Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
-
 ## PROXIMA ETAPA ##
 - Criação da infra do GKE via Terraform:
     * Será executado através do Github Actions
@@ -145,6 +147,22 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
     * deploy ->> aprovação:
         - é necessário configurar no arquivo [CODEOWNERS] os usuários que podem aprovar ou negar o fluxo de deploy.
 
+    * Aguardar alguns minutos para que o ingress-controller (Load Balancers) estejam totalmente configurados e
+        assim poder testar o acesso ao app nos ambientes de dev/hlg e prd:
+
+        https://flask-app-tembici-dev.[dominio_definido]/api/ping
+        https://flask-app-tembici-hlg.[dominio_definido]/api/ping
+        https://flask-app-tembici-prd.[dominio_definido]/api/ping
+
+## FIM DO TESTE ##
+## EXTRAS ##
+
+## Listar os projetos criados ##
+gcloud projects list
+## Para deletar um projeto ##
+* Com esse comando, apagará todos os recursos criados, tanto pelo terraform quanto pelo gcloud + github actions.
+
+gcloud projects delete [nome_do_projeto]
 ## OBSERVAÇÃO SOBRE OS WORKFLOWS ##
 * Ambos foram definidos para serem executados somente em cenários específicos:
 
