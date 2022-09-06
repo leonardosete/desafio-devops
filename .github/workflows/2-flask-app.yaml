@@ -64,7 +64,9 @@ jobs:
   deploy_apps:
     strategy:
       matrix:
-        app_env: [dev, hlg, prd] ## vai rodar 3 x por conta do array
+        app_env: [dev, hlg, prd]
+      fail-fast: true ## se uma execução do job falhar, vai parar tudo
+      max-parallel: 1
     runs-on: ubuntu-latest
     env:
       NS_APP: "tembici-sre-apps-${{ matrix.app-env }}"
