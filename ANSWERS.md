@@ -50,6 +50,26 @@ Poderia ter adotado uma abordagem maior com terraform, mas acabei realizando um 
         - A definição do registro será preciso para a etapa de geração de certificado SSL
              que está na parte do deploy/criação dos recursos do K8s (GKE).
 
+### NOTA IMPORTANTE ###
+ Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido na variável [$NEW_PROJECT_ID]:
+
+ * tembici-desafio-devops/.github/workflows/1-gke.yaml ->> PROJECT_ID: [colocar_nome_do_projeto]
+ * tembici-desafio-devops/.github/workflows/2-flasp-app.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
+ * tembici-desafio-devops/k8s/deploy-dev.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
+ * tembici-desafio-devops/k8s/deploy-hlg.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
+ * tembici-desafio-devops/k8s/deploy-prd.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
+ * tembici-desafio-devops/terraform-gke/provider.tf  ->> bucket = "[valor_antigo]" == bucket = "[colocar_nome_do_projeto]"
+ * tembici-desafio-devops/terraform-gke/variables.tf ->> default = "[valor_antigo]" == default = "[colocar_nome_do_projeto]"
+    
+    - No workflow de deploy, durante a criação dos recursos do kubernetes será criado 3 certificados via [annotations].
+
+## DICA ##
+## Esse comando pode ajudar na substituição dos valores antigos pelos novos ###
+find ** -type f -print0 | xargs -0 sed -i "" "s/OLD_VALUE/NEW_PROJECT_ID/g"
+                                                [valor_antigo]/[novo_nome_do_projeto]
+## VSCODE ##
+Ou utilizar o find VSCODE e realizar a substituição.
+### FIM DA NOTA ###
 ## ORIENTAÇÃO PÓS USO DOS SCRIPTS ##
 
 [1-create-project.sh]
@@ -78,25 +98,6 @@ Esse arquivo será utilizado na etapa seguinte:
             para realizar a aprovação no fluxo de deploys.
 
 Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
-
-### NOTA IMPORTANTE ###
- Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido na variável [$NEW_PROJECT_ID]:
-
- * tembici-desafio-devops/.github/workflows/1-gke.yaml ->> PROJECT_ID: [colocar_nome_do_projeto]
- * tembici-desafio-devops/.github/workflows/2-flasp-app.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
- * tembici-desafio-devops/k8s/deploy-dev.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
- * tembici-desafio-devops/k8s/deploy-hlg.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
- * tembici-desafio-devops/k8s/deploy-prd.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
- * tembici-desafio-devops/terraform-gke/provider.tf  ->> bucket = "[valor_antigo]" == bucket = "[colocar_nome_do_projeto]"
- * tembici-desafio-devops/terraform-gke/variables.tf ->> default = "[valor_antigo]" == default = "[colocar_nome_do_projeto]"
-
-## DICA ##
-## Esse comando pode ajudar na substituição dos valores antigos pelos novos ###
-find ** -type f -print0 | xargs -0 sed -i "" "s/OLD_VALUE/NEW_PROJECT_ID/g"
-                                                [valor_antigo]/[novo_nome_do_projeto]
-## VSCODE ##
-Ou utilizar o find VSCODE e realizar a substituição.
-### FIM DA NOTA ###
 
 ## PROXIMA ETAPA ##
 - Criação da infra do GKE via Terraform:

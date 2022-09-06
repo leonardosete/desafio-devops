@@ -52,7 +52,7 @@ spec:
       - env:
         - name: TZ
           value: America/Sao_Paulo
-        image: us-central1-docker.pkg.dev/desafio-tembici-sre-1/sre-docker-registry/flask-app:latest
+        image: us-central1-docker.pkg.dev/fork-project-1/sre-docker-registry/flask-app:latest
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -108,11 +108,11 @@ metadata:
   labels:
     app: flask-app
     env: prd
-  name: prd-leosete7-com
+  name: prd-certs
   namespace: tembici-sre-apps-prd
 spec:
   domains:
-  - flask-app-tembici-prd.desafio-tembici-sre-1.com
+  - flask-app-tembici-prd.fork-project-1.com
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -121,7 +121,7 @@ metadata:
     ingressclass.kubernetes.io/is-default-class: "true"
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici-prd
-    networking.gke.io/managed-certificates: prd-leosete7-com
+    networking.gke.io/managed-certificates: prd-certs
   labels:
     app: flask-app
     env: prd
@@ -129,7 +129,7 @@ metadata:
   namespace: tembici-sre-apps-prd
 spec:
   rules:
-  - host: flask-app-tembici-prd.desafio-tembici-sre-1.com
+  - host: flask-app-tembici-prd.fork-project-1.com
     http:
       paths:
       - backend:
