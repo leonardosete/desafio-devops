@@ -23,8 +23,6 @@ env: ## Variables available in this workflow
 jobs:
   build_app:
     runs-on: ubuntu-latest
-    # env:
-    #   APP_ENV: "dev"
     steps:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
@@ -46,56 +44,35 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: Login to Artifact Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.REGION }}-docker.pkg.dev
-          username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.access_token }}
+      - name: 5-BUILD DOCKER IMAGE
+        if: ${{ inputs.build-push-image == true }}
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
-      - name: 5-GET TAG
-        id: get-tag
-        run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
-
-      - id: docker-push-tagged
-        name: 6-TAG DOCKER IMAGE AND PUSH TO GOOGLE ARTIFACT REGISTRY
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: |
-            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.get-tag.outputs.short_ref }}
-            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-
-
-      # - name: 5-BUILD DOCKER IMAGE
-      #   if: ${{ inputs.build-push-image == true }}
-      #   run: docker build -t ${{ env.IMAGE_NAME }}:latest .
-
-      # - name: 6-AUTOMATIC TAGGING OF RELEASES
-      #   if: ${{ inputs.build-push-image == true }}
-      #   id: increment-git-tag
-      #   run: |
-      #     bash ./scripts/git_update.sh -v major
+      - name: 6-AUTOMATIC TAGGING OF RELEASES
+        if: ${{ inputs.build-push-image == true }}
+        id: increment-git-tag
+        run: |
+          bash ./scripts/git_update.sh -v major
 
       - name: 7-TESTE FLASK APP
         if: ${{ inputs.build-push-image == true }}
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
-      # - name: 8-CONFIGURE DOCKER CLIENT
-      #   if: ${{ inputs.build-push-image == true }}
-      #   run: |
-      #     gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+      - name: 8-CONFIGURE DOCKER CLIENT
+        if: ${{ inputs.build-push-image == true }}
+        run: |
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      # - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-      #   if: ${{ inputs.build-push-image == true }}
-      #   env:
-      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      #   run: |
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+        if: ${{ inputs.build-push-image == true }}
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_app_dev:
     runs-on: ubuntu-latest
@@ -147,10 +124,7 @@ jobs:
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      # - name: 9-SETUP KUSTOMIZE
-      #   uses: imranismail/setup-kustomize@v1
-
-      - name: 10-DEPLOY FLASK APP IN DEV
+      - name: 9-DEPLOY FLASK APP IN DEV
         if: ${{ inputs.build-push-image == true }}
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
@@ -172,7 +146,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
+          
       - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
         run: echo Waiting approval to deploy in ${{ env.NS_APP }}
 
@@ -205,10 +179,7 @@ jobs:
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      # - name: 9-SETUP KUSTOMIZE
-      #   uses: imranismail/setup-kustomize@v1
-
-      - name: 10-DEPLOY FLASK APP IN HLG
+      - name: 9-DEPLOY FLASK APP IN HLG
         if: ${{ inputs.build-push-image == true }}
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
@@ -261,10 +232,7 @@ jobs:
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      # - name: 9-SETUP KUSTOMIZE
-      #   uses: imranismail/setup-kustomize@v1
-
-      - name: 10-DEPLOY FLASK APP IN HLG
+      - name: 9-DEPLOY FLASK APP IN HLG
         if: ${{ inputs.build-push-image == true }}
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
