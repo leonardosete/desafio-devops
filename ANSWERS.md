@@ -126,11 +126,17 @@ on:
     se for essa a intenção.
 
 - 2-DEPLOY-FLASK-APP ->> Responsável por realizar o fluxo de CI/CD do App.  
-
-* Execute o primeiro workflow para que seja criada a infra/cluster do GKE.
     * Ao término da criação do cluster, ja será possível executar o segundo workflow [2-DEPLOY-FLASK-APP]
-        * Com isso, será
-
+        * Com isso, será possível realizar a criação dos recursos necessários para rodar o app:
+        - build
+        - teste
+        - publish
+        - deploy (existe a necessidade de aprovação no fluxo - através de issue aberta automaticamente)
+            * criará os recursos no GKE: 
+                - Load Balancers através do ingress controller [gce]
+                - criará os namespaces, deployments, services, hpa, ingress resources, managed certificate [criará_os_certificados_no_GCP]
+    * deploy ->> aprovação:
+        - é necessário configurar no arquivo "CODEOWNERS" os usuários que podem aprovar ou negar o fluxo de deploy.
 
 ###### NOTAS ####
 ## Construção do Cluster GKE ##
