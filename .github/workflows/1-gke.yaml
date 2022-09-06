@@ -45,7 +45,7 @@ jobs:
           openssl genrsa 4096 > $PRIVATE_KEY
 
       - id: auth
-        name: 3-AUTHENTICATE TO GOOGLE CLOUD
+        name: 3-AUTHENTICATE GOOGLE CLOUD
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
