@@ -1,1 +1,0 @@
-terraform-svc-account@leosete-devops-4.iam.gserviceaccount.com

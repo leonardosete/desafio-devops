@@ -14,12 +14,14 @@ NC='\033[0m' # No Color
 create_projects_and_dependencies(){
 
 ## /VARS ##
-LIST_ROLES=`cat ./roles-svc-account.md` ## A list of the needed roles to be added to the new Service Account
-SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be created to run Terraform
-SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description
-TF_BACKEND_PATH="tembici-desafio-devops/terraform-gke/" ## Terraform file's path
-TF_BACKEND_FILE="provider.tf" ## Terraform provider file
-
+NEW_PROJECT_ID="desafio-tembici-sre-1" ## The new PROJECT ID to be created.
+SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be created to run Terraform.
+SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description.
+LIST_ROLES=`cat ./roles-svc-account.md` ## Roles for the new Service Account.
+TF_BACKEND_PATH="tembici-desafio-devops/terraform-gke/" ## Terraform file's path.
+TF_BACKEND_FILE="provider.tf" ## Terraform provider file.
+BILLING_ID=`gcloud alpha billing accounts list |tail -n1 |awk '{print $1}'` ## The billing ID to set in the new project.
+BUCKET_NAME="$NEW_PROJECT_ID" ## Bucket which will store the tfstate file.
 ## VARS/ ##
 
 ## /AUTH AND CONFIG GCLOUD ##
@@ -34,22 +36,12 @@ echo " "
 ## AUTH AND CONFIG GCLOUD/ ##
 
 ## /CREATING NEW PROJECT ##
-echo "### ${YEL}Checking Project availability${NC} ###"
-echo "### The new ${YEL}PROJECT_ID to create${NC} must be different than: ###"
 echo " "
-    gcloud projects list
-echo " "
-echo " "
-echo "### Please, define the variable below ###"
-echo " "
-echo "### The ${YEL}New Project-Name:${NC} ###"
-read -p "The NEW_PROJECT_ID to be created is: " NEW_PROJECT_ID
-echo " "
+echo "### 1-The ${YEL}New Project-Name is: ${GREEN}$NEW_PROJECT_ID${NC} ${NC}###"
 
 ## /DINAMIC VARS ##
 KEY_FILE="./svc-$NEW_PROJECT_ID-private-key.json" ## The key/json file to be created to the Service Account
 echo "$SERVICE_ACCOUNT_ID@$NEW_PROJECT_ID.iam.gserviceaccount.com" > ./service_account.md
-BUCKET_NAME="tembici-leosete"
 ## DINAMIC VARS/ ##
 
 echo " "
@@ -100,18 +92,13 @@ echo " "
 ## /CREATING BUCKET AND ACTIVATE PROJECT BILLING ##
 echo " "
 echo "### ${YEL}7-Activate Billing Project Account${NC} ###"
-
-## /VARS ##
-BILLING_ID=`gcloud alpha billing accounts list |tail -n1 |awk '{print $1}'`
-## VARS/ ##    
-    
+echo " "
     gcloud alpha billing projects link "${NEW_PROJECT_ID}" --billing-account "${BILLING_ID}"
 echo "### ${YEL}8-Activate Requested APIs${NC} ###"
-    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com 
+    gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com artifactregistry.googleapis.com dns.googleapis.com domains.googleapis.com
 echo " "
 
-echo "### ${YEL}9-Create TFSTATE and SSL CERTIFICATES Buckets:${NC} ###"
-echo "### ${YEL}SSL CERTIFICATES - Lets' Encrypt:${NC} ###"
+echo "### ${YEL}9-Create TFSTATE Bucket:${NC} ###"
 echo " "
     gcloud alpha storage buckets create gs://$BUCKET_NAME-tfstate --project="${NEW_PROJECT_ID}" --default-storage-class=standard --location=us
     
@@ -136,18 +123,18 @@ echo "        - Defina: ${RED}[GCP_TERRAFORM_SVC_ACCOUNT]${NC} ## Esse é o valo
 echo "    * Em ${RED}[Value]${NC}, cole o conteúdo do arquivo ${GREEN}[svc-$NEW_PROJECT_ID-private-key.json]${NC} e clique em ${RED}[Add Secret]${NC}."
 echo " "
 echo " "
-echo "### ${YEL}VERY IMPORTANT${NC} ###"
-echo "### ${YEL}SAVE THIS BUCKET NAME: ${NC} ${GREEN}$BUCKET_NAME${NC} ###"
-echo "### ${YEL}WE GONNA NEED IN TERRAFORM FILE${NC} ${GREEN}$TF_BACKEND_FILE${NC} ###"
-echo "### ${YEL}LOCATE IN:${NC} ${GREEN}$TF_BACKEND_PATH/$TF_BACKEND_FILE${NC} ###"
-echo "### ${YEL}Change the current value:${NC} bucket = ${RED}CURRENT_VALUE${NC} ###"
-echo "### ${YEL}For the new bucket name:${NC} bucket = ${GREEN}$BUCKET_NAME${NC} ###"
+echo "### ${YEL}MUITO IMPORTANTE${NC} ###"
+echo "### ${YEL}SALVE O NOME DO BUCKET NOVO: ${NC} ${GREEN}$BUCKET_NAME${NC} ###"
+echo "### ${YEL}IREMOS PRECISAR USAR NO ARQUIVO DO TERRAFORM${NC} ${GREEN}$TF_BACKEND_FILE${NC} ###"
+echo "### ${YEL}NO CAMINHO:${NC} ${GREEN}$TF_BACKEND_PATH/$TF_BACKEND_FILE${NC} ###"
+echo "### ${YEL}ALTERE O VALOR QUE ESTIVER NO ARQUIVO ATUALMENTE:${NC} bucket = ${RED}"valor_atual"${NC} ###"
+echo "### ${YEL}PELO NOME DO BUCKET QUE FOI CRIADO AGORA:${NC} bucket = ${GREEN}$BUCKET_NAME${NC} ###"
 echo " "
-echo "### ${YEL}Also, we need to change the follow value:${NC} ###"
+echo "### ${YEL}TAMBÉM PRECISAREMOS MODIFICAR O VALOR ABAIXO NOS SEGUINTES ARQUIVOS:${NC} ###"
 echo "### ${GREEN}$NEW_PROJECT_ID${NC} ###"
-echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/.github/workflows/*yaml${NC} ###"
-echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/terraform-gke/*.tf${NC} ###"
-echo "### ${RED}files' path:${NC} ${GREEN}tembici-desafio-devops/k8s/flask-app.yaml${NC} ###"
+echo "### ${RED}PROJECT_ID:${NC} ${GREEN}tembici-desafio-devops/.github/workflows/*yaml${NC} ###"
+echo "### ${RED}project_id:${NC} ${GREEN}tembici-desafio-devops/terraform-gke/variables.tf${NC} ###"
+echo "### ${RED}image:${NC} ${GREEN}tembici-desafio-devops/k8s/deploy-*.yaml${NC} ###"
 echo "### ${GREEN}END-OF-SCRIPT${NC} ###"
 ## /LAST MESSAGE ##
 }
@@ -185,6 +172,18 @@ read -p "Do you want to create a new GCP Project and its dependencies? (y/N)" an
 case ${answer:0:1} in
     y|Y )
         create_projects_and_dependencies
+    ;;
+    * )
+        echo No
+        exit
+    ;;
+esac
+
+echo "### ${YEL}Em seguida, será necessário definir os IPs dos LBs que usaremos no Ingress - GKE${NC} ###"
+read -p "Deseja executar o script para criar os IPs dos LBs? (y/N)" answer
+case ${answer:0:1} in
+    y|Y )
+        sh ./2-external-static-ip.sh
     ;;
     * )
         echo No

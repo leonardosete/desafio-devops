@@ -52,7 +52,7 @@ spec:
       - env:
         - name: TZ
           value: America/Sao_Paulo
-        image: us-central1-docker.pkg.dev/leosete-devops-4/sre-docker-registry/flask-app:latest
+        image: us-central1-docker.pkg.dev/desafio-tembici-sre-1/sre-docker-registry/flask-app:latest
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -120,7 +120,7 @@ metadata:
   annotations:
     ingressclass.kubernetes.io/is-default-class: "true"
     kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici
+    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici-dev
     networking.gke.io/managed-certificates: dev-leosete7-com
   labels:
     app: flask-app

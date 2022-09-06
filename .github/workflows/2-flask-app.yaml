@@ -11,7 +11,7 @@ on:
         type: boolean
 
 env: ## Variables available in this workflow
-  PROJECT_ID: "leosete-devops-4"
+  PROJECT_ID: "desafio-tembici-sre-1"
   CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"

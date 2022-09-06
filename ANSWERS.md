@@ -14,23 +14,20 @@ serem básicos para a configuração do ambiente na GCP.
 ## CRIAÇÃO DE UM NOVO PROJETO GCP E OUTROS SERVIÇOS/APIS NECESSÁRIOS PARA O CENÁRIO DE TESTE ##
 - Após realizado o [fork] do repositório no GitHub, execute em sua máquina o bash script a seguir:
     * [path:] "./scripts"
-    * 1-create-project.sh [mandatório]
-    * 2-buy-domain.sh [extras]
-    * 3-external-static-ip.sh [extras]
-    * 4-set-dns-records.sh [extras]
-    * 5-ssl-certs.sh [extras]
+    * 1-create-project.sh [mandatório] - Criará os primeiros recursos necessários para dar início ao projeto.
+    * 2-external-static-ip.sh [mandatório] - Definir IPs estáticos (externo) - usará nos LBs do GKE.
+    * 3-buy-domain.sh [extras] - Se já possuir um domínio e puder utilizar, pode pular esse script.
+    * 4-set-dns-records.sh [extras] - Registar no DNS a aplicação para acessar via hostname ao invés de IP.
 
-## ORIENTAÇÃO DE USO DO SCRIPT - 1-create-project.sh ##
+## ORIENTAÇÃO DE USO DOs SCRIPTS ##
 
-Será necessário interagir com o script [1-create-project.sh] em alguns momentos:
-- Confirmação da instalação do gcloud CLI:
-    * Necessário digitar [y/Y] para que o script siga.
-    * Confirmar que deseja prosseguir com a configuração do novo projeto e suas dependências.
+O script [1-create-project.sh] é interativo.
 
 - Com isso começará a instalação dos componentes básicos do gcloud CLI.
-
-- Fornecer o valor de 1 variável:
-    * [NEW_PROJECT_ID] = Nome do novo projeto que será criado.
+- Variável importante:
+    * [NEW_PROJECT_ID] = Essa variável já está definida, mas se desejar alterar, é importante ler as orientações
+    ao término do script, sobre os arquivos que precisam estar com essa mesma informação para tudo funcionar
+    corretamente.
 
 Os valores definidos nas variáveis pré-definidas, não necessitam de alteração - mas é possível alterá-los
 caso deseje.
@@ -45,7 +42,7 @@ Esse arquivo será utilizado na etapa seguinte:
         - Defina: [GCP_TERRAFORM_SVC_ACCOUNT] ## Esse é o valor configurado nos arquivos de workflows.
     * Em [Value], cole o conteúdo do arquivo [svc-$NEW_PROJECT_ID-private-key.json] e clique em [Add Secret].
 
-Feito isso, agora seu projeto/repo terá o acesso necessário para executar os workflows do GitHub Actions.
+Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
 
  ### CONTINUAR A PARTE DOS OUTROS SCRIPTS ###
 
@@ -55,19 +52,11 @@ Foram gerados alguns workflows (pipelines/esteiras) no path:
 
 -  ./github/workflows:
     * 1-gke.yaml ## Criar/deletar a infraestrutura (cluster GKE) via Terraform.
-    * 2-k8s-namespace.yaml ## Criar namespaces dentro do cluster GKE.
-    * 3-flask-app.yaml ## Realizar o build/teste e deploy da aplicação flask (K8s) no namespace definido acima.
-    * 4-flask-app-delete.yaml ## Deletar todos os manifestos/recursos (K8s) da aplicação.
-
-
+    * 2-flask-app.yaml ## Realizar o fluxo de CI/CD da aplicação flask no GKE.
 ## Construção do Cluster GKE ##
 - Utilizado o Terraform para provisionar a infraestrutura necessária para cenário de teste.
     * Documentações de apoio/referência: 
         https://learnk8s.io/terraform-gke
         https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/tree/master/modules/private-cluster
 
-
-
 ###### NOTAS ####
-## Google Manager Certs SSL ##
-https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
