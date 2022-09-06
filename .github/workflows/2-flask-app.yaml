@@ -10,9 +10,7 @@ env: ## Variables available in this workflow
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: "flask-app"
-  APPROVERS_DEV: "7700472077"
-  APPROVERS_HLG: "7700472077"
-  APPROVERS_PRD: "7700472077"
+  APPROVERS: "7700472077"
 
 jobs:
   build_app:
@@ -63,123 +61,15 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-  deploy_app_dev:
+  deploy_apps:
+    strategy:
+      matrix:
+        app_env: [dev, hlg, prd] ## vai rodar 3 x por conta do array
     runs-on: ubuntu-latest
-    needs: build_app
     env:
-      NS_APP: "tembici-sre-apps-dev"
+      NS_APP: "tembici-sre-apps-${{ matrix.app-env }}"
       WORK_DIR: "./k8s"
-      APP_ENV: "dev"
-    defaults:
-      run:
-        working-directory: ${{ env.WORK_DIR }}
-
-    steps:
-      - name: 1-CHECKOUT ACTIONS
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
-        run: echo Waiting approval to deploy in ${{ env.NS_APP }}
-
-      - name: 3-SETUP MANUAL APPROVAL
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS_DEV }}
-          issue-title: "Deploying flask-app in DEV"
-          
-      - name: 4-DEPLOY TO DEVELOPMENT
-        run: echo deploying in ${{ env.NS_APP }}
-
-      - id: auth
-        name: 5-AUTHENTICATE TO GOOGLE CLOUD
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
-
-      - name: 6-SETUP CLOUD SDK
-        uses: google-github-actions/setup-gcloud@v0
-
-      - name: 7-GET CREDENTIALS
-        uses: 'google-github-actions/get-gke-credentials@v0'
-        with:
-          cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.REGION }}
-
-      - name: 8-NAMESPACE TO USE
-        continue-on-error: true
-        run: |
-          kubectl get ns ${{ env.NS_APP }}
-          echo "The current Namespace is ${{ env.NS_APP }}"
-
-      - name: 9-DEPLOY FLASK APP IN DEV
-        run: |
-          kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
-
-  deploy_app_hlg:
-    runs-on: ubuntu-latest
-    needs: deploy_app_dev
-    env:
-      NS_APP: "tembici-sre-apps-hlg"
-      WORK_DIR: "./k8s"
-      APP_ENV: "hlg"
-    defaults:
-      run:
-        working-directory: ${{ env.WORK_DIR }}
-
-    steps:
-      - name: 1-CHECKOUT ACTIONS
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          
-      - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
-        run: echo Waiting approval to deploy in ${{ env.NS_APP }}
-
-      - name: 3-SETUP MANUAL APPROVAL
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS_HLG }}
-          issue-title: "Deploying flask-app in HLG"
-          
-      - name: 4-DEPLOY TO HOMOLOG
-        run: echo deploying in ${{ env.NS_APP }}
-
-      - id: auth
-        name: 5-AUTHENTICATE TO GOOGLE CLOUD
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
-
-      - name: 6-SETUP CLOUD SDK
-        uses: google-github-actions/setup-gcloud@v0
-
-      - name: 7-GET CREDENTIALS
-        uses: 'google-github-actions/get-gke-credentials@v0'
-        with:
-          cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.REGION }}
-
-      - name: 8-NAMESPACE TO USE
-        continue-on-error: true
-        run: |
-          kubectl get ns ${{ env.NS_APP }}
-          echo "The current Namespace is ${{ env.NS_APP }}"
-
-      - name: 9-DEPLOY FLASK APP IN HLG
-        run: |
-          kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
-
-  deploy_app_prd:
-    runs-on: ubuntu-latest
-    needs: deploy_app_hlg
-    env:
-      NS_APP: "tembici-sre-apps-prd"
-      WORK_DIR: "./k8s"
-      APP_ENV: "prd"
+      APP_ENV: "${{ matrix.app-env }}"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
@@ -195,8 +85,8 @@ jobs:
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS_PRD }}
-          issue-title: "Deploying flask-app in PRD"
+          approvers: ${{ env.APPROVERS }}
+          issue-title: "Deploying flask-app in ${{ matrix.app-env }}"
           
       - name: 4-DEPLOY TO PRODUCTION
         run: echo deploying in ${{ env.NS_APP }}
@@ -222,6 +112,6 @@ jobs:
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 9-DEPLOY FLASK APP IN PRD
+      - name: 9-DEPLOY FLASK APP IN ${{ matrix.app-env }}
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
