@@ -62,6 +62,7 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
+    needs: build_app
     strategy:
       matrix:
         app_env: [dev, hlg, prd]
