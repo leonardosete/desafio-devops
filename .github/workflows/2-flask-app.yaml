@@ -3,12 +3,6 @@ on:
   push:
     branches: [release, feature, hotfix, task]
   workflow_dispatch:
-    inputs:
-      build-push-image:
-        description: 'Run build and publish?'
-        default: false
-        required: false
-        type: boolean
 
 env: ## Variables available in this workflow
   PROJECT_ID: "desafio-tembici-sre-1"
@@ -29,8 +23,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - id: auth
-        name: 2-AUTHENTICATE TO GOOGLE CLOUD
+      - name: 2-AUTHENTICATE TO GOOGLE CLOUD
+        id: auth
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
@@ -45,27 +39,22 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-BUILD DOCKER IMAGE
-        if: ${{ inputs.build-push-image == true }}
         run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: 6-AUTOMATIC TAGGING OF RELEASES
-        if: ${{ inputs.build-push-image == true }}
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v major
 
       - name: 7-TESTE FLASK APP
-        if: ${{ inputs.build-push-image == true }}
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: 8-CONFIGURE DOCKER CLIENT
-        if: ${{ inputs.build-push-image == true }}
         run: |
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-        if: ${{ inputs.build-push-image == true }}
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
@@ -86,7 +75,6 @@ jobs:
         working-directory: ${{ env.WORK_DIR }}
 
     steps:
-
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
         with:
@@ -126,7 +114,6 @@ jobs:
           echo "The current Namespace is ${{ env.NS_APP }}"
 
       - name: 9-DEPLOY FLASK APP IN DEV
-        if: ${{ inputs.build-push-image == true }}
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
 
@@ -142,7 +129,6 @@ jobs:
         working-directory: ${{ env.WORK_DIR }}
 
     steps:
-
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
         with:
@@ -176,12 +162,12 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 8-NAMESPACE TO USE
+        continue-on-error: true
         run: |
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
       - name: 9-DEPLOY FLASK APP IN HLG
-        if: ${{ inputs.build-push-image == true }}
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
 
@@ -191,13 +177,12 @@ jobs:
     env:
       NS_APP: "tembici-sre-apps-prd"
       WORK_DIR: "./k8s"
-      APP_ENV: "hlg"
+      APP_ENV: "prd"
     defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}
 
     steps:
-
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
 
@@ -229,11 +214,11 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 8-NAMESPACE TO USE
+        continue-on-error: true
         run: |
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 9-DEPLOY FLASK APP IN HLG
-        if: ${{ inputs.build-push-image == true }}
+      - name: 9-DEPLOY FLASK APP IN PRD
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml

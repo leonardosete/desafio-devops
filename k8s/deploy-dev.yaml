@@ -112,7 +112,7 @@ metadata:
   namespace: tembici-sre-apps-dev
 spec:
   domains:
-  - flask-app-tembici-dev.desafio-tembici-sre.com
+  - flask-app-tembici-dev.desafio-tembici-sre-1.com
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -129,7 +129,7 @@ metadata:
   namespace: tembici-sre-apps-dev
 spec:
   rules:
-  - host: flask-app-tembici-dev.desafio-tembici-sre.com
+  - host: flask-app-tembici-dev.desafio-tembici-sre-1.com
     http:
       paths:
       - backend:
