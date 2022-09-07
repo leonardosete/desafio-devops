@@ -44,7 +44,7 @@ jobs:
           docker build -t ${{ env.IMAGE_NAME }}:latest .
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      - name: TESTE
+      - name: 6-SEMANTIC VERSION
         id: semantic-version
         run: |
           bash ./scripts/semantic-version.sh
