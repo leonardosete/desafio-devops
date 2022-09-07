@@ -7,7 +7,6 @@ on:
     #   approvers:
     #     description: 'The github user which can approve/deny deploys:'
     #     required: true
-
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
