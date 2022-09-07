@@ -46,7 +46,8 @@ jobs:
 
       - name: TESTE
         run: |
-          bash -x ./scripts/semantic-version.sh
+          bash ./scripts/semantic-version.sh
+          echo $SEMANTIC
 
       # - name: 6-GET BRANCH NAME
       #   run: |
