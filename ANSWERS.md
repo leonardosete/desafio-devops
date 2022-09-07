@@ -154,7 +154,7 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
         informado ao início da execução do workflow, e deverá responder o comentário conforme a orientação na própria issue.
         * Podendo ser as respostas:
            [approved], [approve], [lgtm], [yes] to continue workflow or [denied], [deny], [no] to cancel.
-        * Defina a resposta e selecione [close_with_comment].
+        * Defina a resposta e selecione [Close_with_comment].
 
     * Aguardar alguns minutos para que o ingress-controller (Load Balancers) estejam totalmente configurados e
         assim poder testar o acesso ao app nos ambientes de dev/hlg e prd:
