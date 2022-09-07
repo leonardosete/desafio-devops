@@ -163,6 +163,17 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
         https://flask-app-tembici-hlg.[dominio_definido]/api/ping
         https://flask-app-tembici-prd.[dominio_definido]/api/ping
 
+
+* Para configurar que o app atenda somente requisições via HTTPS, após a primeira execução do deploy
+    habilite/descomente nos arquivos de [deploy-*.yaml] essa linha:
+
+     kubernetes.io/ingress.allow-http: "false" ## Only enable this, after the LB's creation
+
+* Reexecute o deploy ou conecte-se ao cluster e aplique essa alteração via linha de comando:
+    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-dev.yaml
+    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-hlg.yaml
+    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-prd.yaml
+
 ## FIM DO TESTE ##
 
 ## OBSERVAÇÃO SOBRE OS WORKFLOWS ##
