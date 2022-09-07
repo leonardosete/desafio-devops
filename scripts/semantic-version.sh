@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-echo "BRANCH_PREFIX=${BRANCH%%[/-]*}" >> $GITHUB_ENV
+BRANCH="${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+BRANCH_PREFIX="${BRANCH%%[/-]*}" >> $GITHUB_ENV
          
 if [[ $BRANCH_PREFIX == 'release' ]]
 then 
