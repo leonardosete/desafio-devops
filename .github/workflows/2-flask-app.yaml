@@ -68,11 +68,19 @@ jobs:
     strategy:
       matrix:
         app_env: [dev, hlg, prd]
+        env_deploy: [DEVELOPMENT, HOMOLOG, PRODUCTION]
+        include:
+          - app_env: dev
+            env_deploy: DEVELOPMENT
+          - app_env: hlg
+            env_deploy: HOMOLOG
+          - app_env: prd
+            env_deploy: PRODUCTION
       fail-fast: true ## se uma execução do job falhar, vai parar tudo
       max-parallel: 1
     environment:
       name: app-url 
-      url: -${{ matrix.app_env }}$.${{ env.PROJECT_ID }}.com
+      url: ${{ env.HOST }}-${{ matrix.app_env }}$.${{ env.PROJECT_ID }}.com
     runs-on: ubuntu-latest
     env:
       NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
@@ -96,7 +104,7 @@ jobs:
           approvers: ${{ inputs.approvers }}
           issue-title: "Deploying flask-app in ${{ matrix.app_env }}"
           
-      - name: 4-DEPLOY TO PRODUCTION
+      - name: 4-DEPLOY TO ${{ matrix.env_deploy }}
         run: echo deploying in ${{ env.NS_APP }}
 
       - id: auth
