@@ -49,27 +49,27 @@ jobs:
           echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
           echo "BRANCH_PREFIX=${BRANCH%%[/-]*}" >> $GITHUB_ENV
 
-      - name: 7-DEFINE SEMANTIC
-        run: |
+      # - name: 7-DEFINE SEMANTIC
+      #   run: |
           
-          if [[ $BRANCH_PREFIX == 'release' ]]
-          then 
-            echo "SEMANTIC=major" >> $GITHUB_ENV
-          elif [[ $BRANCH_PREFIX == 'feature' ]]
-          then 
-            echo "SEMANTIC=minor" >> $GITHUB_ENV
-          elif [[ $BRANCH_PREFIX == 'hotfix' ]]
-          then 
-            echo "SEMANTIC=patch" >> $GITHUB_ENV
-          else
-            echo "Any branch compatible with semantic version"
-            exit 1
-          fi
+      #     if [[ $BRANCH_PREFIX == 'release' ]]
+      #     then 
+      #       echo "SEMANTIC=major" >> $GITHUB_ENV
+      #     elif [[ $BRANCH_PREFIX == 'feature' ]]
+      #     then 
+      #       echo "SEMANTIC=minor" >> $GITHUB_ENV
+      #     elif [[ $BRANCH_PREFIX == 'hotfix' ]]
+      #     then 
+      #       echo "SEMANTIC=patch" >> $GITHUB_ENV
+      #     else
+      #       echo "Any branch compatible with semantic version"
+      #       exit 1
+      #     fi
 
       - name: 7-GET BRANCH NAME
         run: |
-          echo ${{ env.SEMANTIC }}
-          echo $SEMANTIC
+          echo ${{ env.BRANCH }}
+          echo ${{ env.BRANCH_PREFIX }}
       
       # - name: 7-AUTOMATIC TAGGING OF RELEASES
       #   if: ${{ startsWith(env.BRANCH, 'release') }}
