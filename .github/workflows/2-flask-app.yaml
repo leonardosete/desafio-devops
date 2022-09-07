@@ -44,48 +44,39 @@ jobs:
       #     docker build -t ${{ env.IMAGE_NAME }}:latest .
       #     gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      - name: 6-GET BRANCH NAME
+      - name: TESTE
         run: |
-          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          bash ./scripts/semantic-version.sh
 
-      - name: 6-GET BRANCH_PREFIX
-        run: |
-          echo "BRANCH_PREFIX=${BRANCH%%[/-]*}" >> $GITHUB_ENV
+      # - name: 6-GET BRANCH NAME
+      #   run: |
+      #     echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
-      - name: 7-DEFINE SEMANTIC
-        run: |
+      # - name: 6-GET BRANCH_PREFIX
+      #   run: |
+      #     echo "BRANCH_PREFIX=${BRANCH%%[/-]*}" >> $GITHUB_ENV
+
+      # - name: 7-DEFINE SEMANTIC
+      #   run: |
           
-          if [[ $BRANCH_PREFIX == 'release' ]]
-          then 
-            echo "SEMANTIC=major" >> $GITHUB_ENV
-          elif [[ $BRANCH_PREFIX == 'feature' ]]
-          then 
-            echo "SEMANTIC=minor" >> $GITHUB_ENV
-          elif [[ $BRANCH_PREFIX == 'hotfix' ]]
-          then 
-            echo "SEMANTIC=patch" >> $GITHUB_ENV
-          else
-            echo "Any branch compatible with semantic version"
-            exit 1
-          fi
-
-      - name: 7-GET BRANCH NAME
-        run: |
-          echo $BRANCH
-          echo $BRANCH_PREFIX
-          echo $SEMANTIC
+      #     if [[ $BRANCH_PREFIX == 'release' ]]
+      #     then 
+      #       echo "SEMANTIC=major" >> $GITHUB_ENV
+      #     elif [[ $BRANCH_PREFIX == 'feature' ]]
+      #     then 
+      #       echo "SEMANTIC=minor" >> $GITHUB_ENV
+      #     elif [[ $BRANCH_PREFIX == 'hotfix' ]]
+      #     then 
+      #       echo "SEMANTIC=patch" >> $GITHUB_ENV
+      #     else
+      #       echo "Any branch compatible with semantic version"
+      #       exit 1
+      #     fi
       
       # - name: 7-AUTOMATIC TAGGING OF RELEASES
-      #   if: ${{ startsWith(env.BRANCH, 'release') }}
       #   id: increment-git-tag
       #   run: |
-      #     bash ./scripts/git_update.sh -v major
-
-      # - name: 7-AUTOMATIC TAGGING OF RELEASES
-      #   if: ${{ startsWith(env.BRANCH, 'release') }}
-      #   id: increment-git-tag-major
-      #   run: |
-      #     bash ./scripts/git_update.sh -v major
+      #     bash ./scripts/git_update.sh -v $SEMANTIC
 
 
       # - name: 8-TESTING APPLICATION
