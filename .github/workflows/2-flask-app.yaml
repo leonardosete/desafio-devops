@@ -124,6 +124,6 @@ jobs:
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 9-DEPLOY FLASK APP IN ${{ matrix.app_env }}
+      - name: 9-DEPLOY FLASK APP IN ${{ matrix.app_env }}"
         run: |
           kubectl apply -f deploy-${{ env.APP_ENV }}.yaml
