@@ -46,11 +46,12 @@ jobs:
 
       - name: 6-GET BRANCH NAME
         run: |
-          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
-      - name: 6-GET "BRANCH_PREFIX
-        run: |
+          echo "BRANCH=${GITHUB_REF#refs/heads/}"
           echo "BRANCH_PREFIX=${BRANCH%%[/-]*}" >> $GITHUB_ENV
+
+      # - name: 6-GET "BRANCH_PREFIX
+      #   run: |
+      #     echo "BRANCH_PREFIX=${BRANCH%%[/-]*}" >> $GITHUB_ENV
 
       # - name: 7-DEFINE SEMANTIC
       #   run: |
@@ -71,7 +72,6 @@ jobs:
 
       - name: 7-GET BRANCH NAME
         run: |
-          echo ${{ env.BRANCH }}
           echo ${{ env.BRANCH_PREFIX }}
       
       # - name: 7-AUTOMATIC TAGGING OF RELEASES
