@@ -18,7 +18,8 @@ env: ## Variables available in this workflow
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: "flask-app"
-
+  HOST: "flask-app-tembici"
+  APP_DOMAIN: ${{ env.PROJECT_ID }}.com
 jobs:
   build_app:
     runs-on: ubuntu-latest
@@ -76,6 +77,9 @@ jobs:
         app_env: [dev, hlg, prd]
       fail-fast: true ## se uma execução do job falhar, vai parar tudo
       max-parallel: 1
+    environment:
+      name: app-url 
+      url: -${{ matrix.app_env }}$.{{ env.APP_DOMAIN }}
     runs-on: ubuntu-latest
     env:
       NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
