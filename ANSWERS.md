@@ -192,5 +192,8 @@ https://cloud.google.com/sdk/gcloud
 
 ## ManagedCertificate ##
 https://github.com/GoogleCloudPlatform/gke-managed-certs
+
+## gke-https-redirect ##
+https://github.com/doitintl/gke-https-redirect
 ## Github Actions ##
 https://trstringer.com/github-actions-manual-approval/
