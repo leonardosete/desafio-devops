@@ -38,7 +38,7 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-BUILD DOCKER IMAGE
-        run: docker build -t ${{ env.IMAGE_NAME }}:$latest .
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: 6-AUTOMATIC TAGGING OF RELEASES
         id: increment-git-tag
