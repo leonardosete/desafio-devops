@@ -6,16 +6,16 @@ BRANCH_PREFIX="${BRANCH%%[/-]*}"
          
 if [[ $BRANCH_PREFIX == 'release' ]]
 then 
-    SEMANTIC="major" >> $GITHUB_ENV
+    SEMANTIC="major" 
 elif [[ $BRANCH_PREFIX == 'feature' ]]
 then 
-    SEMANTIC="minor" >> $GITHUB_ENV
+    SEMANTIC="minor"
 elif [[ $BRANCH_PREFIX == 'hotfix' ]]
 then 
-    SEMANTIC="patch" >> $GITHUB_ENV
+    SEMANTIC="patch"
 else
   echo "Any branch compatible with semantic version"
   exit 1
 fi
 
-# echo ::set-output name=semantic-version::$SEMANTIC
+echo ::set-output name=semantic-version::$SEMANTIC
