@@ -97,31 +97,29 @@ jobs:
           secret: ${{ github.token }}
           approvers: ${{ inputs.approvers }}
           issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
-          
-      - name: 4-DEPLOY TO ${{ matrix.env_deploy }}
-        run: echo deploying in ${{ env.NS_APP }}
+  
 
       - id: auth
-        name: 5-AUTHENTICATE TO GOOGLE CLOUD
+        name: 4-AUTHENTICATE TO GOOGLE CLOUD
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: 6-SETUP CLOUD SDK
+      - name: 5-SETUP CLOUD SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: 7-GET CREDENTIALS
+      - name: 6-GET CREDENTIALS
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: 8-NAMESPACE TO USE
+      - name: 7-NAMESPACE TO USE
         continue-on-error: true
         run: |
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 9-DEPLOY FLASK APP IN ${{ matrix.env_deploy }}
+      - name: 8-DEPLOY FLASK APP IN ${{ matrix.env_deploy }}
         run: |
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
