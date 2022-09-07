@@ -122,7 +122,7 @@ metadata:
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici-prd
     networking.gke.io/managed-certificates: prd-certs
-    kubernetes.io/ingress.allow-http: "false" ## Only available after LB is fully programmed.
+    # kubernetes.io/ingress.allow-http: "false" ## Only available after LB is fully programmed.
   labels:
     app: flask-app
     env: prd
