@@ -22,45 +22,45 @@ jobs:
         with:
           fetch-depth: 0
 
-      # - name: 2-AUTHENTICATE TO GOOGLE CLOUD
-      #   id: auth
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      - name: 2-AUTHENTICATE TO GOOGLE CLOUD
+        id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      # - name: 3-SETUP CLOUD SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: 3-SETUP CLOUD SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: 4-GET CREDENTIALS
-      #   uses: 'google-github-actions/get-gke-credentials@v0'
-      #   with:
-      #     cluster_name: ${{ env.CLUSTER_NAME }}
-      #     location: ${{ env.REGION }}
+      - name: 4-GET CREDENTIALS
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
 
-      # - name: 5-BUILD DOCKER IMAGE
-      #   run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+      - name: 5-BUILD DOCKER IMAGE
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
-      # - name: 6-AUTOMATIC TAGGING OF RELEASES
-      #   id: increment-git-tag
-      #   run: |
-      #     bash ./scripts/git_update.sh -v major
+      - name: 6-AUTOMATIC TAGGING OF RELEASES
+        id: increment-git-tag
+        run: |
+          bash ./scripts/git_update.sh -v major
 
-      # - name: 7-TESTE FLASK APP
-      #   run: |
-      #     docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
+      - name: 7-TESTE FLASK APP
+        run: |
+          docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
-      # - name: 8-CONFIGURE DOCKER CLIENT
-      #   run: |
-      #     gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+      - name: 8-CONFIGURE DOCKER CLIENT
+        run: |
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      # - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-      #   env:
-      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      #   run: |
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
     needs: build_app
@@ -77,7 +77,7 @@ jobs:
       fail-fast: true ## se uma execução do job falhar, vai parar tudo
       max-parallel: 1
     runs-on: ubuntu-latest
-    env:
+    env: ## Variables available in this job
       NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
       WORK_DIR: "./k8s"
     defaults:
@@ -87,39 +87,35 @@ jobs:
     steps:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
-
-      - name: 2-VERIFY ISSUES TO APPROVE OR DENY DEPLOY
-        run: echo Waiting approval to deploy in ${{ env.NS_APP }}
-
-      - name: 3-SETUP MANUAL APPROVAL
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ inputs.approvers }}
-          issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
   
-
-      - id: auth
-        name: 4-AUTHENTICATE TO GOOGLE CLOUD
+      - name: 2-AUTHENTICATE TO GOOGLE CLOUD
+        id: auth
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: 5-SETUP CLOUD SDK
+      - name: 3-SETUP CLOUD SDK
         uses: google-github-actions/setup-gcloud@v0
 
-      - name: 6-GET CREDENTIALS
+      - name: 4-GET GKE CREDENTIALS
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: 7-NAMESPACE TO USE
+      - name: 5-CHECK NAMESPACE TO DEPLOY
         continue-on-error: true
         run: |
           kubectl get ns ${{ env.NS_APP }}
           echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 8-DEPLOY FLASK APP IN ${{ matrix.env_deploy }}
+      - name: 6-APPROVE OR DENY DEPLOY
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: ${{ inputs.approvers }}
+          issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
+
+      - name: 7-FLASK APP APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
         run: |
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
