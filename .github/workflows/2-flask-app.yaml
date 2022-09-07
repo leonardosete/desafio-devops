@@ -38,7 +38,7 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-BUILD DOCKER IMAGE
-        run: docker build -t ${{ env.IMAGE_NAME }}:$GIT_TAG .
+        run: docker build -t ${{ env.IMAGE_NAME }}:$latest .
 
       - name: 6-AUTOMATIC TAGGING OF RELEASES
         id: increment-git-tag
@@ -49,28 +49,24 @@ jobs:
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:$GIT_TAG bash -c "BASE_API_ENV=test pipenv run pytest"
 
-      - name: 8-CONFIGURE DOCKER CLIENT
-        run: |
-          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
-
-      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
           docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG      
 
-      # - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      # - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
       #   env:
       #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       #   run: |
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          # docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          # docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          # docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          # docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
     needs: build_app
