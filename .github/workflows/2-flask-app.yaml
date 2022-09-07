@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       approvers:
-        description: 'The github user which can approve/deny a deploy:'
+        description: 'The github user which can approve/deny deploys:'
         required: false
       deploy-app:
         description: 'Run deploy app in GKE?'
