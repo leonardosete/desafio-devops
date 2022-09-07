@@ -1,20 +1,21 @@
 #!/bin/bash
 
-BRANCH="${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-BRANCH_PREFIX="${BRANCH%%[/-]*}" >> $GITHUB_ENV
+BRANCH="${GITHUB_REF#refs/heads/}"
+# BRANCH="release-teste"
+BRANCH_PREFIX="${BRANCH%%[/-]*}"
          
 if [[ $BRANCH_PREFIX == 'release' ]]
 then 
-  echo "SEMANTIC=major" >> $GITHUB_ENV
+    SEMANTIC="major"
 elif [[ $BRANCH_PREFIX == 'feature' ]]
 then 
-  echo "SEMANTIC=minor" >> $GITHUB_ENV
+    SEMANTIC="minor"
 elif [[ $BRANCH_PREFIX == 'hotfix' ]]
 then 
-  echo "SEMANTIC=patch" >> $GITHUB_ENV
+    SEMANTIC="patch"
 else
   echo "Any branch compatible with semantic version"
   exit 1
 fi
 
-echo $SEMANTIC
+# echo ::set-output name=semantic-version::$SEMANTIC
