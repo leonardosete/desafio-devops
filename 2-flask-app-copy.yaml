@@ -1,20 +1,18 @@
 name: 2-DEPLOY-FLASK-APP
 on:
   push:
-    branches: [release*, feature*, hotfix*]
+    branches: [release, feature, hotfix, task]
   workflow_dispatch:
-    # inputs:
-    #   approvers:
-    #     description: 'The github user which can approve/deny deploys:'
-    #     required: true
-
+    inputs:
+      approvers:
+        description: 'The github user which can approve/deny deploys:'
+        required: true
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: "flask-app"
-  APPROVERS: "7700472077"
 jobs:
   build_app:
     runs-on: ubuntu-latest
@@ -40,32 +38,35 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-BUILD DOCKER IMAGE
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }}:latest .
-          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
-      - name: 6-SEMANTIC VERSION
-        id: semantic-version
-        run: |
-          bash ./scripts/semantic-version.sh
-      
-      - name: 7-AUTOMATIC TAGGING OF RELEASES
+      - name: 6-AUTOMATIC TAGGING OF RELEASES
         id: increment-git-tag
         run: |
-          bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
+          bash ./scripts/git_update.sh -v major
 
-      - name: 8-TESTING APPLICATION
+      - name: 7-TESTING APPLICATION
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
-      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
           docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG      
+
+      # - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      #   env:
+      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+      #   run: |
+          # docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          # docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          # docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          # docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
     needs: build_app
@@ -118,7 +119,7 @@ jobs:
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS }}
+          approvers: ${{ inputs.approvers }}
           issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
 
       - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
