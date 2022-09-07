@@ -48,14 +48,12 @@ jobs:
         id: semantic-version
         run: |
           bash ./scripts/semantic-version.sh
-          echo ${{ env.SEMANTIC }}
-          echo $SEMANTIC
+
       
       - name: 7-AUTOMATIC TAGGING OF RELEASES
         id: increment-git-tag
         run: |
-          bash ./scripts/semantic-version.sh
-          bash ./scripts/git_update.sh -v $SEMANTIC
+          bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
 
 
       # - name: 8-TESTING APPLICATION
