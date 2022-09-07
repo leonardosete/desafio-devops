@@ -67,61 +67,61 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-  # deploy_apps:
-  #   needs: build_app
-  #   strategy:
-  #     matrix:
-  #       app_env: [dev, hlg, prd]
-  #       include:
-  #         - app_env: dev
-  #           env_deploy: DEVELOPMENT
-  #         - app_env: hlg
-  #           env_deploy: HOMOLOG
-  #         - app_env: prd
-  #           env_deploy: PRODUCTION
-  #     fail-fast: true ## se uma execução do job falhar, vai parar tudo
-  #     max-parallel: 1
-  #   runs-on: ubuntu-latest
-  #   env: ## Variables available in this job
-  #     NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
-  #     WORK_DIR: "./k8s"
-  #   defaults:
-  #     run:
-  #       working-directory: ${{ env.WORK_DIR }}
+  deploy_apps:
+    needs: build_app
+    strategy:
+      matrix:
+        app_env: [dev, hlg, prd]
+        include:
+          - app_env: dev
+            env_deploy: DEVELOPMENT
+          - app_env: hlg
+            env_deploy: HOMOLOG
+          - app_env: prd
+            env_deploy: PRODUCTION
+      fail-fast: true ## se uma execução do job falhar, vai parar tudo
+      max-parallel: 1
+    runs-on: ubuntu-latest
+    env: ## Variables available in this job
+      NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
+      WORK_DIR: "./k8s"
+    defaults:
+      run:
+        working-directory: ${{ env.WORK_DIR }}
 
-  #   steps:
-  #     - name: 1-CHECKOUT ACTIONS
-  #       uses: actions/checkout@v3
+    steps:
+      - name: 1-CHECKOUT ACTIONS
+        uses: actions/checkout@v3
   
-  #     - name: 2-AUTHENTICATE TO GOOGLE CLOUD
-  #       id: auth
-  #       uses: google-github-actions/auth@v0
-  #       with:
-  #         credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      - name: 2-AUTHENTICATE TO GOOGLE CLOUD
+        id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-  #     - name: 3-SETUP CLOUD SDK
-  #       uses: google-github-actions/setup-gcloud@v0
+      - name: 3-SETUP CLOUD SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-  #     - name: 4-GET GKE CREDENTIALS
-  #       uses: 'google-github-actions/get-gke-credentials@v0'
-  #       with:
-  #         cluster_name: ${{ env.CLUSTER_NAME }}
-  #         location: ${{ env.REGION }}
+      - name: 4-GET GKE CREDENTIALS
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
 
-  #     - name: 5-CHECK NAMESPACE TO DEPLOY
-  #       continue-on-error: true
-  #       run: |
-  #         kubectl get ns ${{ env.NS_APP }}
-  #         echo "The current Namespace is ${{ env.NS_APP }}"
+      - name: 5-CHECK NAMESPACE TO DEPLOY
+        continue-on-error: true
+        run: |
+          kubectl get ns ${{ env.NS_APP }}
+          echo "The current Namespace is ${{ env.NS_APP }}"
 
-  #     - name: 6-APPROVE OR DENY DEPLOY
-  #       uses: trstringer/manual-approval@v1
-  #       with:
-  #         secret: ${{ github.token }}
-  #         approvers: ${{ env.APPROVERS }}
-  #         issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
+      - name: 6-APPROVE OR DENY DEPLOY
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: ${{ env.APPROVERS }}
+          issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
 
-  #     - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
-  #       run: |
-  #         sleep 30
-  #         kubectl apply -f deploy-${{ matrix.app_env }}.yaml
+      - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
+        run: |
+          sleep 30
+          kubectl apply -f deploy-${{ matrix.app_env }}.yaml
