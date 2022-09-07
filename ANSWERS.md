@@ -136,7 +136,7 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
 - Após a criação da infra do GKE (aguarde o terraform finalizar), e então é possível rodar o segundo workflow:
 
 - [2-DEPLOY-FLASK-APP]
-    * Para executar, é necessário fornecer o nome do usuário do github que pode aprovar ou negar o fluxo de deploy
+    * Para executar, é necessário fornecer o [nome_de_usuário_do_github] que pode aprovar ou negar o fluxo de deploy
     e após isso, basta selecionar o workflow e ir em [Run_workflow]
     
     * Deixar no branch master e clicar em [Run_workflow] na caixinha verde.
