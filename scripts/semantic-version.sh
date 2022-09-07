@@ -18,5 +18,5 @@ else
   exit 1
 fi
 
-# echo $SEMANTIC
+echo $SEMANTIC
 echo ::set-output name=semantic-version::$SEMANTIC
