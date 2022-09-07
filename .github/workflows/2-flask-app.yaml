@@ -73,6 +73,7 @@ jobs:
         run: |
           echo $BRANCH
           echo $BRANCH_PREFIX
+          echo $SEMANTIC
       
       # - name: 7-AUTOMATIC TAGGING OF RELEASES
       #   if: ${{ startsWith(env.BRANCH, 'release') }}
