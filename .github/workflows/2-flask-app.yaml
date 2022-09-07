@@ -51,10 +51,11 @@ jobs:
           echo ${{ env.SEMANTIC }}
           echo $SEMANTIC
       
-      # - name: 7-AUTOMATIC TAGGING OF RELEASES
-      #   id: increment-git-tag
-      #   run: |
-      #     bash ./scripts/git_update.sh -v $SEMANTIC
+      - name: 7-AUTOMATIC TAGGING OF RELEASES
+        id: increment-git-tag
+        run: |
+          bash ./scripts/semantic-version.sh
+          bash ./scripts/git_update.sh -v $SEMANTIC
 
 
       # - name: 8-TESTING APPLICATION
