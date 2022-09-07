@@ -124,4 +124,5 @@ jobs:
 
       - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
         run: |
+          sleep 60
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
