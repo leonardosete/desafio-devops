@@ -69,7 +69,7 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
-    if: ${{ input.deplo-app == true }}
+    if: ${{ input.deploy-app == true }}
     needs: build_app
     strategy:
       matrix:
