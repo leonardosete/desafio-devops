@@ -6,7 +6,7 @@ on:
     inputs:
       approvers:
         description: 'The github user which can approve/deny a deploy:'
-        required: true
+        required: false
       deploy-app:
         description: 'Run deploy app in GKE?'
         default: false
