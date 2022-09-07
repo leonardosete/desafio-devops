@@ -47,7 +47,7 @@ jobs:
 
       - name: 7-TESTING APPLICATION
         run: |
-          docker run -t ${{ env.IMAGE_NAME }}:$GIT_TAG bash -c "BASE_API_ENV=test pipenv run pytest"
+          docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
         env:
