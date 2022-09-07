@@ -7,7 +7,11 @@ on:
       approvers:
         description: 'The github user which can approve/deny a deploy:'
         required: true
-
+      deploy-app:
+        description: 'Run deploy app in GKE?'
+        default: false
+        required: false
+        type: boolean
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
@@ -65,6 +69,7 @@ jobs:
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
+    if: ${{ input.deplo-app == true }}
     needs: build_app
     strategy:
       matrix:
