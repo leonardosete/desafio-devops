@@ -47,8 +47,10 @@ jobs:
       - name: 6-GET BRANCH NAME
         run: |
           echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      
+      - name: 7-GET BRANCH NAME
+        run: |
           echo ${{ env.BRANCH }}
-
 
       # - name: 7-AUTOMATIC TAGGING OF RELEASES
       #   if: ${{ startsWith(env.BRANCH, 'release') }}
