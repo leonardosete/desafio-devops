@@ -38,16 +38,16 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-BUILD DOCKER IMAGE
-        run: docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+        run: docker build -t ${{ env.IMAGE_NAME }}:$GIT_TAG .
 
       - name: 6-AUTOMATIC TAGGING OF RELEASES
         id: increment-git-tag
         run: |
           bash ./scripts/git_update.sh -v major
 
-      - name: 7-TESTE FLASK APP
+      - name: 7-TESTING APPLICATION
         run: |
-          docker run -t ${{ env.IMAGE_NAME }}:${{ github.sha }} bash -c "BASE_API_ENV=test pipenv run pytest"
+          docker run -t ${{ env.IMAGE_NAME }}:$GIT_TAG bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: 8-CONFIGURE DOCKER CLIENT
         run: |
@@ -57,9 +57,9 @@ jobs:
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
           docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           
 
@@ -126,6 +126,6 @@ jobs:
           approvers: ${{ inputs.approvers }}
           issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
 
-      - name: 7-FLASK APP APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
+      - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
         run: |
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
