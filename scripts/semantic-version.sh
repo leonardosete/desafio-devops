@@ -19,4 +19,4 @@ else
 fi
 
 echo $SEMANTIC
-# echo ::set-output name=semantic-version::$SEMANTIC
+echo ::set-output name=semantic-version::$SEMANTIC
