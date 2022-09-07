@@ -16,4 +16,5 @@ else
   echo "Any branch compatible with semantic version"
   exit 1
 fi
-      
+
+echo $SEMANTIC
