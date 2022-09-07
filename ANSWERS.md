@@ -136,6 +136,10 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
 - Após a criação da infra do GKE (aguarde o terraform finalizar), e então é possível rodar o segundo workflow:
 
 - [2-DEPLOY-FLASK-APP]
+    * Para executar, é necessário fornecer o nome do usuário do github que pode aprovar ou negar o fluxo de deploy
+    e após isso, basta selecionar o workflow e ir em [Run_workflow]
+    
+    * Deixar no branch master e clicar em [Run_workflow] na caixinha verde.
     * Com isso, será possível realizar a criação dos recursos necessários para rodar o app:
         - build
         - teste
@@ -144,8 +148,13 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
             * criará os recursos no GKE: 
                 - Load Balancers através do ingress controller [gce]
                 - criará os namespaces, deployments, services, hpa, ingress resources, managed certificate [criará_os_certificados_no_GCP]
-    * deploy ->> aprovação:
-        - é necessário configurar no arquivo [CODEOWNERS] os usuários que podem aprovar ou negar o fluxo de deploy.
+
+    * deploy ->> [aprovação]:
+        * nos jobs de deploy, uma issue será aberta para que seja aprovada pelo usuário que foi
+        informado ao início da execução do workflow, e deverá responder o comentário conforme a orientação na própria issue.
+        * Podendo ser as respostas:
+           [approved], [approve], [lgtm], [yes] to continue workflow or [denied], [deny], [no] to cancel.
+        * Defina a resposta e selecione [close_with_comment].
 
     * Aguardar alguns minutos para que o ingress-controller (Load Balancers) estejam totalmente configurados e
         assim poder testar o acesso ao app nos ambientes de dev/hlg e prd:

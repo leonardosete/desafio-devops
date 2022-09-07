@@ -3,6 +3,10 @@ on:
   push:
     branches: [release, feature, hotfix, task]
   workflow_dispatch:
+      approvers:
+        description: 'The github user which can approve/deny a deploy:'
+        default: false
+        required: true
 
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
@@ -10,7 +14,6 @@ env: ## Variables available in this workflow
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: "flask-app"
-  APPROVERS: "7700472077"
 
 jobs:
   build_app:
@@ -88,7 +91,7 @@ jobs:
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS }}
+          approvers: ${{ inputs.approvers }}
           issue-title: "Deploying flask-app in ${{ matrix.app_env }}"
           
       - name: 4-DEPLOY TO PRODUCTION
