@@ -47,7 +47,7 @@ jobs:
 
       - name: 7-TESTE FLASK APP
         run: |
-          docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
+          docker run -t ${{ env.IMAGE_NAME }}:${{ github.sha }} bash -c "BASE_API_ENV=test pipenv run pytest"
 
       - name: 8-CONFIGURE DOCKER CLIENT
         run: |
