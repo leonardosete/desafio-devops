@@ -1,7 +1,5 @@
 name: 1-CREATE-INFRA-GKE
 on:
-  pull_request:
-    branches: [deploy-infra]
   workflow_dispatch:
     inputs:
       should-destroy:

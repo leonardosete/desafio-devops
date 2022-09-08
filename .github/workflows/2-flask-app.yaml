@@ -1,9 +1,5 @@
 name: 2-DEPLOY-FLASK-APP
 on:
-  pull_request:
-    branches: [release*, feature*, hotfix*]
-  push:
-    branches: [release*, feature*, hotfix*]
   workflow_dispatch:
       should-merge:
         description: 'Do you want to merge to maste branch?'

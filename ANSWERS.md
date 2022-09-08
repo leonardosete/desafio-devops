@@ -179,15 +179,23 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
 ## OBSERVAÇÃO SOBRE OS WORKFLOWS ##
 * Ambos foram definidos para serem executados somente em cenários específicos:
 
-## Será executado de forma manual (Run workflow) ou via pull request para o branch deploy-infra ##
-* O branch [deploy-infra] não existe no projeto, mas caso deseje testar através do pull request, ele deverá ser criado.
-    * Não adotei essa abordagem, apesar de deixar disponível - usei mais a forma "manual" [Run_workflow].
+## Será executado apenas de forma manual (Run workflow) ##
+* Escolhi essa abordagem - executar worklow com [Run_workflow], pois também adicionei 2 steps que perguntam se deseja deletar a infra. Só marque essas opções, se desejar destruir o cluster GKE.
 ## WORKFLOW 1 ##
 name: 1-CREATE-INFRA-GKE
 on:
-  pull_request:
-    branches: [deploy-infra]
   workflow_dispatch:
+    inputs:
+      should-destroy:
+        description: 'Run: terraform destroy -auto-approve?'
+        default: false
+        required: false
+        type: boolean
+      should-destroy-yes:
+        description: 'Are you Sure? Run: terraform destroy -auto-approve?'
+        default: false
+        required: false
+        type: boolean
 
 ## Será executado apenas de forma manual (Run workflow) ##
 * Escolhi essa abordagem, pois adicionei um step que pergunta se
