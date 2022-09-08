@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       should-merge:
-        description: 'Do you want to merge to master branch?'
+        description: 'Do you want to merge ${{ github.ref_name }} into master branch?'
         default: false
         required: false
         type: boolean
