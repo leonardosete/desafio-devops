@@ -40,8 +40,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: |
-            us-central1-docker.pkg.dev/fork-project-teste/sre-docker-registry/flask-app
+          # images: |
+          #   us-central1-docker.pkg.dev/fork-project-teste/sre-docker-registry/flask-app
           tags: |
             # minimal
             type=semver,pattern={{version}}
