@@ -21,22 +21,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      # - name: 2-AUTHENTICATE TO GOOGLE CLOUD
-      #   id: auth
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+      - name: 2-AUTHENTICATE TO GOOGLE CLOUD
+        id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      # - name: 3-SETUP CLOUD SDK
-      #   uses: google-github-actions/setup-gcloud@v0
+      - name: 3-SETUP CLOUD SDK
+        uses: google-github-actions/setup-gcloud@v0
 
-      # - name: 4-GET CREDENTIALS
-      #   uses: 'google-github-actions/get-gke-credentials@v0'
-      #   with:
-      #     cluster_name: ${{ env.CLUSTER_NAME }}
-      #     location: ${{ env.REGION }}
+      - name: 4-GET CREDENTIALS
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
 
-      - name: Docker Metadata
+      - name: 6-DOCKER METADATA
         id: meta
         uses: docker/metadata-action@v4
         with:
@@ -48,14 +48,14 @@ jobs:
             # use custom value instead of git tag
             type=semver,pattern={{version}},value=v1.0.0
 
-      # - name: 5-BUILD DOCKER IMAGE
-      #   run: |
-      #     docker build -t ${{ env.IMAGE_NAME }}:latest .
-      #     gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+      - name: 7-BUILD DOCKER IMAGE
+        run: |
+          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} .
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      # - name: 6-TESTING APPLICATION
-      #   run: |
-      #     docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
+      - name: 8-TESTING APPLICATION
+        run: |
+          docker run -t ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} bash -c "BASE_API_ENV=test pipenv run pytest"
 
       # - name: 7-SEMANTIC VERSION
       #   id: semantic-version
@@ -67,14 +67,14 @@ jobs:
       #   run: |
       #     bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
 
-      # - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-      #   env:
-      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      #   run: |
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+        # env:
+        #   GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |
+          docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+          docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
 
   # deploy_apps:
   #   needs: build_app
