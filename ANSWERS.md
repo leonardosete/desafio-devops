@@ -189,13 +189,18 @@ on:
     branches: [deploy-infra]
   workflow_dispatch:
 
-## Será executado forma manual (Run workflow) ou via push para os branches = release, feature, hotfix, task ##
+## Será executado apenas de forma manual (Run workflow) ##
+* Escolhi essa abordagem, pois adicionei um step que pergunta se
+deseja ou não realizar o merge no final do worklow para o branch master.[marcar_checkbox=True] Pode ocorrer que não deseje fazer o merge em determinado momento. Por isso, está como opcional.
 ## WORKFLOW 2 ##
 name: 2-DEPLOY-FLASK-APP
 on:
-  push:
-    branches: [release, feature, hotfix, task]
   workflow_dispatch:
+      should-merge:
+        description: 'Do you want to merge to maste branch?'
+        default: false
+        required: false
+        type: boolean
 
 ## OBS ##
 * Essa abordagem pode ser modificada de acordo com a necessidade/entendimento de cada projeto.
