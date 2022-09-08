@@ -68,7 +68,7 @@ jobs:
   #         docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG 
 
   deploy_apps:
-    needs: build_app
+    # needs: build_app
     runs-on: ubuntu-latest
     strategy:
       matrix:
