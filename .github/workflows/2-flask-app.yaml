@@ -114,11 +114,13 @@ jobs:
         run: |
           kubectl get ns ${{ env.NS_APP }} > check-ns.txt
           CHECK_NS=`cat check-ns.txt |grep ${{ env.NS_APP }} |awk '{print $1}'`
+          echo $CHECK_NS
         
       - name: 7-APPLICATION APPROVED TO DEPLOY
         if: ${{ env.CHECK_NS != env.NS_APP }}
         run: |
           echo "primeiro deploy"
+          echo $CHECK_NS
       #     kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
 
