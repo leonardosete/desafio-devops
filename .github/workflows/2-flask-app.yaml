@@ -38,6 +38,7 @@ jobs:
       - name: 5-BUILD DOCKER IMAGE
         run: |
           docker build -t ${{ env.IMAGE_NAME }}:latest .
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
           
       - name: 6-SEMANTIC VERSION
         id: semantic-version
@@ -57,7 +58,6 @@ jobs:
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |-
-          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
           docker tag $IMAGE_NAME:latest ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
           docker tag $IMAGE_NAME:latest ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
           docker push ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
