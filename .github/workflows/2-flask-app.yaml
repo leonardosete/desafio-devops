@@ -43,9 +43,10 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           tags: |
+            type=schedule
             type=ref,event=branch
+            type=ref,event=tag
             type=ref,event=pr
-            type=semver,pattern={{version}}
 
       - name: 6-BUILD DOCKER IMAGE
         run: |
