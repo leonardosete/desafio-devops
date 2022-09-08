@@ -43,7 +43,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           tags: |
-            type=sha
+            type=match,pattern=v(.*),group=0
 
       - name: 6-BUILD DOCKER IMAGE
         run: |
