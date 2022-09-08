@@ -45,7 +45,8 @@ jobs:
           tags: |
             # minimal
             type=semver,pattern={{version}}
-
+            # use custom value instead of git tag
+            type=semver,pattern={{version}},value=v1.0.0
 
       - name: 6-BUILD DOCKER IMAGE
         run: |
@@ -54,7 +55,7 @@ jobs:
 
       - name: 7-TESTING APPLICATION
         run: |
-          docker run -t ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} bash -c "BASE_API_ENV=test pipenv run pytest"
+          docker run -t ${{ steps.meta.outputs.tags }} bash -c "BASE_API_ENV=test pipenv run pytest"
 
       # - name: 7-SEMANTIC VERSION
       #   id: semantic-version
@@ -66,14 +67,14 @@ jobs:
       #   run: |
       #     bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
 
-      - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-        # env:
-        #   GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: |
-          docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
-          docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
+      # - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      #   # env:
+      #   #   GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+      #   run: |
+      #     docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+      #     docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
+      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
 
   # deploy_apps:
   #   needs: build_app
