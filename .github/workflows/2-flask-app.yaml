@@ -120,7 +120,7 @@ jobs:
         if: ${{ env.CHECK_NS != env.NS_APP }}
         run: |
           echo "primeiro deploy"
-          echo $CHECK_NS
+          echo ${{ env.CHECK_NS }}
       #     kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
 
