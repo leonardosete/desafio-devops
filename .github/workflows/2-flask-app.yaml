@@ -1,7 +1,7 @@
 name: 2-DEPLOY-FLASK-APP
 on:
   pull_request:
-    branches: [release*, feature*, hotfix*]
+    branches: [release, feature, hotfix]
   # push:
     # branches: [release*, feature*, hotfix*]
   workflow_dispatch:
