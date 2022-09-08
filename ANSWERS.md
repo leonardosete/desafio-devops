@@ -247,3 +247,4 @@ https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-ac
 
 ## kubernetes.io/ingress.allow-http ##
 https://cloud.google.com/kubernetes-engine/docs/concepts/ingress-xlb?hl=pt-br
+https://cloud.google.com/kubernetes-engine/docs/how-to/updating-apps
