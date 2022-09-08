@@ -124,8 +124,26 @@ jobs:
         run: |
           sleep 30
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
+          kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
       - name: Merge ${{ github.ref_name }} -> Master
+        if: ${{ inputs.should-merge == true }}
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: ${{ github.ref_name }}
+          target_branch: master
+          github_token: ${{ github.token }}
+
+  merge_master:
+    needs: deploy_apps
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1-CHECKOUT ACTIONS
+        uses: actions/checkout@v3
+
+      - name: MERGE BRANCh ${{ github.ref_name }} INTO BRANCH master
         if: ${{ inputs.should-merge == true }}
         uses: devmasx/merge-branch@master
         with:
