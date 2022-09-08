@@ -16,7 +16,7 @@ on:
 env: ## Variables available in this workflow
   APPROVERS: "7700472077" ## Inserir seu usuário do github para aprovar as issues
   
-  PROJECT_ID: "leosete-project-final" ## nome do projeto no GKE
+  PROJECT_ID: "fork-project-teste" ## nome do projeto no GKE
   CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
