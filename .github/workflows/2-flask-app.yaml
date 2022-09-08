@@ -1,6 +1,7 @@
 name: 2-DEPLOY-FLASK-APP
 on:
   workflow_dispatch:
+    inputs:
       should-merge:
         description: 'Do you want to merge to maste branch?'
         default: false
