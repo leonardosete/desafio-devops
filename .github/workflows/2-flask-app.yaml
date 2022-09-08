@@ -61,9 +61,7 @@ jobs:
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
@@ -125,15 +123,6 @@ jobs:
           sleep 30
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
-
-      - name: Merge ${{ github.ref_name }} -> Master
-        if: ${{ inputs.should-merge == true }}
-        uses: devmasx/merge-branch@master
-        with:
-          type: now
-          from_branch: ${{ github.ref_name }}
-          target_branch: master
-          github_token: ${{ github.token }}
 
   merge_master:
     needs: deploy_apps
