@@ -228,6 +228,7 @@ https://github.com/GoogleCloudPlatform/gke-managed-certs
 
 ## Github Actions ##
 https://trstringer.com/github-actions-manual-approval/
+https://github.com/marketplace/actions/merge-branch
 
 ## kubernetes.io/ingress.allow-http ##
 https://cloud.google.com/kubernetes-engine/docs/concepts/ingress-xlb?hl=pt-br

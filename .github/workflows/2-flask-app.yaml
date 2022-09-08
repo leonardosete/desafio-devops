@@ -33,110 +33,125 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: 5-BUILD DOCKER IMAGE
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }}:latest .
-          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+      - name: Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            us-central1-docker.pkg.dev/fork-project-teste/sre-docker-registry/flask-app
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
 
-      - name: 6-TESTING APPLICATION
-        run: |
-          docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
 
-      - name: 7-SEMANTIC VERSION
-        id: semantic-version
-        run: |
-          bash ./scripts/semantic-version.sh
+      # - name: 5-BUILD DOCKER IMAGE
+      #   run: |
+      #     docker build -t ${{ env.IMAGE_NAME }}:latest .
+      #     gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # - name: 6-TESTING APPLICATION
+      #   run: |
+      #     docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
+
+      # - name: 7-SEMANTIC VERSION
+      #   id: semantic-version
+      #   run: |
+      #     bash ./scripts/semantic-version.sh
       
-      - name: 8-AUTOMATIC TAGGING OF RELEASES
-        id: increment-git-tag
-        run: |
-          bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
+      # - name: 8-AUTOMATIC TAGGING OF RELEASES
+      #   id: increment-git-tag
+      #   run: |
+      #     bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
 
-      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-        env:
-          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+      # - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      #   env:
+      #     GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+      #   run: |
+      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+      #     docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
-  deploy_apps:
-    needs: build_app
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app_env: [dev, hlg, prd]
-        include:
-          - app_env: dev
-            env_deploy: DEVELOPMENT
-          - app_env: hlg
-            env_deploy: HOMOLOG
-          - app_env: prd
-            env_deploy: PRODUCTION
-      fail-fast: true ## se uma execução do job falhar, vai parar tudo
-      max-parallel: 1
-    env: ## Variables available in this job
-      NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
-      WORK_DIR: "./k8s"
-    defaults:
-      run:
-        working-directory: ${{ env.WORK_DIR }}
+  # deploy_apps:
+  #   needs: build_app
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       app_env: [dev, hlg, prd]
+  #       include:
+  #         - app_env: dev
+  #           env_deploy: DEVELOPMENT
+  #         - app_env: hlg
+  #           env_deploy: HOMOLOG
+  #         - app_env: prd
+  #           env_deploy: PRODUCTION
+  #     fail-fast: true ## se uma execução do job falhar, vai parar tudo
+  #     max-parallel: 1
+  #   env: ## Variables available in this job
+  #     NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
+  #     WORK_DIR: "./k8s"
+  #   defaults:
+  #     run:
+  #       working-directory: ${{ env.WORK_DIR }}
 
-    steps:
-      - name: 1-CHECKOUT ACTIONS
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: 1-CHECKOUT ACTIONS
+  #       uses: actions/checkout@v3
   
-      - name: 2-AUTHENTICATE TO GOOGLE CLOUD
-        id: auth
-        uses: google-github-actions/auth@v0
-        with:
-          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+  #     - name: 2-AUTHENTICATE TO GOOGLE CLOUD
+  #       id: auth
+  #       uses: google-github-actions/auth@v0
+  #       with:
+  #         credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
 
-      - name: 3-SETUP CLOUD SDK
-        uses: google-github-actions/setup-gcloud@v0
+  #     - name: 3-SETUP CLOUD SDK
+  #       uses: google-github-actions/setup-gcloud@v0
 
-      - name: 4-GET GKE CREDENTIALS
-        uses: 'google-github-actions/get-gke-credentials@v0'
-        with:
-          cluster_name: ${{ env.CLUSTER_NAME }}
-          location: ${{ env.REGION }}
+  #     - name: 4-GET GKE CREDENTIALS
+  #       uses: 'google-github-actions/get-gke-credentials@v0'
+  #       with:
+  #         cluster_name: ${{ env.CLUSTER_NAME }}
+  #         location: ${{ env.REGION }}
 
-      - name: 5-CHECK NAMESPACE TO DEPLOY
-        continue-on-error: true
-        run: |
-          kubectl get ns ${{ env.NS_APP }}
-          echo "The current Namespace is ${{ env.NS_APP }}"
+  #     - name: 5-CHECK NAMESPACE TO DEPLOY
+  #       continue-on-error: true
+  #       run: |
+  #         kubectl get ns ${{ env.NS_APP }}
+  #         echo "The current Namespace is ${{ env.NS_APP }}"
 
-      - name: 6-APPROVE OR DENY DEPLOY
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS }}
-          issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
+  #     - name: 6-APPROVE OR DENY DEPLOY
+  #       uses: trstringer/manual-approval@v1
+  #       with:
+  #         secret: ${{ github.token }}
+  #         approvers: ${{ env.APPROVERS }}
+  #         issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
 
-      - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
-        run: |
-          sleep 30
-          kubectl apply -f deploy-${{ matrix.app_env }}.yaml
+  #     - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
+  #       run: |
+  #         sleep 30
+  #         kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
-  merge_master:
-    needs: deploy_apps
-    runs-on: ubuntu-latest
+  # merge_master:
+  #   needs: deploy_apps
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: 1-CHECKOUT ACTIONS
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: 1-CHECKOUT ACTIONS
+  #       uses: actions/checkout@v3
 
-      - name: 2-APPROVE OR DENY MERGE TO MASTER
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS }}
-          issue-title: "Approve merge ${{ github.ref_name }} branch into master branch"
+  #     - name: 2-APPROVE OR DENY MERGE TO MASTER
+  #       uses: trstringer/manual-approval@v1
+  #       with:
+  #         secret: ${{ github.token }}
+  #         approvers: ${{ env.APPROVERS }}
+  #         issue-title: "Approve merge ${{ github.ref_name }} branch into master branch"
 
-      - name: MERGE ${{ github.ref_name }} BRANCH INTO master BRANCH
-        uses: devmasx/merge-branch@master
-        with:
-          type: now
-          from_branch: ${{ github.ref_name }}
-          target_branch: master
-          github_token: ${{ github.token }}
+  #     - name: MERGE ${{ github.ref_name }} BRANCH INTO master BRANCH
+  #       uses: devmasx/merge-branch@master
+  #       with:
+  #         type: now
+  #         from_branch: ${{ github.ref_name }}
+  #         target_branch: master
+  #         github_token: ${{ github.token }}

@@ -33,6 +33,7 @@ metadata:
   name: flask-app
   namespace: tembici-sre-apps-dev
 spec:
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: flask-app
