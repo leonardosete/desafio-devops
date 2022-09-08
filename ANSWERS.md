@@ -198,17 +198,17 @@ on:
         type: boolean
 
 ## Será executado apenas de forma manual (Run workflow) ##
-* Escolhi essa abordagem, pois adicionei um step que pergunta se
-deseja ou não realizar o merge no final do worklow para o branch master.[marcar_checkbox=True] Pode ocorrer que não deseje fazer o merge em determinado momento. Por isso, está como opcional.
+* Escolhi essa abordagem - executar apenas worklow com [Run_workflow].
+
+* Será aberto 4 issues:
+ - para aprovar deploy em dev (kubernetes - GKE)
+ - para aprovar deploy em hlg (kubernetes - GKE)
+ - para aprovar deploy em prd (kubernetes - GKE)
+ - para aprovar a realização do merge do branch atual para o branch master.
 ## WORKFLOW 2 ##
 name: 2-DEPLOY-FLASK-APP
 on:
   workflow_dispatch:
-      should-merge:
-        description: 'Do you want to merge to maste branch?'
-        default: false
-        required: false
-        type: boolean
 
 ## OBS ##
 * Essa abordagem pode ser modificada de acordo com a necessidade/entendimento de cada projeto.

@@ -1,12 +1,7 @@
 name: 2-DEPLOY-FLASK-APP
 on:
   workflow_dispatch:
-    # inputs:
-    #   should-merge:
-    #     description: 'Do you want to merge this branch into master?'
-    #     default: false
-    #     required: false
-    #     type: boolean
+
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
@@ -122,7 +117,6 @@ jobs:
         run: |
           sleep 30
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
-          kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
   merge_master:
     needs: deploy_apps
@@ -139,16 +133,10 @@ jobs:
           approvers: ${{ env.APPROVERS }}
           issue-title: "Approve merge ${{ github.ref_name }} branch into master branch"
 
-      # - name: MERGE ${{ github.ref_name }} BRANCH INTO master BRANCH
-      #   uses: devmasx/merge-branch@master
-      #   with:
-      #     type: now
-      #     from_branch: ${{ github.ref_name }}
-      #     target_branch: master
-      #     github_token: ${{ github.token }}
-      - name: pull-request-action
-        uses: vsoch/pull-request-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_PREFIX: "update/"
-          PULL_REQUEST_BRANCH: "master"
+      - name: MERGE ${{ github.ref_name }} BRANCH INTO master BRANCH
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: ${{ github.ref_name }}
+          target_branch: master
+          github_token: ${{ github.token }}
