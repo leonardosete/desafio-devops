@@ -35,40 +35,33 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: 5-DOCKER METADATA
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: |
-            ${{ env.IMAGE_NAME }}
-          tags: |
-            type=semver,pattern={{major}}.{{minor}}.{{patch}},value=v1.0.0
-
-      - name: 6-BUILD DOCKER IMAGE
+      - name: 5-BUILD DOCKER IMAGE
         run: |
-          docker build -t ${{ steps.meta.outputs.tags }} .
-          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
-
-      # - name: 7-TESTING APPLICATION
-      #   run: |
-      #     docker run -t ${{ steps.meta.outputs.tags }} bash -c "BASE_API_ENV=test pipenv run pytest"
-
-      # - name: 7-SEMANTIC VERSION
-      #   id: semantic-version
-      #   run: |
-      #     bash ./scripts/semantic-version.sh
+          docker build -t ${{ env.IMAGE_NAME }}:latest .
+          
+      - name: 6-SEMANTIC VERSION
+        id: semantic-version
+        run: |
+          bash ./scripts/semantic-version.sh
       
-      # - name: 8-AUTOMATIC TAGGING OF RELEASES
-      #   id: increment-git-tag
-      #   run: |
-      #     bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
+      - name: 7-AUTOMATIC TAGGING OF RELEASES
+        id: increment-git-tag
+        run: |
+          bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
 
-      # - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-      #   run: |
-      #     docker tag ${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
-      #     docker tag ${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
-      #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
+      - name: 8-TESTING APPLICATION
+        run: |
+          docker run -t ${{ env.IMAGE_NAME }}:latest bash -c "BASE_API_ENV=test pipenv run pytest"
+
+      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+        env:
+          GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+        run: |-
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+          docker tag $IMAGE_NAME:latest ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+          docker tag $IMAGE_NAME:latest ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
+          docker push ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+          docker push ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
 
   # deploy_apps:
   #   needs: build_app
