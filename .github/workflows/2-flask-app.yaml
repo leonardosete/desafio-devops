@@ -72,14 +72,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app_env: [dev, hlg, prd]
+        # app_env: [dev, hlg, prd]
+        app_env: [dev]
         include:
           - app_env: dev
             env_deploy: DEVELOPMENT
-          - app_env: hlg
-            env_deploy: HOMOLOG
-          - app_env: prd
-            env_deploy: PRODUCTION
+          # - app_env: hlg
+          #   env_deploy: HOMOLOG
+          # - app_env: prd
+          #   env_deploy: PRODUCTION
       fail-fast: true ## se uma execução do job falhar, vai parar tudo
       max-parallel: 1
     env: ## Variables available in this job
