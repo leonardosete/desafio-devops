@@ -128,7 +128,7 @@ jobs:
           kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ needs.build_app.outputs.output1 }}
 
       - name: 8-ROLLBACK DEPLOY - APPROVE/DENY
-        if: ${{ matrix.app_env == prd }}
+        if: ${{ matrix.app_env == 'prd' }}
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
@@ -136,7 +136,7 @@ jobs:
           issue-title: "Rollback flask-app in ${{ env.NS_APP }}-prd"
 
       - name: 9-ROLLBACK DEPLOY PRD
-        if: ${{ matrix.app_env == prd }}
+        if: ${{ matrix.app_env == 'prd' }}
         run: |
           kubectl rollout undo deployments ${{ env.APP_K8S_NAME }}
           echo "The current Namespace is ${{ env.NS_APP }}-prd"
