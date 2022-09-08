@@ -1,12 +1,12 @@
 name: 2-DEPLOY-FLASK-APP
 on:
   workflow_dispatch:
-    inputs:
-      should-merge:
-        description: 'Do you want to merge this branch into master?'
-        default: false
-        required: false
-        type: boolean
+    # inputs:
+    #   should-merge:
+    #     description: 'Do you want to merge this branch into master?'
+    #     default: false
+    #     required: false
+    #     type: boolean
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
@@ -132,11 +132,23 @@ jobs:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
 
-      - name: MERGE BRANCh ${{ github.ref_name }} INTO BRANCH master
-        if: ${{ inputs.should-merge == true }}
-        uses: devmasx/merge-branch@master
+      - name: 2-APPROVE OR DENY MERGE TO MASTER
+        uses: trstringer/manual-approval@v1
         with:
-          type: now
-          from_branch: ${{ github.ref_name }}
-          target_branch: master
-          github_token: ${{ github.token }}
+          secret: ${{ github.token }}
+          approvers: ${{ env.APPROVERS }}
+          issue-title: "Approve merge ${{ github.ref_name }} branch into master branch"
+
+      # - name: MERGE ${{ github.ref_name }} BRANCH INTO master BRANCH
+      #   uses: devmasx/merge-branch@master
+      #   with:
+      #     type: now
+      #     from_branch: ${{ github.ref_name }}
+      #     target_branch: master
+      #     github_token: ${{ github.token }}
+      - name: pull-request-action
+        uses: vsoch/pull-request-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_PREFIX: "update/"
+          PULL_REQUEST_BRANCH: "master"
