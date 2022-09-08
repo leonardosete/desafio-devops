@@ -85,7 +85,7 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
  Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido na variável [$NEW_PROJECT_ID]:
 
  * tembici-desafio-devops/.github/workflows/1-gke.yaml ->> PROJECT_ID: [colocar_nome_do_projeto]
- * tembici-desafio-devops/.github/workflows/2-flasp-app.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
+ * tembici-desafio-devops/.github/workflows/2-deploy.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
  * tembici-desafio-devops/k8s/deploy-dev.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
  * tembici-desafio-devops/k8s/deploy-hlg.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
  * tembici-desafio-devops/k8s/deploy-prd.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
@@ -107,11 +107,12 @@ Ou utilizar o find VSCODE e realizar a substituição.
 
 ### BREVE ENTENDIMENTO DOS ARQUIVOS DE WORKFLOW DO GITHUB ACTIONS ###
 
-Foram gerados 2 workflows (pipelines/esteiras) no path:
+Foram gerados 3 workflows (pipelines/esteiras) no path:
 
 -  ./github/workflows:
     * 1-gke.yaml ->> Responsável por executar o Terraform que criará o cluster GKE.
-    * 2-flask-app.yaml  ->> Responsável por realizar o fluxo de CI/CD do App.
+    * 2-deploy.yaml  ->> Responsável por realizar o fluxo de CI/CD do App.
+    * 3-rollback.yaml  ->> Responsável por realizar o rollback do App em Produção - GKE (K8s).
 
     [extra]
 - ./github/workflows:
@@ -136,10 +137,14 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
 - Após a criação da infra do GKE (aguarde o terraform finalizar), e então é possível rodar o segundo workflow:
 
 - [2-DEPLOY-FLASK-APP]
-    * Para executar, é necessário fornecer o [nome_de_usuário_do_github] que pode aprovar ou negar o fluxo de deploy
-    e após isso, basta selecionar o workflow e ir em [Run_workflow]
-    
+    * Para executar, basta selecionar o workflow e ir em [Run_workflow]
     * Deixar no branch master e clicar em [Run_workflow] na caixinha verde.
+    * Ou para gerar as tags de versão da imagem da aplicação, criar um dos 3 branchs:
+        - release = major
+        - feature = minor
+        - hotfix = patch
+    * E ao realizar o [push] em um desses branchs, o workflow executará automaticamente (além da opção Run Workflow também nos branches citados).
+    
     * Com isso, será possível realizar a criação dos recursos necessários para rodar o app:
         - build
         - teste
@@ -147,10 +152,10 @@ Foram gerados 2 workflows (pipelines/esteiras) no path:
         - deploy (existe a necessidade de aprovação no fluxo - através de issue aberta automaticamente)
             * criará os recursos no GKE: 
                 - Load Balancers através do ingress controller [gce]
-                - criará os namespaces, deployments, services, hpa, ingress resources, managed certificate [criará_os_certificados_no_GCP]
+                - criará os objetos do Kubernetes: namespaces, deployments, services, hpa, ingress resources, managed certificate           [criará_os_certificados_no_GCP].
 
     * deploy ->> [aprovação]:
-        * nos jobs de deploy, uma issue será aberta para que seja aprovada pelo usuário que foi
+        * nos jobs de deploy [dev,hlg,prd], uma issue será aberta automaticamente para que seja aprovada pelo usuário que foi
         informado ao início da execução do workflow, e deverá responder o comentário conforme a orientação na própria issue.
         * Podendo ser as respostas:
            [approved], [approve], [lgtm], [yes] to continue workflow or [denied], [deny], [no] to cancel.

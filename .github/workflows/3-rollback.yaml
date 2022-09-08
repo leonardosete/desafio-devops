@@ -14,12 +14,13 @@ on:
         type: boolean
 
 env: ## Variables available in this workflow
-  PROJECT_ID: "fork-project-teste"
+  APPROVERS: "7700472077" ## Inserir seu usuário do github para aprovar as issues
+  
+  PROJECT_ID: "fork-project-teste" ## nome do projeto no GKE
   CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: "flask-app"
-  APPROVERS: "7700472077"
   APP_K8S_NAME: "flask-app"
   NS_APP: "tembici-sre-apps"
 jobs:
