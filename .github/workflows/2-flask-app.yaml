@@ -36,7 +36,7 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: 6-DOCKER METADATA
+      - name: 5-DOCKER METADATA
         id: meta
         uses: docker/metadata-action@v4
         with:
@@ -45,15 +45,14 @@ jobs:
           tags: |
             # minimal
             type=semver,pattern={{version}}
-            # use custom value instead of git tag
-            type=semver,pattern={{version}},value=v1.0.0
 
-      - name: 7-BUILD DOCKER IMAGE
+
+      - name: 6-BUILD DOCKER IMAGE
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} .
+          docker build -t ${{ steps.meta.outputs.tags }} .
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      - name: 8-TESTING APPLICATION
+      - name: 7-TESTING APPLICATION
         run: |
           docker run -t ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} bash -c "BASE_API_ENV=test pipenv run pytest"
 
@@ -67,7 +66,7 @@ jobs:
       #   run: |
       #     bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
 
-      - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
+      - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
         # env:
         #   GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
