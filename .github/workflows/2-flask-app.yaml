@@ -112,7 +112,8 @@ jobs:
       - name: 5-CHECK NAMESPACE TO DEPLOY
         continue-on-error: true
         run: |
-          kubectl get ns banana |grep "NotFound"
+          kubectl get ns banana
+          echo $?
 
       # - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
       #   run: |
