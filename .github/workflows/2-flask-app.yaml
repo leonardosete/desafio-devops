@@ -84,7 +84,7 @@ jobs:
       fail-fast: true ## se uma execução do job falhar, vai parar tudo
       max-parallel: 1
     env: ## Variables available in this job
-      NS_APP: "tembici-sre-apps"
+      NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
       WORK_DIR: "./k8s"
     defaults:
       run:
@@ -112,30 +112,21 @@ jobs:
       - name: 5-CHECK NAMESPACE TO DEPLOY
         continue-on-error: true
         run: |
-          NS=${{ env.NS_APP }}-${{ matrix.app_env }}
-          kubectl get ns ${{ env.NS }} > check-ns.txt
-          CHECK_NS=`cat check-ns.txt |grep ${{ env.NS }} |awk '{print $1}'`
+          kubectl get ns ${{ env.NS_APP }} > check-ns.txt
+          CHECK_NS=`cat check-ns.txt |grep ${{ env.NS_APP }} |awk '{print $1}'`
         
       - name: 7-APPLICATION APPROVED TO DEPLOY
-        if: ${{ env.CHECK_NS != '$NS' }}
+        if: ${{ env.CHECK_NS != env.NS_APP }}
         run: |
           echo "primeiro deploy"
-
-
-      # - name: 7-APPLICATION APPROVED TO DEPLOY
-      #   if: ${{ env.CHECK_NS == 'empty' }}
-      #   run: |
       #     kubectl apply -f deploy-${{ matrix.app_env }}.yaml
-      #     echo "primeiro deploy"
-
-
 
 
       # - name: 5-CHECK NAMESPACE TO DEPLOY
       #   continue-on-error: true
       #   run: |
-      #     kubectl get ns ${{ env.NS_APP }}-${{ matrix.app_env }}
-      #     echo "The current Namespace is ${{ env.NS_APP }}-${{ matrix.app_env }}"
+      #     kubectl get ns ${{ env.NS_APP }}
+      #     echo "The current Namespace is ${{ env.NS_APP }}"
 
   #     - name: 6-APPROVE OR DENY DEPLOY
   #       uses: trstringer/manual-approval@v1
@@ -147,7 +138,7 @@ jobs:
   #     - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
   #       run: |
   #         kubectl apply -f deploy-${{ matrix.app_env }}.yaml
-  #         kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ needs.build_app.outputs.output1 }} --namespace ${{ env.NS_APP }}-${{ matrix.app_env }}
+  #         kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ needs.build_app.outputs.output1 }} --namespace ${{ env.NS_APP }}
 
   # merge_master:
   #   needs: deploy_apps
