@@ -116,7 +116,7 @@ jobs:
           CHECK_NS=`cat check-ns.txt |grep ${{ env.NS_APP }}-${{ matrix.app_env }} |awk '{print $1}'`
         
       - name: 7-APPLICATION APPROVED TO DEPLOY
-        if: ${{ env.CHECK_NS != '$APP_K8S_NAME'}}
+        if: ${{ env.CHECK_NS != '$NS_APP-$matrix.app_env' }}
         run: |
           echo "primeiro deploy"
 
