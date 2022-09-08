@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       should-merge:
-        description: 'Do you want to merge to master branch?'
+        description: 'Do you want to merge this branch into master?'
         default: false
         required: false
         type: boolean
@@ -61,9 +61,7 @@ jobs:
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
-          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   deploy_apps:
@@ -124,8 +122,17 @@ jobs:
         run: |
           sleep 30
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
+          kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
-      - name: Merge ${{ github.ref_name }} -> Master
+  merge_master:
+    needs: deploy_apps
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1-CHECKOUT ACTIONS
+        uses: actions/checkout@v3
+
+      - name: MERGE BRANCh ${{ github.ref_name }} INTO BRANCH master
         if: ${{ inputs.should-merge == true }}
         uses: devmasx/merge-branch@master
         with:
