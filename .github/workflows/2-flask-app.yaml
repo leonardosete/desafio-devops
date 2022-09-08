@@ -50,12 +50,12 @@ jobs:
 
       - name: 6-BUILD DOCKER IMAGE
         run: |
-          docker build -t ${{ steps.meta.outputs.tags }} .
+          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} .
           gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: 7-TESTING APPLICATION
         run: |
-          docker run -t ${{ steps.meta.outputs.tags }} bash -c "BASE_API_ENV=test pipenv run pytest"
+          docker run -t ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }} bash -c "BASE_API_ENV=test pipenv run pytest"
 
       # - name: 7-SEMANTIC VERSION
       #   id: semantic-version
