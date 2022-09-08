@@ -1,7 +1,5 @@
 name: 3-ROLLBACK-FLASK-APP
 on:
-  push: 
-    branches: [release-*, feature-*, hotfix-*]
   workflow_dispatch:
     inputs:
       should-rollback:
