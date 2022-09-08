@@ -118,7 +118,7 @@ jobs:
           echo ::set-output name=ns_name::$CHECK_NS
         
       - name: 7-APPLICATION APPROVED TO DEPLOY
-        # if: ${{ env.CHECK_NS == env.NS_APP }}
+        if: ${{ env.CHECK_NS != steps.check-ns.outputs.ns_name }}
         run: |
           echo "primeiro deploy"
           echo ${{ steps.check-ns.outputs.ns_name }}
