@@ -11,6 +11,7 @@ env: ## Variables available in this workflow
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: "flask-app"
   APPROVERS: "7700472077"
+  APP_K8S_NAME: "flask-app"
 jobs:
   build_app:
     runs-on: ubuntu-latest
@@ -119,9 +120,10 @@ jobs:
           issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
 
       - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
+        env:
+          GIT_TAG: ${{ jobs.build_app.steps.increment-git-tag.outputs.git-tag }}
         run: |
-          sleep 30
-          kubectl apply -f deploy-${{ matrix.app_env }}.yaml
+          kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
 
   merge_master:
     needs: deploy_apps
