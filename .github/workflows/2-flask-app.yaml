@@ -1,7 +1,7 @@
 name: 2-DEPLOY-FLASK-APP
 on:
-  # push: 
-  #   branches: [release-*, feature-*, hotfix-*]
+  push: 
+    branches: [release-*, feature-*, hotfix-*]
   workflow_dispatch:
 
 env: ## Variables available in this workflow
