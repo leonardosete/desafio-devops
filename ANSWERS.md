@@ -198,7 +198,8 @@ on:
         type: boolean
 
 ## Será executado apenas de forma manual (Run workflow) ##
-* Escolhi essa abordagem - executar apenas worklow com [Run_workflow].
+* Escolhi essa abordagem - executar manualmente com [Run_workflow] e
+através de [push] nos branches [release*,feature*,hoftfix*]
 
 * Será aberto 4 issues:
  - para aprovar deploy em dev (kubernetes - GKE)
@@ -206,8 +207,11 @@ on:
  - para aprovar deploy em prd (kubernetes - GKE)
  - para aprovar a realização do merge do branch atual para o branch master.
 ## WORKFLOW 2 ##
+
 name: 2-DEPLOY-FLASK-APP
 on:
+  push: 
+    branches: [release*, feature*, hotfix*]
   workflow_dispatch:
 
 ## OBS ##
@@ -228,6 +232,7 @@ https://github.com/GoogleCloudPlatform/gke-managed-certs
 
 ## Github Actions ##
 https://trstringer.com/github-actions-manual-approval/
+https://github.com/marketplace/actions/merge-branch
 
 ## kubernetes.io/ingress.allow-http ##
 https://cloud.google.com/kubernetes-engine/docs/concepts/ingress-xlb?hl=pt-br
