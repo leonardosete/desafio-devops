@@ -57,11 +57,12 @@ jobs:
       - name: 9-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
         env:
           GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-        run: |-
-          docker tag $IMAGE_NAME:latest ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-          docker tag $IMAGE_NAME:latest ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
-          docker push ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-          docker push ${{ env.REGION }}.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
+        run: |
+          gcloud auth configure-docker  ${{ env.REGION }}-docker.pkg.dev --quiet
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.IMAGE_NAME }}:latest  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG 
 
   # deploy_apps:
   #   needs: build_app
