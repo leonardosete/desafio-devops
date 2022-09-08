@@ -42,10 +42,7 @@ jobs:
           images: |
             us-central1-docker.pkg.dev/fork-project-teste/sre-docker-registry/flask-app
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{patch}}
-            type=sha
+            type=raw
 
       # - name: 5-BUILD DOCKER IMAGE
       #   run: |
