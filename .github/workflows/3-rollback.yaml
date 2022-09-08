@@ -44,7 +44,7 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-ROLLBACK DEPLOY - APPROVE/DENY
-        if: ${{ inputs.should-rollback == 'true' && inputs.should-rollback-yes == 'true' }}
+        if: ${{ inputs.should-rollback == true && inputs.should-rollback-yes == true }}
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
@@ -52,7 +52,7 @@ jobs:
           issue-title: "Rollback flask-app in ${{ env.NS_APP }}-prd"
 
       - name: 6-ROLLBACK DEPLOY PRD
-        if: ${{ inputs.should-rollback == 'true' && inputs.should-rollback-yes == 'true' }}
+        if: ${{ inputs.should-rollback == true && inputs.should-rollback-yes == true }}
         run: |
           echo "The current Namespace is ${{ env.NS_APP }}-prd"
           sleep 30
