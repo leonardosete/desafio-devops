@@ -43,8 +43,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           tags: |
-            # use custom value instead of git tag
-            type=semver,pattern={{version}},value=v1.0.0
+            type=sha
 
       - name: 6-BUILD DOCKER IMAGE
         run: |
