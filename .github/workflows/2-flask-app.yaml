@@ -110,17 +110,18 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-CHECK NAMESPACE TO DEPLOY
+        id: check-ns
         continue-on-error: true
         run: |
           kubectl get ns ${{ env.NS_APP }} > check-ns.txt
           CHECK_NS=`cat check-ns.txt |grep ${{ env.NS_APP }} |awk '{print $1}'` >> $GITHUB_ENV
-          echo $CHECK_NS
+          echo ::set-output name=ns_name::$CHECK_NS
         
       - name: 7-APPLICATION APPROVED TO DEPLOY
-        if: ${{ env.CHECK_NS != env.NS_APP }}
+        # if: ${{ env.CHECK_NS == env.NS_APP }}
         run: |
           echo "primeiro deploy"
-          echo ${{ env.CHECK_NS }}
+          echo ${{ steps.check-ns.outputs.ns}}
       #     kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
 
