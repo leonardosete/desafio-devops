@@ -43,7 +43,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           tags: |
-            type=match,pattern=v(.*),group=0
+            type=match,pattern=v(.*),group=0,value=v1.0.0
 
       - name: 6-BUILD DOCKER IMAGE
         run: |
@@ -65,11 +65,9 @@ jobs:
       #     bash ./scripts/git_update.sh -v ${{ steps.semantic-version.outputs.semantic-version }}
 
       # - name: 8-PUSH DOCKER IMAGE TO ARTIFACT REGISTRY
-      #   # env:
-      #   #   GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       #   run: |
-      #     docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
-      #     docker tag ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
+      #     docker tag ${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
+      #     docker tag ${{ steps.meta.outputs.tags }}  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
       #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}
       #     docker push  ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$latest
 
