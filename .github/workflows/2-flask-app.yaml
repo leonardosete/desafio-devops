@@ -122,10 +122,8 @@ jobs:
           issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
 
       - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
-        # env:
-        #   GIT_TAG: ${{ needs.build_app.outputs.output1 }}
         run: |
-          kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ needs.build_app.outputs.output1 }}
+          kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ needs.build_app.outputs.output1 }} --namespace ${{ env.NS_APP }}-${{ matrix.app_env }}
 
       - name: 8-ROLLBACK DEPLOY - APPROVE/DENY
         if: ${{ matrix.app_env == 'prd' }}
