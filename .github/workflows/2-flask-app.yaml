@@ -112,11 +112,12 @@ jobs:
       - name: 5-CHECK NAMESPACE TO DEPLOY
         continue-on-error: true
         run: |
-          kubectl get ns ${{ env.NS_APP }}-${{ matrix.app_env }} > check-ns.txt
-          CHECK_NS=`cat check-ns.txt |grep ${{ env.NS_APP }}-${{ matrix.app_env }} |awk '{print $1}'`
+          NS=${{ env.NS_APP }}-${{ matrix.app_env }}
+          kubectl get ns ${{ env.NS }} > check-ns.txt
+          CHECK_NS=`cat check-ns.txt |grep ${{ env.NS }} |awk '{print $1}'`
         
       - name: 7-APPLICATION APPROVED TO DEPLOY
-        if: ${{ env.CHECK_NS != '$NS_APP-$matrix.app_env' }}
+        if: ${{ env.CHECK_NS != '$NS' }}
         run: |
           echo "primeiro deploy"
 
