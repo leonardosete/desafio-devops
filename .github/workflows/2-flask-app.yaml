@@ -1,12 +1,10 @@
 name: 2-DEPLOY-FLASK-APP
 on:
-  push:
+  pull_request:
     branches: [release*, feature*, hotfix*]
+  # push:
+    # branches: [release*, feature*, hotfix*]
   workflow_dispatch:
-    # inputs:
-    #   approvers:
-    #     description: 'The github user which can approve/deny deploys:'
-    #     required: true
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
@@ -68,6 +66,7 @@ jobs:
 
   deploy_apps:
     needs: build_app
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         app_env: [dev, hlg, prd]
@@ -80,7 +79,6 @@ jobs:
             env_deploy: PRODUCTION
       fail-fast: true ## se uma execução do job falhar, vai parar tudo
       max-parallel: 1
-    runs-on: ubuntu-latest
     env: ## Variables available in this job
       NS_APP: "tembici-sre-apps-${{ matrix.app_env }}"
       WORK_DIR: "./k8s"
