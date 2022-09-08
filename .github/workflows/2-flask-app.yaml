@@ -42,7 +42,7 @@ jobs:
           images: |
             ${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,value=v1.0.0
+            type=semver,pattern={{major}}
 
       - name: 6-BUILD DOCKER IMAGE
         run: |
