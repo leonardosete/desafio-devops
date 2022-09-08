@@ -5,6 +5,11 @@ on:
   push:
     branches: [release*, feature*, hotfix*]
   workflow_dispatch:
+      should-merge:
+        description: 'Do you want to merge to maste branch?'
+        default: false
+        required: false
+        type: boolean
 env: ## Variables available in this workflow
   PROJECT_ID: "fork-project-teste"
   CLUSTER_NAME: "tembici-cluster-prod"
@@ -124,6 +129,7 @@ jobs:
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
       - name: Merge ${{ github.ref_name }} -> Master
+        if: ${{ inputs.should-merge == true }}
         uses: devmasx/merge-branch@master
         with:
           type: now
