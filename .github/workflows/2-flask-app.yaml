@@ -122,3 +122,11 @@ jobs:
         run: |
           sleep 30
           kubectl apply -f deploy-${{ matrix.app_env }}.yaml
+
+      - name: Merge ${{ github.ref_name }} -> Master
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: ${{ github.ref_name }}
+          target_branch: master
+          github_token: ${{ github.token }}
