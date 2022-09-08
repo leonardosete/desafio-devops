@@ -18,9 +18,6 @@ Poderia ter adotado uma abordagem maior com terraform, mas acabei realizando um 
 - Após realizado o [fork] do repositório no GitHub, execute em sua máquina o bash script a seguir:
     * Path = "./scripts"
 
-    * 1-create-project.sh [mandatório] - Criará os primeiros recursos necessários para dar início ao projeto.
-## ORIENTAÇÃO DE EXECUÇÃO DOS SCRIPTS ##
-
 [1-create-project.sh]
 
 - Variáveis importantes:
@@ -28,18 +25,18 @@ Poderia ter adotado uma abordagem maior com terraform, mas acabei realizando um 
     ao término do script, sobre os arquivos que precisam estar com essa mesma informação para tudo funcionar
     corretamente.
     
-    * [BUCKET_NAME] = Por padrão, será o mesmo nome do projeto [NEW_PROJECT_ID]-tfstate, mas caso dê algum erro (nome de bucket já em uso),
-    basta alterá-la dentro do script [1-create-project.sh].
+    * [BUCKET_NAME] = Por padrão, será o mesmo nome do projeto [NEW_PROJECT_ID], mas caso dê algum erro (nome de bucket já em uso),
+    basta alterá-la dentro do script [1-create-project.sh] e no arquivo [provider.tf].
 
-Ao término da execução do script, será gerado o arquivo [svc-$NEW_PROJECT_ID-private-key.json].
+Ao término da execução do script, será gerado o arquivo [svc-$NEW_PROJECT_ID-private-key.json] na raiz do projeto.
 
 Esse arquivo será utilizado na etapa seguinte:
 - Configurando Secrets no Repositório:
     * No github, na home do projeto/repositório que foi realizado o fork, clique na opção [Settings] que fica ao lado de [Insights];
     * Dentro das opções na coluna [General], navegue na sessão até chegar na opção "Actions": [Security] >> [Secrets] >> [Actions];
-    * Clique em [New Repository Secret] >> Crie um nome baseado na finalidade dessa secret:
+    * Clique em [New_Repository_Secret] >> E digite/cole o valor abaixo:
         - Defina: [GCP_TERRAFORM_SVC_ACCOUNT] ## Esse é o valor configurado nos arquivos de workflows.
-    * Em [Value], cole o conteúdo do arquivo [svc-$NEW_PROJECT_ID-private-key.json] e clique em [Add Secret].
+    * Em [Value], cole o conteúdo do arquivo [svc-$NEW_PROJECT_ID-private-key.json] e clique em [Add_Secret].
 
 - Ativando Issues no repositório:
     * No github, na home do projeto/repositório que foi realizado o fork, clique na opção [Settings] >> [Features] >> [Issues]
@@ -49,57 +46,55 @@ Esse arquivo será utilizado na etapa seguinte:
 Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
 
 ## SCRIPT 2 ##
-  * 2-external-static-ip.sh [mandatório] - Definirá 3 IPs estáticos (externos) - usará nos LBs do GKE/Ingress Controller.
+  * 2-external-static-ip.sh [mandatório] - Definirá 3 IPs estáticos [externos] - necessário nos LBs do GKE/Ingress Controller.
             
    - 3 IPs = 3 Load Balancers = 1 para cada ambiente (dev/hlg/prd)
 
-## SCRIPT 3 - Apesar de opcional, recomendo que seja executado para garantir o funcionamento de todo fluxo ##
-  * 3-buy-domain.sh [opcional] - Fará a compra de um domínio através da GCP e ativará o serviço Cloud DNS do Google.
+## SCRIPT 3 ##
+  * 3-buy-domain.sh [mandatório] - Fará a compra de um domínio através da GCP e ativará o serviço Cloud DNS do Google.
         
     - Escolha um domínio para que seja verificado e estando disponível, basta seguir com o processo de configuração
-            do Cloud DNS e posteriormente, a compra do domínio.
-            * Caso não queria adquirir um domínio [usando_uma_conta_free_da_GCP], é possível utilizar o que já possuir.
+      do Cloud DNS e posteriormente, a compra do domínio.
     
-## SCRIPT 4 - Apesar de opcional, recomendo que seja executado para garantir o funcionamento de todo fluxo ##
-   * 4-set-dns-records.sh [opcional] - Criará registros na zona de DNS do Google - Cloud DNS.
-
-       - Caso não tenha executado o script 3 e não queira ativar esse serviço, precisará configurar em uma zona já existente
-        [manualmente] o registro dos 3 IPs estáticos, para que possamos acessar a aplicação de teste no final por [hostname].
-            Seguirá a mesma lógica sobre a definição dentro dos arquivos/manifestos, quanto na zona de DNS.
-
-        - Execute o script 3 vezes para definir as 3 entradas/registros necessárias.
-            * entradas a serem definidas, por exemplo:
-                - flask-app-tembici-dev.[dominio]
-                - flask-app-tembici-hlg.[dominio]
-                - flask-app-tembici-prd.[dominio]
+## SCRIPT 4 ##
+   * 4-set-dns-records.sh [mandatório] - Criará registros na zona de DNS do Google - Cloud DNS.
+    -   Execute o script 3 vezes para definir as 3 entradas/registros necessárias.
+        * entradas a serem definidas, por exemplo:
+          - flask-app-tembici-dev.[dominio]
+          - flask-app-tembici-hlg.[dominio]
+          - flask-app-tembici-prd.[dominio]
             
         - Esses hostnames estão pré-definidos nos arquivos/manifestos do k8s:
-            - tembici-desafio-devops/k8s/deploy-dev.yaml -> definir o mesmo valor que for atribuído no DNS
-            - tembici-desafio-devops/k8s/deploy-hlg.yaml -> definir o mesmo valor que for atribuído no DNS
-            - tembici-desafio-devops/k8s/deploy-prd.yaml -> definir o mesmo valor que for atribuído no DNS
+            - tembici-desafio-devops/k8s/deploy-dev.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - tembici-desafio-devops/k8s/deploy-hlg.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - tembici-desafio-devops/k8s/deploy-prd.yaml -> [definir] o mesmo valor que for atribuído no DNS
 
         - A definição do registro será preciso para a etapa de geração de certificado SSL
              que está na parte do deploy/criação dos recursos do K8s (GKE).
-
+        
+        - No workflow de deploy, durante a criação dos recursos do kubernetes será criado 3 certificados via [annotations].
 ### NOTA IMPORTANTE ###
- Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido na variável [$NEW_PROJECT_ID]:
+* Já estão pré-configurados os valores citados abaixo, mas caso sejam alterados, deve seguir a orientação:
+
+ Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido dentro da variável [$NEW_PROJECT_ID]:
 
  * tembici-desafio-devops/.github/workflows/1-gke.yaml ->> PROJECT_ID: [colocar_nome_do_projeto]
  * tembici-desafio-devops/.github/workflows/2-deploy.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
+ * tembici-desafio-devops/.github/workflows/3-rollback.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
  * tembici-desafio-devops/k8s/deploy-dev.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
  * tembici-desafio-devops/k8s/deploy-hlg.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
  * tembici-desafio-devops/k8s/deploy-prd.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
  * tembici-desafio-devops/terraform-gke/provider.tf  ->> bucket = "[valor_antigo]" == bucket = "[colocar_nome_do_projeto]"
  * tembici-desafio-devops/terraform-gke/variables.tf ->> default = "[valor_antigo]" == default = "[colocar_nome_do_projeto]"
     
-    - No workflow de deploy, durante a criação dos recursos do kubernetes será criado 3 certificados via [annotations].
+
 
 ## DICA ##
 ## Esse comando pode ajudar na substituição dos valores antigos pelos novos ###
 find ** -type f -print0 | xargs -0 sed -i "" "s/OLD_VALUE/NEW_PROJECT_ID/g"
                                                 [valor_antigo]/[novo_nome_do_projeto]
 ## VSCODE ##
-Ou utilizar o find VSCODE e realizar a substituição.
+Ou utilizar o find [VSCODE] e realizar a substituição.
 ### FIM DA NOTA ###
 ## PROXIMA ETAPA ##
 - Criação da infra do GKE via Terraform:
@@ -113,12 +108,17 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
     * 1-gke.yaml ->> Responsável por executar o Terraform que criará o cluster GKE.
     * 2-deploy.yaml  ->> Responsável por realizar o fluxo de CI/CD do App.
     * 3-rollback.yaml  ->> Responsável por realizar o rollback do App em Produção - GKE (K8s).
+        - Não adicionei rollback para os ambientes de [dev] e [hlg] por teoricamente não serem "prioritários" 
+        na hora de um rollback.
 
     [extra]
 - ./github/workflows:
     * CODEOWNERS >> Esse arquivo define permissões no repositório, é indicado colocar ao menos o seu usuário nele.
         [exemplo]: "* @leonardosete" >> exatamente conforme dentro das " ", o * significa permissão em todos os arquivos.       
 
+## IMPORTANTE ##
+* Definir o valor da variável [APPROVERS] que está dentro dos 3 arquivos de wokflows acima.
+    - é o usuário que fará a aprovação das issues.
 ### EXECUTANDO GITHUB ACTIONS - WORKFLOWS ###
 
 - Pela console do github [web], na aba de [Actions], e será preciso ativar os workflows clicando no botão
@@ -138,12 +138,17 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
 
 - [2-DEPLOY-FLASK-APP]
     * Para executar, basta selecionar o workflow e ir em [Run_workflow]
-    * Deixar no branch master e clicar em [Run_workflow] na caixinha verde.
-    * Ou para gerar as tags de versão da imagem da aplicação, criar um dos 3 branchs:
+    * Criar qualquer um dos 3 branches abaixo:
+       - hotfix
+       - feature
+       - release
+    
+    Depois clicar em [Run_workflow] na caixinha verde.
+    * Ou através de commit+push em um dos 3 branches citados.
         - release = major
         - feature = minor
         - hotfix = patch
-    * E ao realizar o [push] em um desses branchs, o workflow executará automaticamente (além da opção Run Workflow também nos branches citados).
+    * Se optar por realizar o [push] em um desses branchs, o workflow executará automaticamente.
     
     * Com isso, será possível realizar a criação dos recursos necessários para rodar o app:
         - build
@@ -170,22 +175,20 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
 
 
 * Para configurar que o app atenda somente requisições via HTTPS, após a primeira execução do deploy
-    habilite/descomente nos arquivos de [deploy-*.yaml] essa linha:
+    habilite/descomente nos arquivos de [deploy-*.yaml] a linha abaixo:
 
      kubernetes.io/ingress.allow-http: "false" ## Only enable this, after the LB's creation
 
 * Reexecute o deploy ou conecte-se ao cluster e aplique essa alteração via linha de comando:
-    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-dev.yaml
-    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-hlg.yaml
-    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-prd.yaml
+    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-dev.yaml --namespace tembici-sre-apps-dev
+    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-hlg.yaml --namespace tembici-sre-apps-hlg
+    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-prd.yaml --namespace tembici-sre-apps-prd
 
 ## FIM DO TESTE ##
 
 ## OBSERVAÇÃO SOBRE OS WORKFLOWS ##
 * Ambos foram definidos para serem executados somente em cenários específicos:
 
-## Será executado apenas de forma manual (Run workflow) ##
-* Escolhi essa abordagem - executar worklow com [Run_workflow], pois também adicionei 2 steps que perguntam se deseja deletar a infra. Só marque essas opções, se desejar destruir o cluster GKE.
 ## WORKFLOW 1 ##
 name: 1-CREATE-INFRA-GKE
 on:
@@ -201,8 +204,17 @@ on:
         default: false
         required: false
         type: boolean
-
 ## Será executado apenas de forma manual (Run workflow) ##
+* Escolhi essa abordagem - executar worklow com [Run_workflow], pois também adicionei 2 steps que perguntam se deseja deletar a infra. Só marque essas opções, se desejar destruir o cluster GKE.
+
+## WORKFLOW 2 ##
+
+name: 2-DEPLOY-FLASK-APP
+on:
+  push: 
+    branches: [release*, feature*, hotfix*]
+  workflow_dispatch:
+## Será executado de forma manual (Run workflow) e via push ##
 * Escolhi essa abordagem - executar manualmente com [Run_workflow] e
 através de [push] nos branches [release*,feature*,hoftfix*]
 
@@ -211,13 +223,6 @@ através de [push] nos branches [release*,feature*,hoftfix*]
  - para aprovar deploy em hlg (kubernetes - GKE)
  - para aprovar deploy em prd (kubernetes - GKE)
  - para aprovar a realização do merge do branch atual para o branch master.
-## WORKFLOW 2 ##
-
-name: 2-DEPLOY-FLASK-APP
-on:
-  push: 
-    branches: [release*, feature*, hotfix*]
-  workflow_dispatch:
 
 ## OBS ##
 * Essa abordagem pode ser modificada de acordo com a necessidade/entendimento de cada projeto.
