@@ -112,12 +112,22 @@ jobs:
       - name: 5-CHECK NAMESPACE TO DEPLOY
         continue-on-error: true
         run: |
-          kubectl get ns banana
-          echo $?
+          kubectl get ns banana > check-ns.txt
+          CHECK_NS=`file check-ns.txt |grep empty`
+        
+      - name: 7-APPLICATION APPROVED TO DEPLOY
+        if: ${{ env.CHECK_NS == 'empty' }}
+        run: |
+          echo "primeiro deploy"
 
-      # - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
+
+      # - name: 7-APPLICATION APPROVED TO DEPLOY
+      #   if: ${{ env.CHECK_NS == 'empty' }}
       #   run: |
       #     kubectl apply -f deploy-${{ matrix.app_env }}.yaml
+      #     echo "primeiro deploy"
+
+
 
 
       # - name: 5-CHECK NAMESPACE TO DEPLOY
