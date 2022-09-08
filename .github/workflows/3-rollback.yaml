@@ -1,0 +1,59 @@
+name: 3-ROLLBACK-FLASK-APP
+on:
+  workflow_dispatch:
+    inputs:
+      should-rollback:
+        description: 'Rollback the last deploy?'
+        default: false
+        required: false
+        type: boolean
+      should-rollback-yes:
+        description: 'Are you sure?'
+        default: false
+        required: false
+        type: boolean
+
+env: ## Variables available in this workflow
+  PROJECT_ID: "fork-project-teste"
+  CLUSTER_NAME: "tembici-cluster-prod"
+  REGION: "us-central1"
+  REPOSITORY: "sre-docker-registry"
+  IMAGE_NAME: "flask-app"
+  APPROVERS: "7700472077"
+  APP_K8S_NAME: "flask-app"
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1-CHECKOUT ACTIONS
+        uses: actions/checkout@v3
+  
+      - name: 2-AUTHENTICATE TO GOOGLE CLOUD
+        id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
+
+      - name: 3-SETUP CLOUD SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: 4-GET GKE CREDENTIALS
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.REGION }}
+
+      - name: 5-ROLLBACK DEPLOY - APPROVE/DENY
+        if: ${{ inputs.should-rollback == 'true' && inputs.should-rollback-yes == 'true' }}
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: ${{ env.APPROVERS }}
+          issue-title: "Rollback flask-app in ${{ env.NS_APP }}-prd"
+
+      - name: 6-ROLLBACK DEPLOY PRD
+        if: ${{ inputs.should-rollback == 'true' && inputs.should-rollback-yes == 'true' }}
+        run: |
+          echo "The current Namespace is ${{ env.NS_APP }}-prd"
+          sleep 30
+          kubectl rollout undo deployments ${{ env.APP_K8S_NAME }} --namespace ${{ env.NS_APP }}-prd

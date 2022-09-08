@@ -14,6 +14,8 @@ env: ## Variables available in this workflow
   APP_K8S_NAME: "flask-app"
 jobs:
   build_app:
+    outputs: 
+      output1: ${{ steps.increment-git-tag.outputs.git-tag }}
     runs-on: ubuntu-latest
     steps:
       - name: 1-CHECKOUT ACTIONS
@@ -107,28 +109,33 @@ jobs:
           location: ${{ env.REGION }}
 
       - name: 5-CHECK NAMESPACE TO DEPLOY
+        id: check-ns
         continue-on-error: true
         run: |
-          kubectl get ns ${{ env.NS_APP }}
+          kubectl get ns ${{ env.NS_APP }} > check-ns.txt
+          CHECK_NS=`cat check-ns.txt |grep ${{ env.NS_APP }} |awk '{print $1}'` >> $GITHUB_ENV
+          echo ::set-output name=ns_name::$CHECK_NS
           echo "The current Namespace is ${{ env.NS_APP }}"
+        
+      - name: 6-CREATE K8s OBJECTS - FIRST RUN
+        if: ${{ steps.check-ns.outputs.ns_name != env.NS_APP }}
+        run: |
+          kubectl apply -f deploy-${{ matrix.app_env }}.yaml
 
-      - name: 6-APPROVE OR DENY DEPLOY
+      - name: 7-APPROVE OR DENY DEPLOY
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS }}
           issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
 
-      - name: 7-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
-        env:
-          GIT_TAG: ${{ jobs.build_app.steps.increment-git-tag.outputs.git-tag }}
+      - name: 8-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
         run: |
-          kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:$GIT_TAG
+          kubectl set image deployment.v1.apps/${{ env.APP_K8S_NAME }} ${{ env.APP_K8S_NAME }}=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ needs.build_app.outputs.output1 }} --namespace ${{ env.NS_APP }}
 
   merge_master:
     needs: deploy_apps
     runs-on: ubuntu-latest
-
     steps:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
