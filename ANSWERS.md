@@ -15,7 +15,7 @@ Poderia ter adotado uma abordagem maior com terraform, mas acabei realizando um 
 ### DETALHE IMPORTANTE/ ###
 
 ## CRIAÇÃO DE UM NOVO PROJETO GCP E OUTROS SERVIÇOS/APIS NECESSÁRIOS PARA O CENÁRIO DE TESTE ##
-- Após realizado o [fork] do repositório no GitHub, execute em sua máquina o bash script a seguir:
+- Após realizado o [fork] do repositório no GitHub, execute em sua máquina o bash script a seguir [usando_branch_master]:
     * Path = "./scripts"
 
 [1-create-project.sh]
@@ -117,7 +117,7 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
         [exemplo]: "* @leonardosete" >> exatamente conforme dentro das " ", o * significa permissão em todos os arquivos.       
 
 ## IMPORTANTE ##
-* Definir o valor da variável [APPROVERS] que está dentro dos 3 arquivos de wokflows acima.
+* Definir o valor da variável [APPROVERS] que está dentro dos arquivos de wokflows acima [1-gke.yaml] e [2-deploy.yaml].
     - é o usuário que fará a aprovação das issues.
 ### EXECUTANDO GITHUB ACTIONS - WORKFLOWS ###
 
@@ -137,18 +137,18 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
 - Após a criação da infra do GKE (aguarde o terraform finalizar), e então é possível rodar o segundo workflow:
 
 - [2-DEPLOY-FLASK-APP]
-    * Para executar, basta selecionar o workflow e ir em [Run_workflow]
     * Criar qualquer um dos 3 branches abaixo:
        - hotfix
        - feature
        - release
     
-    Depois clicar em [Run_workflow] na caixinha verde.
-    * Ou através de commit+push em um dos 3 branches citados.
-        - release = major
-        - feature = minor
-        - hotfix = patch
-    * Se optar por realizar o [push] em um desses branchs, o workflow executará automaticamente.
+    * Realizer um commit + push, com isso o workflow dará início.
+    ## OBSERVAÇÃO ##
+    * Após a criação dos branchs ou de apenas 1 deles, é possível rodar [Run_workflow] na caixinha verde de forma correta.
+        - Esses branches são necessários para o funcionamento do semantic version.
+            - release = major
+             - feature = minor
+                - hotfix = patch
     
     * Com isso, será possível realizar a criação dos recursos necessários para rodar o app:
         - build
@@ -179,7 +179,7 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
 
      kubernetes.io/ingress.allow-http: "false" ## Only enable this, after the LB's creation
 
-* Reexecute o deploy ou conecte-se ao cluster e aplique essa alteração via linha de comando:
+* Conecte-se ao cluster e aplique essa alteração via linha de comando:
     kubectl apply -f [tembici-desafio-devops]/k8s/deploy-dev.yaml --namespace tembici-sre-apps-dev
     kubectl apply -f [tembici-desafio-devops]/k8s/deploy-hlg.yaml --namespace tembici-sre-apps-hlg
     kubectl apply -f [tembici-desafio-devops]/k8s/deploy-prd.yaml --namespace tembici-sre-apps-prd
