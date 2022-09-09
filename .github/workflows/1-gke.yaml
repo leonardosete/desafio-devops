@@ -22,7 +22,6 @@ jobs:
       CLUSTER_NAME: "tembici-cluster-prod"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       PRIVATE_KEY: "private_key.pem"
-      APPROVERS: "YOUR_GIT_USER"
 
     ## Add "id-token" with the intended permissions.
     permissions:
@@ -71,14 +70,7 @@ jobs:
         run: terraform plan 
         continue-on-error: true
 
-      - name: 9-APPROVE OR DENY CREATE/DESTROY INFRA
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS }}
-          issue-title: "CREATE/DELETE INFRA GKE"
-
-      - name: 10-TERRAFORM APPLY
+      - name: 9-TERRAFORM APPLY
         if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
         id: apply
         run: terraform apply -auto-approve
