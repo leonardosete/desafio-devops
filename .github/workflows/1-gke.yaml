@@ -17,7 +17,7 @@ jobs:
   gke_cluster:
     runs-on: ubuntu-latest
     env: ## Variables available in this workflow
-      PROJECT_ID: "fork-project-teste"
+      PROJECT_ID: "fork-project-teste-2"
       REGION: "us-central1"
       CLUSTER_NAME: "tembici-cluster-prod"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
@@ -71,17 +71,17 @@ jobs:
         run: terraform plan 
         continue-on-error: true
 
-      # - name: 9-APPROVE OR DENY CREATE/DESTROY INFRA
-      #   uses: trstringer/manual-approval@v1
-      #   with:
-      #     secret: ${{ github.token }}
-      #     approvers: ${{ env.APPROVERS }}
-      #     issue-title: "CREATE/DELETE INFRA GKE"
+      - name: 9-APPROVE OR DENY CREATE/DESTROY INFRA
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: ${{ env.APPROVERS }}
+          issue-title: "CREATE/DELETE INFRA GKE"
 
-      # - name: 10-TERRAFORM APPLY
-      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-      #   id: apply
-      #   run: terraform apply -auto-approve
+      - name: 10-TERRAFORM APPLY
+        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+        id: apply
+        run: terraform apply -auto-approve
 
       - name: 10-TERRAFORM DESTROY
         if: ${{ inputs.should-destroy == true && inputs.should-destroy-yes == true }}
