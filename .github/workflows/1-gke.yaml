@@ -71,17 +71,17 @@ jobs:
         run: terraform plan 
         continue-on-error: true
 
-      - name: 9-APPROVE OR DENY CREATE/DESTROY INFRA
-        uses: trstringer/manual-approval@v1
-        with:
-          secret: ${{ github.token }}
-          approvers: ${{ env.APPROVERS }}
-          issue-title: "CREATE/DELETE INFRA GKE"
+      # - name: 9-APPROVE OR DENY CREATE/DESTROY INFRA
+      #   uses: trstringer/manual-approval@v1
+      #   with:
+      #     secret: ${{ github.token }}
+      #     approvers: ${{ env.APPROVERS }}
+      #     issue-title: "CREATE/DELETE INFRA GKE"
 
-      - name: 10-TERRAFORM APPLY
-        if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
-        id: apply
-        run: terraform apply -auto-approve
+      # - name: 10-TERRAFORM APPLY
+      #   if: ${{ inputs.should-destroy == false && inputs.should-destroy-yes == false }}
+      #   id: apply
+      #   run: terraform apply -auto-approve
 
       - name: 10-TERRAFORM DESTROY
         if: ${{ inputs.should-destroy == true && inputs.should-destroy-yes == true }}
