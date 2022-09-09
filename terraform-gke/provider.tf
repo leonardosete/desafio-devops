@@ -10,7 +10,7 @@ provider "google" {
 # https://www.terraform.io/language/settings/backends/gcs
 terraform {
   backend "gcs" {
-    bucket = "fork-project-teste-2"
+    bucket = "devops-project-leosete"
     prefix = "terraform/state"
   }
   required_providers {

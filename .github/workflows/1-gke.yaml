@@ -17,12 +17,12 @@ jobs:
   gke_cluster:
     runs-on: ubuntu-latest
     env: ## Variables available in this workflow
-      PROJECT_ID: "fork-project-teste-2"
+      PROJECT_ID: "devops-project-leosete"
       REGION: "us-central1"
       CLUSTER_NAME: "tembici-cluster-prod"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       PRIVATE_KEY: "private_key.pem"
-      APPROVERS: "7700472077"
+      APPROVERS: "YOUR_GIT_USER"
 
     ## Add "id-token" with the intended permissions.
     permissions:

@@ -113,11 +113,13 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
 
     [extra]
 - ./github/workflows:
-    * CODEOWNERS >> Esse arquivo define permissões no repositório, é indicado colocar ao menos o seu usuário nele.
+    * [CODEOWNERS] >> Esse arquivo define permissões no repositório, é indicado colocar ao menos o seu usuário nele.
         [exemplo]: "* @leonardosete" >> exatamente conforme dentro das " ", o * significa permissão em todos os arquivos.       
+    - trocar o valor = [YOUR_GIT_USER]
 
 ## IMPORTANTE ##
-* Definir o valor da variável [APPROVERS] que está dentro dos arquivos de wokflows acima [1-gke.yaml] e [2-deploy.yaml].
+* Definir o valor da variável [APPROVERS] que está dentro dos arquivos de wokflows acima [1-gke.yaml], [2-deploy.yaml].
+    - trocar o valor = [YOUR_GIT_USER]
     - é o usuário que fará a aprovação das issues.
 ### EXECUTANDO GITHUB ACTIONS - WORKFLOWS ###
 

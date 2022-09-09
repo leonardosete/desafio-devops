@@ -14,9 +14,9 @@ on:
         type: boolean
 
 env: ## Variables available in this workflow
-  APPROVERS: "7700472077" ## Inserir seu usuário do github para aprovar as issues
+  APPROVERS: "YOUR_GIT_USER" ## Inserir seu usuário do github para aprovar as issues
   
-  PROJECT_ID: "fork-project-teste-2" ## nome do projeto no GKE
+  PROJECT_ID: "devops-project-leosete" ## nome do projeto no GKE
   CLUSTER_NAME: "tembici-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
