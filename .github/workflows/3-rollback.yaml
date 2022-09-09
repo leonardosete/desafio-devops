@@ -52,6 +52,7 @@ jobs:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS }}
           issue-title: "Rollback flask-app in ${{ env.NS_APP }}-prd"
+          timeout-minutes: 60 ## Se não for aprovado em 1 hora, será cancelado.
 
       - name: 6-ROLLBACK DEPLOY PRD
         if: ${{ inputs.should-rollback == true && inputs.should-rollback-yes == true }}

@@ -129,6 +129,7 @@ jobs:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS }}
           issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
+          timeout-minutes: 60 ## Se não for aprovado em 1 hora, será cancelado.
 
       - name: 8-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
         run: |
