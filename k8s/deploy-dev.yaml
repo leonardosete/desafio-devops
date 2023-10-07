@@ -3,24 +3,24 @@ kind: Namespace
 metadata:
   labels:
     env: dev
-  name: tembici-sre-apps-dev
+  name: leosete-sre-apps-dev
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: flask-app
+    app: hello-app
     env: dev
-  name: flask-app
-  namespace: tembici-sre-apps-dev
+  name: hello-app
+  namespace: leosete-sre-apps-dev
 spec:
   ports:
-  - name: flask
+  - name: hello
     port: 8080
     protocol: TCP
     targetPort: 8080
   selector:
-    app: flask-app
+    app: hello-app
     env: dev
   type: ClusterIP
 ---
@@ -28,15 +28,15 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: flask-app
+    app: hello-app
     env: dev
-  name: flask-app
-  namespace: tembici-sre-apps-dev
+  name: hello-app
+  namespace: leosete-sre-apps-dev
 spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: flask-app
+      app: hello-app
       env: dev
   strategy:
     rollingUpdate:
@@ -46,14 +46,14 @@ spec:
   template:
     metadata:
       labels:
-        app: flask-app
+        app: hello-app
         env: dev
     spec:
       containers:
       - env:
         - name: TZ
           value: America/Sao_Paulo
-        image: us-central1-docker.pkg.dev/devops-project-leosete/sre-docker-registry/flask-app
+        image: us-central1-docker.pkg.dev/devops-project-leosete/sre-docker-registry/hello-app
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -65,7 +65,7 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 2
-        name: flask-app
+        name: hello-app
         ports:
         - containerPort: 8080
           protocol: TCP
@@ -90,30 +90,30 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
-    app: flask-app
+    app: hello-app
     env: dev
-  name: flask-app
-  namespace: tembici-sre-apps-dev
+  name: hello-app
+  namespace: leosete-sre-apps-dev
 spec:
   maxReplicas: 2
   minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: flask-app
+    name: hello-app
   targetCPUUtilizationPercentage: 75
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
   labels:
-    app: flask-app
+    app: hello-app
     env: dev
   name: dev-certs
-  namespace: tembici-sre-apps-dev
+  namespace: leosete-sre-apps-dev
 spec:
   domains:
-  - flask-app-tembici-dev.devops-project-leosete.com
+  - hello-app-dev.desafioleosete.com
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -121,22 +121,22 @@ metadata:
   annotations:
     ingressclass.kubernetes.io/is-default-class: "true"
     kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-tembici-dev
+    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-dev
     networking.gke.io/managed-certificates: dev-certs
     # kubernetes.io/ingress.allow-http: "false" ## Only enable this, after the LB's creation
   labels:
-    app: flask-app
+    app: hello-app
     env: dev
-  name: flask-app-dev-ext
-  namespace: tembici-sre-apps-dev
+  name: hello-app-dev-ext
+  namespace: leosete-sre-apps-dev
 spec:
   rules:
-  - host: flask-app-tembici-dev.devops-project-leosete.com
+  - host: hello-app-dev.desafioleosete.com
     http:
       paths:
       - backend:
           service:
-            name: flask-app
+            name: hello-app
             port:
               number: 8080
         path: /api/ping

@@ -4,7 +4,7 @@ variable "project_id" {
 }
 variable "cluster_name" {
   description = "The name for the GKE cluster"
-  default     = "tembici-cluster"
+  default     = "leosete-cluster"
 }
 variable "env_name" {
   description = "The environment for the GKE cluster"
@@ -48,5 +48,5 @@ variable "release_channel" {
 
 variable "node_pools_name" {
   description = "Node pool name"
-  default = "tembici-node-pool"
+  default = "leosete-node-pool"
 }

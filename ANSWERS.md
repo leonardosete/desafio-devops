@@ -60,14 +60,14 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
    * 4-set-dns-records.sh [mandatório] - Criará registros na zona de DNS do Google - Cloud DNS.
     -   Execute o script 3 vezes para definir as 3 entradas/registros necessárias.
         * entradas a serem definidas, por exemplo:
-          - flask-app-tembici-dev.[dominio]
-          - flask-app-tembici-hlg.[dominio]
-          - flask-app-tembici-prd.[dominio]
+          - hello-app-dev.[dominio]
+          - hello-app-hlg.[dominio]
+          - hello-app-prd.[dominio]
             
         - Esses hostnames estão pré-definidos nos arquivos/manifestos do k8s:
-            - tembici-desafio-devops/k8s/deploy-dev.yaml -> [definir] o mesmo valor que for atribuído no DNS
-            - tembici-desafio-devops/k8s/deploy-hlg.yaml -> [definir] o mesmo valor que for atribuído no DNS
-            - tembici-desafio-devops/k8s/deploy-prd.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - leosete-desafio-devops/k8s/deploy-dev.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - leosete-desafio-devops/k8s/deploy-hlg.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - leosete-desafio-devops/k8s/deploy-prd.yaml -> [definir] o mesmo valor que for atribuído no DNS
 
         - A definição do registro será preciso para a etapa de geração de certificado SSL
              que está na parte do deploy/criação dos recursos do K8s (GKE).
@@ -78,14 +78,14 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
 
  Os arquivos abaixo, todos [DEVEM] possuir o mesmo valor que foi definido dentro da variável [$NEW_PROJECT_ID]:
 
- * tembici-desafio-devops/.github/workflows/1-gke.yaml ->> PROJECT_ID: [colocar_nome_do_projeto]
- * tembici-desafio-devops/.github/workflows/2-deploy.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
- * tembici-desafio-devops/.github/workflows/3-rollback.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
- * tembici-desafio-devops/k8s/deploy-dev.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
- * tembici-desafio-devops/k8s/deploy-hlg.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
- * tembici-desafio-devops/k8s/deploy-prd.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
- * tembici-desafio-devops/terraform-gke/provider.tf  ->> bucket = "[valor_antigo]" == bucket = "[colocar_nome_do_projeto]"
- * tembici-desafio-devops/terraform-gke/variables.tf ->> default = "[valor_antigo]" == default = "[colocar_nome_do_projeto]"
+ * leosete-desafio-devops/.github/workflows/1-gke.yaml ->> PROJECT_ID: [colocar_nome_do_projeto]
+ * leosete-desafio-devops/.github/workflows/2-deploy.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
+ * leosete-desafio-devops/.github/workflows/3-rollback.yaml  ->> PROJECT_ID: [colocar_nome_do_projeto]
+ * leosete-desafio-devops/k8s/deploy-dev.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
+ * leosete-desafio-devops/k8s/deploy-hlg.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
+ * leosete-desafio-devops/k8s/deploy-prd.yaml  ->> us-central1-docker.pkg.dev/[valor_antigo] == us-central1-docker.pkg.dev/[colocar_nome_do_projeto]
+ * leosete-desafio-devops/terraform-gke/provider.tf  ->> bucket = "[valor_antigo]" == bucket = "[colocar_nome_do_projeto]"
+ * leosete-desafio-devops/terraform-gke/variables.tf ->> default = "[valor_antigo]" == default = "[colocar_nome_do_projeto]"
     
 
 
@@ -138,7 +138,7 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
 
 - Após a criação da infra do GKE (aguarde o terraform finalizar), e então é possível rodar o segundo workflow:
 
-- [2-DEPLOY-FLASK-APP]
+- [2-DEPLOY-APP]
     * Criar qualquer um dos 3 branches abaixo:
        - hotfix
        - feature
@@ -171,9 +171,9 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
     * Aguardar alguns minutos para que o ingress-controller (Load Balancers) estejam totalmente configurados e
         assim poder testar o acesso ao app nos ambientes de dev/hlg e prd:
 
-        https://flask-app-tembici-dev.[dominio_definido]/api/ping
-        https://flask-app-tembici-hlg.[dominio_definido]/api/ping
-        https://flask-app-tembici-prd.[dominio_definido]/api/ping
+        https://hello-app-dev.[dominio_definido]/api/ping
+        https://hello-app-hlg.[dominio_definido]/api/ping
+        https://hello-app-prd.[dominio_definido]/api/ping
 
 
 * Para configurar que o app atenda somente requisições via HTTPS, após a primeira execução do deploy
@@ -182,9 +182,9 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
      kubernetes.io/ingress.allow-http: "false" ## Only enable this, after the LB's creation
 
 * Conecte-se ao cluster e aplique essa alteração via linha de comando:
-    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-dev.yaml --namespace tembici-sre-apps-dev
-    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-hlg.yaml --namespace tembici-sre-apps-hlg
-    kubectl apply -f [tembici-desafio-devops]/k8s/deploy-prd.yaml --namespace tembici-sre-apps-prd
+    kubectl apply -f [leosete-desafio-devops]/k8s/deploy-dev.yaml --namespace leosete-sre-apps-dev
+    kubectl apply -f [leosete-desafio-devops]/k8s/deploy-hlg.yaml --namespace leosete-sre-apps-hlg
+    kubectl apply -f [leosete-desafio-devops]/k8s/deploy-prd.yaml --namespace leosete-sre-apps-prd
 
 ## FIM DO TESTE ##
 
@@ -211,7 +211,7 @@ on:
 
 ## WORKFLOW 2 ##
 
-name: 2-DEPLOY-FLASK-APP
+name: 2-DEPLOY-APP
 on:
   push: 
     branches: [release*, feature*, hotfix*]

@@ -19,7 +19,7 @@ jobs:
     env: ## Variables available in this workflow
       PROJECT_ID: "devops-project-leosete"
       REGION: "us-central1"
-      CLUSTER_NAME: "tembici-cluster-prod"
+      CLUSTER_NAME: "leosete-cluster-prod"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
       PRIVATE_KEY: "private_key.pem"
 
@@ -49,7 +49,8 @@ jobs:
       - name: 4-SETUP TERRAFORM
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.2.7 ## Se não definida, usará default: latest
+          # terraform_version: 1.2.7 ## Se não definida, usará default: latest
+          terraform_version: ">=1.3" ## Se não definida, usará default: latest
 
       - name: 5-TERRAFORM FMT
         id: fmt

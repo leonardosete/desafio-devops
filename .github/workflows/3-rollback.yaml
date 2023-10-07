@@ -17,12 +17,12 @@ env: ## Variables available in this workflow
   APPROVERS: "YOUR_GIT_USER" ## TROCAR POR SEU USUARIO GIT
   
   PROJECT_ID: "devops-project-leosete" ## nome do projeto no GKE
-  CLUSTER_NAME: "tembici-cluster-prod"
+  CLUSTER_NAME: "leosete-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
   IMAGE_NAME: "flask-app"
   APP_K8S_NAME: "flask-app"
-  NS_APP: "tembici-sre-apps"
+  NS_APP: "leosete-sre-apps"
 jobs:
   rollback:
     runs-on: ubuntu-latest
