@@ -1,4 +1,4 @@
-name: 2-DEPLOY-FLASK-APP
+name: 2-DEPLOY-APP
 on:
   push: 
     branches: [release-*, feature-*, hotfix-*]
@@ -6,7 +6,7 @@ on:
 
 env: ## Variables available in this workflow
   APPROVERS: "leonardosete" ## TROCAR POR SEU USUARIO GIT
-  
+
   PROJECT_ID: "devops-project-leosete"
   CLUSTER_NAME: "leosete-cluster-prod"
   REGION: "us-central1"
@@ -128,7 +128,7 @@ jobs:
         with:
           secret: ${{ github.token }}
           approvers: ${{ env.APPROVERS }}
-          issue-title: "Deploying flask-app in ${{ matrix.env_deploy }}"
+          issue-title: "Deploying App in ${{ matrix.env_deploy }}"
           timeout-minutes: 60 ## Se não for aprovado em 1 hora, será cancelado.
 
       - name: 8-APPLICATION APPROVED TO DEPLOY IN ${{ matrix.env_deploy }}
