@@ -14,9 +14,9 @@ NC='\033[0m' # No Color
 create_static_ext_ip(){
 ## /vars ##
 REGION="us-central1"
-ADDRESS_NAME_DEV="gke-lb-ext-tembici-dev"
-ADDRESS_NAME_HLG="gke-lb-ext-tembici-hlg"
-ADDRESS_NAME_PRD="gke-lb-ext-tembici-prd"
+ADDRESS_NAME_DEV="gke-lb-ext-leosete-dev"
+ADDRESS_NAME_HLG="gke-lb-ext-leosete-hlg"
+ADDRESS_NAME_PRD="gke-lb-ext-leosete-prd"
 ## vars/ ##
 
 echo " "
@@ -35,9 +35,9 @@ echo " "
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_DEV${NC} ###"
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_HLG${NC} ###"
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_PRD${NC} ###"
-echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}tembici-desafio-devops/k8s/deploy-dev.yaml${NC} ###"
-echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}tembici-desafio-devops/k8s/deploy-hlg.yaml${NC} ###"
-echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}tembici-desafio-devops/k8s/deploy-prd.yaml${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-dev.yaml${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-hlg.yaml${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-prd.yaml${NC} ###"
 
 }
 ### FUNCTIONS/ ###
