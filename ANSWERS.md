@@ -60,9 +60,9 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
    * 4-set-dns-records.sh [mandatório] - Criará registros na zona de DNS do Google - Cloud DNS.
     -   Execute o script 3 vezes para definir as 3 entradas/registros necessárias.
         * entradas a serem definidas, por exemplo:
-          - hello-app-dev.[dominio]
-          - hello-app-hlg.[dominio]
-          - hello-app-prd.[dominio]
+          - flask-app-dev.[dominio]
+          - flask-app-hlg.[dominio]
+          - flask-app-prd.[dominio]
             
         - Esses hostnames estão pré-definidos nos arquivos/manifestos do k8s:
             - leosete-desafio-devops/k8s/deploy-dev.yaml -> [definir] o mesmo valor que for atribuído no DNS
@@ -171,9 +171,9 @@ Foram gerados 3 workflows (pipelines/esteiras) no path:
     * Aguardar alguns minutos para que o ingress-controller (Load Balancers) estejam totalmente configurados e
         assim poder testar o acesso ao app nos ambientes de dev/hlg e prd:
 
-        https://hello-app-dev.[dominio_definido]/api/ping
-        https://hello-app-hlg.[dominio_definido]/api/ping
-        https://hello-app-prd.[dominio_definido]/api/ping
+        https://flask-app-dev.[dominio_definido]/api/ping
+        https://flask-app-hlg.[dominio_definido]/api/ping
+        https://flask-app-prd.[dominio_definido]/api/ping
 
 
 * Para configurar que o app atenda somente requisições via HTTPS, após a primeira execução do deploy
