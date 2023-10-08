@@ -33,18 +33,23 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      - name: INSTALL HELM
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo update
+      # - name: INSTALL HELM
+      #   run: |
+      #     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+      #     chmod 700 get_helm.sh
+      #     ./get_helm.sh
+      #     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      #     helm repo update
 
-      - name: DEPLOY PROMETHEUS
-        run: |
-          helm install prometheus prometheus-community/prometheus
+      # - name: DEPLOY PROMETHEUS
+      #   run: |
+      #     helm install prometheus prometheus-community/prometheus
 
-      - name: DEPLOY GRAFANA
+      # - name: DEPLOY GRAFANA
+      #   run: |
+      #     helm install grafana prometheus-community/grafana
+
+      - name: 5-CREATE K8s OBJECTS
         run: |
-          helm install grafana prometheus-community/grafana
+          kubectl apply -f ./k8s-monitoring/grafana.yaml
+          kubectl apply -f ./k8s-monitoring/prometheus.yaml

@@ -14,18 +14,22 @@ NC='\033[0m' # No Color
 create_static_ext_ip(){
 ## /vars ##
 REGION="us-central1"
-ADDRESS_NAME_DEV="gke-lb-ext-leosete-dev"
-ADDRESS_NAME_HLG="gke-lb-ext-leosete-hlg"
-ADDRESS_NAME_PRD="gke-lb-ext-leosete-prd"
+# ADDRESS_NAME_DEV="gke-lb-ext-leosete-dev"
+# ADDRESS_NAME_HLG="gke-lb-ext-leosete-hlg"
+# ADDRESS_NAME_PRD="gke-lb-ext-leosete-prd"
+ADDRESS_NAME_GRAFANA="gke-lb-ext-leosete-grafana"
+ADDRESS_NAME_PROMETHEUS="gke-lb-ext-leosete-prometheus"
 ## vars/ ##
 
 echo " "
 echo "### ${RED}1-Creating a new static external IP${NC} ###"
 echo "### ${RED}Reserving IPS${NC} ###"
 echo " "
-    gcloud compute addresses create $ADDRESS_NAME_DEV --global
-    gcloud compute addresses create $ADDRESS_NAME_HLG --global
-    gcloud compute addresses create $ADDRESS_NAME_PRD --global
+    # gcloud compute addresses create $ADDRESS_NAME_DEV --global
+    # gcloud compute addresses create $ADDRESS_NAME_HLG --global
+    # gcloud compute addresses create $ADDRESS_NAME_PRD --global
+    gcloud compute addresses create $ADDRESS_NAME_GRAFANA --global
+    gcloud compute addresses create $ADDRESS_NAME_PROMETHEUS --global
 
 echo " "
 echo "### ${YEL}2-Listing your new IP ADDRESS${NC} ###"
@@ -35,9 +39,13 @@ echo " "
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_DEV${NC} ###"
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_HLG${NC} ###"
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_PRD${NC} ###"
+echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_GRAFANA${NC} ###"
+echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_PROMETHEUS${NC} ###"
 echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-dev.yaml${NC} ###"
 echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-hlg.yaml${NC} ###"
 echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-prd.yaml${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s-monitoring/grafana.yaml.yaml${NC} ###"
+echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s-monitoring/prometheus.yaml${NC} ###"
 
 }
 ### FUNCTIONS/ ###
@@ -49,7 +57,7 @@ echo " "
 echo "### ${YEL}List Static External IPs Created in the Current Project${NC} ###"
     gcloud compute addresses list
 echo " "
-echo "### ${RED}Creating 3 new Static External IP${NC} ###"
+echo "### ${RED}Creating 5 new Static External IP${NC} ###"
 read -p "### Are you sure about the IP creation? (y/N)" answer
 case ${answer:0:1} in
     y|Y )
