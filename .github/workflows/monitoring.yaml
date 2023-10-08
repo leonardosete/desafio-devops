@@ -33,25 +33,25 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
 
-      # - name: INSTALL HELM
-      #   run: |
-      #     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-      #     chmod 700 get_helm.sh
-      #     ./get_helm.sh
-      #     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-      #     helm repo update
-
-      # - name: DEPLOY PROMETHEUS
-      #   run: |
-      #     helm install prometheus prometheus-community/prometheus
-
-      # - name: DEPLOY GRAFANA
-      #   run: |
-      #     helm install grafana prometheus-community/grafana
-
-      - name: 5-CREATE K8s OBJECTS
+      - name: INSTALL HELM
         run: |
-          kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-          kubectl apply -f ./k8s-monitoring/grafana.yaml
-          kubectl apply -f ./k8s-monitoring/prometheus.yaml
-          kubectl apply -f ./k8s-monitoring/servicemonitor.yaml
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+
+      - name: DEPLOY PROMETHEUS
+        run: |
+          helm install prometheus prometheus-community/prometheus --set serviceMonitor.enabled=true
+
+      - name: DEPLOY GRAFANA
+        run: |
+          helm install grafana prometheus-community/grafana --set adminPassword=admin --set adminUser=admin
+          
+      # - name: 5-CREATE K8s OBJECTS
+      #   run: |
+      #     kubectl apply -f https://raw.githubusercontent.com/coreos/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+      #     kubectl apply -f ./k8s-monitoring/grafana.yaml
+      #     kubectl apply -f ./k8s-monitoring/prometheus.yaml
+      #     kubectl apply -f ./k8s-monitoring/servicemonitor.yaml
