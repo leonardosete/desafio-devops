@@ -46,9 +46,10 @@ Esse arquivo será utilizado na etapa seguinte:
 Feito isso, agora seu projeto/repo terá o acesso necessário para quando for executar os workflows do GitHub Actions.
 
 ## SCRIPT 2 ##
-  * 2-external-static-ip.sh [mandatório] - Definirá 3 IPs estáticos [externos] - necessário nos LBs do GKE/Ingress Controller.
+  * 2-external-static-ip.sh [mandatório] - Definirá 5 IPs estáticos [externos] - necessário nos LBs do GKE/Ingress Controller.
             
    - 3 IPs = 3 Load Balancers = 1 para cada ambiente (dev/hlg/prd)
+   - 2 IPs = 2 LBs = grafana e prometheus
 
 ## SCRIPT 3 ##
   * 3-buy-domain.sh [mandatório] - Fará a compra de um domínio através da GCP e ativará o serviço Cloud DNS do Google.
@@ -63,11 +64,16 @@ Feito isso, agora seu projeto/repo terá o acesso necessário para quando for ex
           - flask-app-dev.[dominio]
           - flask-app-hlg.[dominio]
           - flask-app-prd.[dominio]
+          - grafana.[dominio]
+          - prometheus.[dominio]
             
         - Esses hostnames estão pré-definidos nos arquivos/manifestos do k8s:
-            - leosete-desafio-devops/k8s/deploy-dev.yaml -> [definir] o mesmo valor que for atribuído no DNS
-            - leosete-desafio-devops/k8s/deploy-hlg.yaml -> [definir] o mesmo valor que for atribuído no DNS
-            - leosete-desafio-devops/k8s/deploy-prd.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - desafio-devops/k8s/deploy-dev.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - desafio-devops/k8s/deploy-hlg.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - desafio-devops/k8s/deploy-prd.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - desafio-devops/k8s-monitoring/grafana.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            - desafio-devops/k8s-monitoring/prometheus.yaml -> [definir] o mesmo valor que for atribuído no DNS
+            
 
         - A definição do registro será preciso para a etapa de geração de certificado SSL
              que está na parte do deploy/criação dos recursos do K8s (GKE).

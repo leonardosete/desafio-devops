@@ -113,26 +113,22 @@ metadata:
   labels:
     app: grafana
     env: dev
-  name: dev-certs
+  name: grafana-certs
   namespace: grafana
 spec:
   domains:
   - grafana.desafioleosete.com
 ---
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  annotations:
-    ingressclass.kubernetes.io/is-default-class: "true"
-    kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-grafana
-    networking.gke.io/managed-certificates: dev-certs
-  labels:
-    app: grafana
-    env: dev
   name: grafana-ext
   namespace: grafana
 spec:
+  ingressClassName: gce
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-grafana
+    networking.gke.io/managed-certificates: grafana-certs
   rules:
   - host: grafana.desafioleosete.com
     http:
