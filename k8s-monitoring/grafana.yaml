@@ -59,29 +59,29 @@ spec:
           value: America/Sao_Paulo
         image: grafana/grafana
         imagePullPolicy: Always
-        # livenessProbe:
-        #   failureThreshold: 3
-        #   httpGet:
-        #     path: /healthz
-        #     port: 3000
-        #     scheme: HTTP
-        #   initialDelaySeconds: 25
-        #   periodSeconds: 10
-        #   successThreshold: 1
-        #   timeoutSeconds: 2
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 3000
+            scheme: TCP
+          initialDelaySeconds: 40
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
         name: grafana
         ports:
         - containerPort: 3000
-          protocol: TCP
-        # readinessProbe:
-        #   failureThreshold: 3
-        #   httpGet:
-        #     path: /healthz
-        #     port: 3000
-        #     scheme: HTTP
-        #   periodSeconds: 10
-        #   successThreshold: 3
-        #   timeoutSeconds: 2
+          protocol: HTTP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 3
+          timeoutSeconds: 2
         resources:
           limits:
             cpu: 100m
@@ -119,16 +119,20 @@ spec:
   domains:
   - grafana.desafioleosete.com
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-grafana
+    networking.gke.io/managed-certificates: grafana-certs
+  labels:
+    app: grafana
+    env: dev
   name: grafana-ext
   namespace: grafana
 spec:
-  ingressClassName: gce
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-grafana
-    networking.gke.io/managed-certificates: grafana-certs
   rules:
   - host: grafana.desafioleosete.com
     http:
