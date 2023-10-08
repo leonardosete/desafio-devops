@@ -1,16 +1,3 @@
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: prometheus
-  namespace: prometheus
-spec:
-  selector:
-    matchLabels:
-      app: prometheus
-      env: dev
-  endpoints:
-  - port: prometheus
----
 apiVersion: v1
 kind: Namespace
 metadata:
