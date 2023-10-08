@@ -43,7 +43,7 @@ jobs:
 
       - name: DEPLOY PROMETHEUS
         run: |
-          helm install prometheus prometheus-community/prometheus --namespace=prometheus --values=./k8s-monitoring/values.yaml
+          helm install prometheus prometheus-community/prometheus --namespace=prometheus --values=./k8s-monitoring/values-prom.yaml
 
 
       # - name: DEPLOY GRAFANA
