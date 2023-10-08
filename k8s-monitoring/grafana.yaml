@@ -51,33 +51,37 @@ spec:
     spec:
       containers:
       - env:
+        - name: GF_SECURITY_ADMIN_USER
+          value: admin
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: admin
         - name: TZ
           value: America/Sao_Paulo
         image: grafana/grafana
         imagePullPolicy: Always
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz
-            port: 3000
-            scheme: HTTP
-          initialDelaySeconds: 25
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 2
+        # livenessProbe:
+        #   failureThreshold: 3
+        #   httpGet:
+        #     path: /healthz
+        #     port: 3000
+        #     scheme: HTTP
+        #   initialDelaySeconds: 25
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   timeoutSeconds: 2
         name: grafana
         ports:
         - containerPort: 3000
           protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /api/health
-            port: 3000
-            scheme: HTTP
-          periodSeconds: 10
-          successThreshold: 3
-          timeoutSeconds: 2
+        # readinessProbe:
+        #   failureThreshold: 3
+        #   httpGet:
+        #     path: /healthz
+        #     port: 3000
+        #     scheme: HTTP
+        #   periodSeconds: 10
+        #   successThreshold: 3
+        #   timeoutSeconds: 2
         resources:
           limits:
             cpu: 100m
