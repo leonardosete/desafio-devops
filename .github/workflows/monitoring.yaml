@@ -51,7 +51,7 @@ jobs:
 
       - name: 5-CREATE K8s OBJECTS
         run: |
-          kubectl version
+          kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/contrib/kube-prometheus-stack/prometheus-operator/crds/monitoring.coreos.com_servicemonitors.yaml
           kubectl apply -f ./k8s-monitoring/grafana.yaml
           kubectl apply -f ./k8s-monitoring/prometheus.yaml
           kubectl apply -f ./k8s-monitoring/servicemonitor.yaml
