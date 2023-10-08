@@ -86,6 +86,23 @@ spec:
             cpu: 50m
             memory: 100Mi
 ---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: prometheus
+    env: dev
+  name: prometheus
+  namespace: prometheus
+spec:
+  maxReplicas: 2
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: prometheus
+  targetCPUUtilizationPercentage: 75
+---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:

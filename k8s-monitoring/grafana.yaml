@@ -90,6 +90,23 @@ spec:
             cpu: 50m
             memory: 100Mi
 ---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: grafana
+    env: dev
+  name: grafana
+  namespace: grafana
+spec:
+  maxReplicas: 2
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: grafana
+  targetCPUUtilizationPercentage: 75
+---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
