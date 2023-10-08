@@ -43,14 +43,13 @@ jobs:
 
       - name: DEPLOY PROMETHEUS
         run: |
-          helm install prometheus prometheus-community/prometheus --set serviceMonitor.enabled=true
+          helm install prometheus prometheus-community/prometheus --namespace=prometheus --values=./k8s-monitoring/values.yaml
 
-# helm install grafana prometheus-community/grafana --set adminPassword=admin --set adminUser=admin
-      - name: DEPLOY GRAFANA
-        run: |
-          helm repo add grafana https://grafana.github.io/helm-charts
-          helm repo update
-          helm install grafana grafana/grafana --set adminPassword=admin --set adminUser=admin
+
+      # - name: DEPLOY GRAFANA
+      #   run: |
+      #     helm install grafana prometheus-community/grafana --namespace=grafana
+
 
       # - name: 5-CREATE K8s OBJECTS
       #   run: |

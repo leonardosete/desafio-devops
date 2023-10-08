@@ -1,0 +1,59 @@
+autoscaling:
+  horizontalPodAutoscaler:
+    apiVersion: autoscaling/v1
+    kind: HorizontalPodAutoscaler
+    metadata:
+      labels:
+        app: prometheus
+        env: dev
+      name: prometheus
+      namespace: prometheus
+    spec:
+      maxReplicas: 2
+      minReplicas: 1
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: prometheus
+      targetCPUUtilizationPercentage: 75
+managedCertificate:
+  apiVersion: networking.gke.io/v1
+  kind: ManagedCertificate
+  metadata:
+    labels:
+      app: prometheus
+      env: dev
+    name: prometheus-certs
+    namespace: prometheus
+  spec:
+    domains:
+    - prometheus.desafioleosete.com
+ingress:
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      ingressclass.kubernetes.io/is-default-class: "true"
+      kubernetes.io/ingress.class: gce
+      kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-prometheus
+      networking.gke.io/managed-certificates: prometheus-certs
+    labels:
+      app: prometheus
+      env: dev
+    name: prometheus-ext
+    namespace: prometheus
+  spec:
+    rules:
+    - host: prometheus.desafioleosete.com
+      http:
+        paths:
+        - backend:
+            service:
+              name: prometheus
+              port:
+                number: 80
+        path: /
+        pathType: Prefix
+prometheus:
+  serviceMonitor:
+    enable: true
