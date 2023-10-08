@@ -22,7 +22,7 @@ spec:
   selector:
     app: grafana
     env: dev
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
