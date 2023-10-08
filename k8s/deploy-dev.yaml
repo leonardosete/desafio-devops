@@ -15,7 +15,7 @@ metadata:
   namespace: leosete-sre-apps-dev
 spec:
   ports:
-  - name: hello
+  - name: flask
     port: 8080
     protocol: TCP
     targetPort: 8080
