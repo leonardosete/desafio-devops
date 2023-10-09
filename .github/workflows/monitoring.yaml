@@ -34,7 +34,7 @@ jobs:
           location: ${{ env.REGION }}
 
           # git clone https://github.com/leonardosete/kube-prometheus
-      - name: 4-KUBE PROMETHEUS
+      - name: 5-KUBE PROMETHEUS
         run: |
           git clone https://github.com/prometheus-operator/kube-prometheus
           cd kube-prometheus
