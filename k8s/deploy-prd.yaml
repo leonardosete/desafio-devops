@@ -109,7 +109,7 @@ metadata:
   labels:
     app: flask-app
     env: prd
-  name: prd-certs
+  name: flask-app-prd-cert
   namespace: leosete-sre-apps-prd
 spec:
   domains:
@@ -122,7 +122,7 @@ metadata:
     ingressclass.kubernetes.io/is-default-class: "true"
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-prd
-    networking.gke.io/managed-certificates: prd-certs
+    networking.gke.io/managed-certificates: flask-app-prd-cert
     # kubernetes.io/ingress.allow-http: "false" ## Only enable this, after the LB's creation
   labels:
     app: flask-app
