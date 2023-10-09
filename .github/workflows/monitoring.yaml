@@ -39,6 +39,4 @@ jobs:
           git clone https://github.com/prometheus-operator/kube-prometheus
           cd kube-prometheus
           kubectl create -f manifests/setup
-          kubectl get customresourcedefinitions.apiextensions.k8s.io -n monitoring
           kubectl create -f manifests
-          kubectl get pods -n monitoring
