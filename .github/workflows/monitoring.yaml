@@ -33,16 +33,9 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
           
-      - name: 5-KUBE PROMETHEUS - FORK LEO SETE
+      - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
         run: |
           git clone https://github.com/leonardosete/kube-prometheus
           cd kube-prometheus
           kubectl create -f manifests/setup
-          kubectl create -f manifests
-
-      # - name: 5-KUBE PROMETHEUS - ORIGINAL
-      #   run: |
-      #     git clone https://github.com/prometheus-operator/kube-prometheus
-      #     cd kube-prometheus
-      #     kubectl create -f manifests/setup
-      #     kubectl create -f manifests
+          kubectl apply -f manifests
