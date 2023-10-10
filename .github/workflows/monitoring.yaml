@@ -43,6 +43,12 @@ jobs:
           helm repo update
         shell: bash
 
+      - name: CREATE NAMESPACES
+        run: |
+          helm create namespace monitoring
+          helm create namespace hello-world-app
+        shell: bash
+
       - name: INSTALL KUBE-PROMETHEUS
         run: |
           helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring
@@ -52,7 +58,6 @@ jobs:
         run: |
           helm install hello-world bitnami/nginx --namespace hello-world-app
         shell: bash
-
 
     
       # - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
