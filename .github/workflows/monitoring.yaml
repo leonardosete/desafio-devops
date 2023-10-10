@@ -47,10 +47,15 @@ jobs:
         shell: bash
 
       - name: INSTALL KUBE-PROMETHEUS
+        env:
+          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+          GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
         run: |
           helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
           helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
+          helm install grafana bitnami/grafana --namespace monitoring --set adminPassword=$GRAFANA_ADMIN_PASSWORD --set adminUser=$GRAFANA_ADMIN_USER
         shell: bash
+
 
       - name: INSTALL NGINX "HELLO WORLD"
         run: |
