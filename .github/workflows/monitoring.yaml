@@ -37,9 +37,8 @@ jobs:
         run: |
           git clone https://github.com/leonardosete/kube-prometheus
           cd kube-prometheus
-          kubectl apply -f manifests/setup
-          kubectl apply -f manifests
-
+          kubectl create -f manifests/setup
+          kubectl create -f manifests
 
       # - name: 5-KUBE PROMETHEUS - ORIGINAL
       #   run: |
