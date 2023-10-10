@@ -33,9 +33,31 @@ jobs:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
           
-      - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
+      # - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
+      #   run: |
+      #     git clone https://github.com/leonardosete/kube-prometheus
+      #     cd kube-prometheus
+      #     kubectl create -f manifests/setup
+      #     kubectl apply -f manifests
+
+      - name: INSTALL HELM
         run: |
-          git clone https://github.com/leonardosete/kube-prometheus
-          cd kube-prometheus
-          kubectl create -f manifests/setup
-          kubectl apply -f manifests
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+        shell: bash
+
+      - name: ADD HELM REPOSITORY
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+        shell: bash
+
+      - name: INSTALL KUBE-PROMETHEUS
+        run: |
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack
+        shell: bash
+
+      - name: INSTALL NGINX "HELLO WORLD"
+        uses: helm/helm@v3
+        with:
+          args: install hello-world
