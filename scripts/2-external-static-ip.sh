@@ -17,8 +17,8 @@ REGION="us-central1"
 # ADDRESS_NAME_DEV="gke-lb-ext-leosete-dev"
 # ADDRESS_NAME_HLG="gke-lb-ext-leosete-hlg"
 # ADDRESS_NAME_PRD="gke-lb-ext-leosete-prd"
-ADDRESS_NAME_MONITORING="gke-lb-ext-leosete-monitoring"
-
+ADDRESS_NAME_GRAFANA="gke-lb-ext-leosete-grafana"
+ADDRESS_NAME_PROMETHEUS="gke-lb-ext-leosete-prometheus"
 ## vars/ ##
 
 echo " "
@@ -28,7 +28,8 @@ echo " "
     # gcloud compute addresses create $ADDRESS_NAME_DEV --global
     # gcloud compute addresses create $ADDRESS_NAME_HLG --global
     # gcloud compute addresses create $ADDRESS_NAME_PRD --global
-    gcloud compute addresses create $ADDRESS_NAME_MONITORING --global
+    gcloud compute addresses create $ADDRESS_NAME_GRAFANA --global
+    gcloud compute addresses create $ADDRESS_NAME_PROMETHEUS --global
 
 echo " "
 echo "### ${YEL}2-Listing your new IP ADDRESS${NC} ###"
@@ -38,12 +39,13 @@ echo " "
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_DEV${NC} ###"
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_HLG${NC} ###"
 echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_PRD${NC} ###"
-echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_MONITORING${NC} ###"
+echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_GRAFANA${NC} ###"
+echo "### ${YEL}Lembre-se de verificar/configurar nos arquivos abaixo essa annotation: ${GREEN}kubernetes.io/ingress.global-static-ip-name:${NC} ${RED}$ADDRESS_NAME_PROMETHEUS${NC} ###"
 echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-dev.yaml${NC} ###"
 echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-hlg.yaml${NC} ###"
 echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s/deploy-prd.yaml${NC} ###"
 echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s-monitoring/grafana.yaml.yaml${NC} ###"
-
+echo "### ${YEL}Caminho dos arquivos${NC} ${GREEN}leosete-desafio-devops/k8s-monitoring/prometheus.yaml${NC} ###"
 
 }
 ### FUNCTIONS/ ###
