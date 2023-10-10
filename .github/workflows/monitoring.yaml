@@ -32,30 +32,14 @@ jobs:
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
+          
+      - name: 5-KUBE PROMETHEUS - FORK LEO SETE
+        run: |
+          git clone https://github.com/leonardosete/kube-prometheus
+          cd kube-prometheus
+          kubectl apply -f manifests/setup
+          kubectl apply -f manifests
 
-      - name: 5-KUBE PROMETHEUS - FORK LEO SETE
-        run: |
-          git clone https://github.com/leonardosete/kube-prometheus
-          cd kube-prometheus
-          kubectl create -f manifests/setup
-          kubectl create -f manifests
-          on_failure:
-          run: |
-            echo "Falha ao executar a ação anterior, executando ação de recuperação"
-            kubectl delete -f manifests
-          
-      - name: 5-KUBE PROMETHEUS - FORK LEO SETE
-        run: |
-          git clone https://github.com/leonardosete/kube-prometheus
-          cd kube-prometheus
-          kubectl create -f manifests/setup
-          kubectl create -f manifests
-          
-      - name: Handle Failure
-        if: failure()
-        run: |
-          kubectl patch -f manifests/setup
-          kubectl patch -f manifests
 
       # - name: 5-KUBE PROMETHEUS - ORIGINAL
       #   run: |
