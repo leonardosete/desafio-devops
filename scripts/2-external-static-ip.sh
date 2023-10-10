@@ -14,9 +14,9 @@ NC='\033[0m' # No Color
 create_static_ext_ip(){
 ## /vars ##
 REGION="us-central1"
-# ADDRESS_NAME_DEV="gke-lb-ext-leosete-dev"
-# ADDRESS_NAME_HLG="gke-lb-ext-leosete-hlg"
-# ADDRESS_NAME_PRD="gke-lb-ext-leosete-prd"
+ADDRESS_NAME_DEV="gke-lb-ext-leosete-dev"
+ADDRESS_NAME_HLG="gke-lb-ext-leosete-hlg"
+ADDRESS_NAME_PRD="gke-lb-ext-leosete-prd"
 ADDRESS_NAME_GRAFANA="gke-lb-ext-leosete-grafana"
 ADDRESS_NAME_PROMETHEUS="gke-lb-ext-leosete-prometheus"
 ## vars/ ##
@@ -25,9 +25,9 @@ echo " "
 echo "### ${RED}1-Creating a new static external IP${NC} ###"
 echo "### ${RED}Reserving IPS${NC} ###"
 echo " "
-    # gcloud compute addresses create $ADDRESS_NAME_DEV --global
-    # gcloud compute addresses create $ADDRESS_NAME_HLG --global
-    # gcloud compute addresses create $ADDRESS_NAME_PRD --global
+    gcloud compute addresses create $ADDRESS_NAME_DEV --global
+    gcloud compute addresses create $ADDRESS_NAME_HLG --global
+    gcloud compute addresses create $ADDRESS_NAME_PRD --global
     gcloud compute addresses create $ADDRESS_NAME_GRAFANA --global
     gcloud compute addresses create $ADDRESS_NAME_PROMETHEUS --global
 
