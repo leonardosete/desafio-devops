@@ -2,7 +2,7 @@ name: DEPLOY PROMETHEUS AND GRAFANA
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   PROJECT_ID: "projc-devops-sete"
