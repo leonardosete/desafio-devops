@@ -1,7 +1,8 @@
 name: DEPLOY PROMETHEUS AND GRAFANA
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
 
 env:
   PROJECT_ID: "projc-devops-sete"
@@ -9,7 +10,7 @@ env:
   REGION: "us-central1"
 
 jobs:
-  deploy:
+  monitoring:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,15 +45,28 @@ jobs:
         shell: bash
 
       - name: INSTALL KUBE-PROMETHEUS
+        if: ${{ github.event.head_commit.author.name == 'Bot' }}
         run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
-          helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
         shell: bash
 
-      - name: INSTALL NGINX "HELLO WORLD"
+      - name: UPGRADE NGINX "HELLO WORLD"
         run: |
-          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait --generate-name
+          helm upgrade hello-world bitnami/nginx --namespace hello-world-app
         shell: bash
+
+      - name: VERIFY KUBE-PROMETHEUS AND GRAFANA AVAILABILITY
+        run: |
+          kubectl get pods --namespace monitoring | grep prometheus-operator
+          kubectl get pods --namespace monitoring | grep grafana
+        shell: bash
+
+      - name: ROLLBACK KUBE-PROMETHEUS AND GRAFANA IF THEY ARE NOT AVAILABLE
+        if: steps.verify-kube-prometheus-and-grafana-availability.outcome == 'failure'
+        run: |
+          helm rollback kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring
+        shell: bash
+
 
     
       # - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
