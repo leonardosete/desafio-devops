@@ -45,7 +45,7 @@ jobs:
 
       - name: INSTALL KUBE-PROMETHEUS
         run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait --generate-name
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
           helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
         shell: bash
 
