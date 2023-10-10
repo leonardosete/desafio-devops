@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: 1-CHECKOUT ACTIONS
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: 2-AUTHENTICATE TO GOOGLE CLOUD
         id: auth
@@ -45,13 +45,14 @@ jobs:
 
       - name: INSTALL KUBE-PROMETHEUS
         run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
         shell: bash
 
       - name: INSTALL NGINX "HELLO WORLD"
         run: |
-          helm install hello-world bitnami/nginx
+          helm install hello-world bitnami/nginx -n hello-world-app
         shell: bash
+
 
     
       # - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
