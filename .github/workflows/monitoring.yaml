@@ -51,12 +51,12 @@ jobs:
 
       - name: INSTALL KUBE-PROMETHEUS
         run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
         shell: bash
 
       - name: INSTALL NGINX "HELLO WORLD"
         run: |
-          helm install hello-world bitnami/nginx --namespace hello-world-app
+          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
         shell: bash
 
     
