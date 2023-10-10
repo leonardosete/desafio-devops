@@ -53,7 +53,7 @@ spec:
       - env:
         - name: TZ
           value: America/Sao_Paulo
-        image: us-central1-docker.pkg.hlg/devops-project-leosete/sre-docker-registry/flask-app
+        image: us-central1-docker.pkg.hlg/teste-devops-leosete/sre-docker-registry/flask-app
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3

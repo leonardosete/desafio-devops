@@ -17,7 +17,7 @@ jobs:
   gke_cluster:
     runs-on: ubuntu-latest
     env: ## Variables available in this workflow
-      PROJECT_ID: "devops-project-leosete"
+      PROJECT_ID: "teste-devops-leosete"
       REGION: "us-central1"
       CLUSTER_NAME: "leosete-cluster-prod"
       TF_ACTIONS_WORKING_DIR: "./terraform-gke/"
