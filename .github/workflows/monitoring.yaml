@@ -51,7 +51,7 @@ jobs:
 
       - name: INSTALL NGINX "HELLO WORLD"
         run: |
-          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait --name my-hello-world-app-${{ github.run_number }}
+          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
         shell: bash
 
     
