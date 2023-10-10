@@ -53,7 +53,7 @@ spec:
       - env:
         - name: TZ
           value: America/Sao_Paulo
-        image: us-central1-docker.pkg.dev/sre-devops-sete/sre-docker-registry/flask-app
+        image: us-central1-docker.pkg.dev/projc-devops-sete/sre-docker-registry/flask-app
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -113,7 +113,7 @@ metadata:
   namespace: leosete-sre-apps-dev
 spec:
   domains:
-  - flask-app-dev.desafioleosete.com
+  - flask-app-dev.leosete-sre-devops.com
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -131,7 +131,7 @@ metadata:
   namespace: leosete-sre-apps-dev
 spec:
   rules:
-  - host: flask-app-dev.desafioleosete.com
+  - host: flask-app-dev.leosete-sre-devops.com
     http:
       paths:
       - backend:

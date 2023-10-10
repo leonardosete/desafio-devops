@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 create_projects_and_dependencies(){
 
 ## /VARS ##
-NEW_PROJECT_ID="sre-devops-sete" ## The new PROJECT ID to be created.
+NEW_PROJECT_ID="projc-devops-sete" ## The new PROJECT ID to be created.
 SERVICE_ACCOUNT_ID="terraform-svc-account" ## The new Service Account to be created to run Terraform.
 SVC_DESCRIPTION="Terraform Service Account" ## Service Account Description.
 LIST_ROLES=`cat ./roles-svc-account.md` ## Roles for the new Service Account.

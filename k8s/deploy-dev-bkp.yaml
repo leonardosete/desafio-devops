@@ -2,17 +2,17 @@ apiVersion: v1
 kind: Namespace
 metadata:
   labels:
-    env: prd
-  name: leosete-sre-apps-prd
+    env: dev
+  name: leosete-sre-apps-dev
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: flask-app
-    env: prd
+    env: dev
   name: flask-app
-  namespace: leosete-sre-apps-prd
+  namespace: leosete-sre-apps-dev
 spec:
   ports:
   - name: flask
@@ -21,7 +21,7 @@ spec:
     targetPort: 8080
   selector:
     app: flask-app
-    env: prd
+    env: dev
   type: ClusterIP
 ---
 apiVersion: apps/v1
@@ -29,15 +29,15 @@ kind: Deployment
 metadata:
   labels:
     app: flask-app
-    env: prd
+    env: dev
   name: flask-app
-  namespace: leosete-sre-apps-prd
+  namespace: leosete-sre-apps-dev
 spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: flask-app
-      env: prd
+      env: dev
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -47,13 +47,13 @@ spec:
     metadata:
       labels:
         app: flask-app
-        env: prd
+        env: dev
     spec:
       containers:
       - env:
         - name: TZ
           value: America/Sao_Paulo
-        image: us-central1-docker.pkg.prd/projc-devops-sete/sre-docker-registry/flask-app
+        image: us-central1-docker.pkg.dev/projc-devops-sete/sre-docker-registry/flask-app
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -91,9 +91,9 @@ kind: HorizontalPodAutoscaler
 metadata:
   labels:
     app: flask-app
-    env: prd
+    env: dev
   name: flask-app
-  namespace: leosete-sre-apps-prd
+  namespace: leosete-sre-apps-dev
 spec:
   maxReplicas: 3
   minReplicas: 2
@@ -102,18 +102,18 @@ spec:
     kind: Deployment
     name: flask-app
   targetCPUUtilizationPercentage: 75
----
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
-metadata:
-  labels:
-    app: flask-app
-    env: prd
-  name: flask-app-prd-cert
-  namespace: leosete-sre-apps-prd
-spec:
-  domains:
-  - flask-app-prd.leosete-sre-devops.com
+# ---
+# apiVersion: networking.gke.io/v1
+# kind: ManagedCertificate
+# metadata:
+#   labels:
+#     app: flask-app
+#     env: dev
+#   name: flask-app-dev-cert
+#   namespace: leosete-sre-apps-dev
+# spec:
+#   domains:
+#   - flask-app-dev.leosete-sre-devops.com
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -121,17 +121,17 @@ metadata:
   annotations:
     ingressclass.kubernetes.io/is-default-class: "true"
     kubernetes.io/ingress.class: gce
-    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-prd
-    networking.gke.io/managed-certificates: flask-app-prd-cert
+    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-dev
+    networking.gke.io/managed-certificates: flask-app-dev-cert
     # kubernetes.io/ingress.allow-http: "false" ## Only enable this, after the LB's creation
   labels:
     app: flask-app
-    env: prd
-  name: flask-app-prd-ext
-  namespace: leosete-sre-apps-prd
+    env: dev
+  name: flask-app-dev-ext
+  namespace: leosete-sre-apps-dev
 spec:
   rules:
-  - host: flask-app-prd.leosete-sre-devops.com
+  - host: flask-app-dev.leosete-sre-devops.com
     http:
       paths:
       - backend:

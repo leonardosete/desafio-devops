@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env: ## Variables available in this workflow
-  PROJECT_ID: "sre-devops-sete"
+  PROJECT_ID: "projc-devops-sete"
   CLUSTER_NAME: "leosete-cluster-prod"
   REGION: "us-central1"
 

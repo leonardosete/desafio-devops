@@ -16,7 +16,7 @@ on:
 env: ## Variables available in this workflow
   APPROVERS: "YOUR_GIT_USER" ## TROCAR POR SEU USUARIO GIT
   
-  PROJECT_ID: "sre-devops-sete" ## nome do projeto no GKE
+  PROJECT_ID: "projc-devops-sete" ## nome do projeto no GKE
   CLUSTER_NAME: "leosete-cluster-prod"
   REGION: "us-central1"
   REPOSITORY: "sre-docker-registry"
