@@ -3,7 +3,7 @@ name: DEPLOY PROMETHEUS AND GRAFANA
 on:
   workflow_dispatch:
 
-env: ## Variables available in this workflow
+env:
   PROJECT_ID: "projc-devops-sete"
   CLUSTER_NAME: "leosete-cluster-prod"
   REGION: "us-central1"
@@ -15,23 +15,44 @@ jobs:
     steps:
       - name: 1-CHECKOUT ACTIONS
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-    
+
       - name: 2-AUTHENTICATE TO GOOGLE CLOUD
         id: auth
         uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_TERRAFORM_SVC_ACCOUNT }}
-    
+
       - name: 3-SETUP CLOUD SDK
         uses: google-github-actions/setup-gcloud@v0
-    
+
       - name: 4-GET CREDENTIALS
         uses: 'google-github-actions/get-gke-credentials@v0'
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
+
+      - name: INSTALL HELM
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+        shell: bash
+
+      - name: ADD HELM REPOSITORY
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+        shell: bash
+
+      - name: INSTALL KUBE-PROMETHEUS
+        run: |
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack
+        shell: bash
+
+      - name: INSTALL NGINX "HELLO WORLD"
+        run: |
+          helm install hello-world bitnami/nginx
+        shell: bash
+
     
       # - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
       #   run: |
@@ -39,25 +60,3 @@ jobs:
       #     cd kube-prometheus
       #     kubectl create -f manifests/setup
       #     kubectl apply -f manifests
-    
-      - name: INSTALL HELM
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-        shell: bash
-    
-      - name: ADD HELM REPOSITORY
-        run: |
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
-        shell: bash
-    
-      - name: INSTALL KUBE-PROMETHEUS
-        run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack
-        shell: bash
-    
-      - name: INSTALL NGINX "HELLO WORLD"
-        uses: helm/helm@v3
-        with:
-          args: install hello-world
