@@ -45,13 +45,13 @@ jobs:
 
       - name: INSTALL KUBE-PROMETHEUS
         run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait --name my-kube-prometheus-stack-${{ github.run_number }}
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait --generate-name
           helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
         shell: bash
 
       - name: INSTALL NGINX "HELLO WORLD"
         run: |
-          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
+          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait --generate-name
         shell: bash
 
     
