@@ -2,7 +2,9 @@ name: DEPLOY PROMETHEUS AND GRAFANA
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - "master"
+  workflow_dispatch:
 
 env:
   PROJECT_ID: "projc-devops-sete"
@@ -45,28 +47,41 @@ jobs:
         shell: bash
 
       - name: INSTALL KUBE-PROMETHEUS
-        if: ${{ github.event.head_commit.author.name == 'Bot' }}
         run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
+          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
+          helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
         shell: bash
 
-      - name: UPGRADE NGINX "HELLO WORLD"
+      - name: INSTALL NGINX "HELLO WORLD"
         run: |
-          helm upgrade hello-world bitnami/nginx --namespace hello-world-app
+          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
         shell: bash
 
-      - name: VERIFY KUBE-PROMETHEUS AND GRAFANA AVAILABILITY
+      - name: EXPOSE GRAFANA
         run: |
-          kubectl get pods --namespace monitoring | grep prometheus-operator
-          kubectl get pods --namespace monitoring | grep grafana
-        shell: bash
+          kubectl -n monitoring expose service grafana --type=LoadBalancer
+          kubectl -n monitoring patch service grafana -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"grafana.leosete-sre-devops.com"}}'
 
-      - name: ROLLBACK KUBE-PROMETHEUS AND GRAFANA IF THEY ARE NOT AVAILABLE
-        if: steps.verify-kube-prometheus-and-grafana-availability.outcome == 'failure'
+      - name: EXPOSE PROMETHEUS
         run: |
-          helm rollback kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring
-        shell: bash
+          kubectl -n monitoring expose service prometheus --type=LoadBalancer
+          kubectl -n monitoring patch service prometheus -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"prometheus.leosete-sre-devops.com"}}'
 
+      - name: EXPOSE HELLO WORLD
+        run: |
+          kubectl -n hello-world-app expose service hello-world --type=LoadBalancer
+          kubectl -n hello-world-app patch service hello-world -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"hello-world-app.leosete-sre-devops.com"}}'
+
+      - name: REGISTER DNS
+        run: |
+          # Get the IPs of the load balancers
+          load_balancer_ips=$(kubectl get service -n monitoring -o jsonpath="{.items[*].status.loadBalancer.ingress[0].ip}")
+
+          # Create the DNS records
+          for ip in $load_balancer_ips; do
+            gcloud dns record-set create leosete-sre-devops.com A "$ip"
+          done
+        shell: bash
 
     
       # - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
