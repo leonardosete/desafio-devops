@@ -1,1 +1,1 @@
-terraform-svc-account@teste-devops-leosete.iam.gserviceaccount.com
+terraform-svc-account@sre-devops-sete.iam.gserviceaccount.com
