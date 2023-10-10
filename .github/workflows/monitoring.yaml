@@ -43,12 +43,6 @@ jobs:
           helm repo update
         shell: bash
 
-      - name: CREATE NAMESPACES
-        run: |
-          helm create namespace monitoring
-          helm create namespace hello-world-app
-        shell: bash
-
       - name: INSTALL KUBE-PROMETHEUS
         run: |
           helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
