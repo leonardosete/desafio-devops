@@ -39,6 +39,33 @@ jobs:
           cd kube-prometheus
           kubectl create -f manifests/setup
           kubectl create -f manifests
+          on_failure:
+          run: |
+            echo "Falha ao executar a ação anterior, executando ação de recuperação"
+            kubectl delete -f manifests
+          
+      # - name: 5-KUBE PROMETHEUS - FORK LEO SETE
+      #   run: |
+      #     git clone https://github.com/leonardosete/kube-prometheus
+      #     cd kube-prometheus
+      #     kubectl create -f manifests/setup
+      #     kubectl create -f manifests
+          
+      # - name: Handle Failure
+      #   if: failure()
+      #   run: |
+      #     kubectl create -f manifests/setup
+      #     kubectl create -f manifests
+
+          
+      - name: 5-KUBE PROMETHEUS - FORK LEO SETE
+        run: |
+          git clone https://github.com/leonardosete/kube-prometheus
+          cd kube-prometheus
+          kubectl create -f manifests/setup ; kubectl create -f manifests \
+          || (echo "Failed to create setup manifests. Performing recovery..." \
+          && kubectl apply -f manifests/setup ; kubectl apply -f manifests)
+
 
       # - name: 5-KUBE PROMETHEUS - ORIGINAL
       #   run: |
