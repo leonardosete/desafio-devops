@@ -32,12 +32,10 @@ jobs:
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
-
-      - name: 4-KUBE PROMETHEUS
+          
+      - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
         run: |
           git clone https://github.com/leonardosete/kube-prometheus
           cd kube-prometheus
           kubectl create -f manifests/setup
-          kubectl get customresourcedefinitions.apiextensions.k8s.io -n monitoring
-          kubectl create -f manifests
-          kubectl get pods -n monitoring
+          kubectl apply -f manifests
