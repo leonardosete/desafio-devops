@@ -55,6 +55,7 @@ jobs:
       
       - name:  CUSTOM PROMETHEUS VALUES
         run: |
+          ls -lhart
           helm upgrade --install -f ./helm-values/values.yaml kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
         shell: bash
 
