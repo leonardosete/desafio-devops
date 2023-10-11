@@ -73,10 +73,11 @@ jobs:
         env:
           GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
           GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
+          TZ: America/Sao_Paulo
         run: |
-          helm upgrade --install -f ./helm-values/promtail.yaml promtail grafana/promtail -n monitoring --set adminPassword=${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser=${{ env.GRAFANA_ADMIN_USER }}
+          helm upgrade --install -f ./helm-values/promtail.yaml promtail grafana/promtail -n monitoring --set adminPassword=${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser=${{ env.GRAFANA_ADMIN_USER }} --set TZ=${{ env.TZ }}
         shell: bash
-  
+
       # - name: INSTALL NGINX "HELLO WORLD"
       #   run: |
       #     helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
