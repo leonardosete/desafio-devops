@@ -55,7 +55,7 @@ jobs:
       
       - name:  RUN HELM DEPLOYMENT KUBE-PROMETHEUS-STACK
         run: |
-          helm upgrade --install -f ./monitoring-values/prometheus-values.yaml kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
+          helm install -f ./monitoring-values/prometheus-values.yaml kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
         shell: bash
 
       - name:  CONFIGURE SERVICE MONITOR
