@@ -70,16 +70,11 @@ jobs:
         shell: bash
 
       - name:  CONFIGURE PROMTAIL
-        run: |
-          helm upgrade --install -f ./helm-values/promtail.yaml promtail grafana/promtail -n monitoring
-        shell: bash
-
-      - name: SET GRAFANA ADMIN PASSWORD
         env:
           GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
           GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
         run: |
-          grafana-cli admin set-password --admin-user ${{ env.GRAFANA_ADMIN_USER }} --admin-password ${{ env.GRAFANA_ADMIN_PASSWORD }}
+          helm upgrade --install -f ./helm-values/promtail.yaml promtail grafana/promtail -n monitoring --set adminPassword=${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser=${{ env.GRAFANA_ADMIN_USER }}
         shell: bash
   
       # - name: INSTALL NGINX "HELLO WORLD"
