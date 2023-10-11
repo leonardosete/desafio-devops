@@ -53,7 +53,7 @@ jobs:
           helm repo update
         shell: bash
       
-      - name:  CUSTOM PROMETHEUS VALUES
+      - name:  RUN HELM DEPLOYMENT KUBE-PROMETHEUS-STACK
         run: |
           helm upgrade --install -f ./monitoring-values/prometheus-values.yaml kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
         shell: bash
@@ -70,42 +70,6 @@ jobs:
         shell: bash
 
       - name:  CONFIGURE PROMTAIL
-        env:
-          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
-          GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
-          TZ: America/Sao_Paulo
         run: |
           helm upgrade --install -f ./monitoring-values/promtail.yaml promtail grafana/promtail -n monitoring
         shell: bash
-
-      # - name: INSTALL NGINX "HELLO WORLD"
-      #   run: |
-      #     helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
-      #   shell: bash
-
-      # - name: EXPOSE GRAFANA
-      #   run: |
-      #     kubectl -n monitoring expose service grafana --type=LoadBalancer
-      #     kubectl -n monitoring patch service grafana -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"grafana.leosete-sre-devops.com"}}'
-
-      # - name: EXPOSE PROMETHEUS
-      #   run: |
-      #     kubectl -n monitoring expose service prometheus --type=LoadBalancer
-      #     kubectl -n monitoring patch service prometheus -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"prometheus.leosete-sre-devops.com"}}'
-
-      # - name: EXPOSE HELLO WORLD
-      #   run: |
-      #     kubectl -n hello-world-app expose service hello-world --type=LoadBalancer
-      #     kubectl -n hello-world-app patch service hello-world -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"hello-world-app.leosete-sre-devops.com"}}'
-
-      # - name: REGISTER DNS
-      #   run: |
-      #     # Get the IPs of the load balancers
-      #     load_balancer_ips=$(kubectl get service -n monitoring -o jsonpath="{.items[*].status.loadBalancer.ingress[0].ip}")
-
-      #     # Create the DNS records
-      #     for ip in $load_balancer_ips; do
-      #       gcloud dns record-set create leosete-sre-devops.com A "$ip"
-      #     done
-      #   shell: bash
-
