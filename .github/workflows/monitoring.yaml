@@ -53,7 +53,7 @@ jobs:
         run: |
           helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
           helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
-          helm install grafana bitnami/grafana --namespace monitoring --set adminPassword=${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser=${{ $GRAFANA_ADMIN_USER }}
+          helm install grafana bitnami/grafana --namespace monitoring --set adminPassword= ${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser= ${{ $GRAFANA_ADMIN_USER }}
         shell: bash
 
 
