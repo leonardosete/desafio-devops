@@ -99,8 +99,12 @@ prometheus:
     hostAliases: []
     tracingConfig: {}
   grafana:
+    defaultDashboardsTimezone: America/Sao_Paulo
+    adminPassword: admin
   additionalDataSources:
     - name: Loki
       type: loki
       url: http://loki-loki-distributed-gateway.monitoring.svc.cluster.local
       access: proxy
+
+
