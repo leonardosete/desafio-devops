@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  # labels:
+    # app.kubernetes.io/component: grafana
+    # app.kubernetes.io/name: grafana
+    # app.kubernetes.io/part-of: kube-prometheus
+    # app.kubernetes.io/version: 9.5.3
+  name: grafana
+  namespace: monitoring
+spec:
+  ports:
+  - name: grafana
+    port: 80
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app.kubernetes.io/component: grafana
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/part-of: kube-prometheus
+  type: ClusterIP
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: grafana-cert
+  namespace: monitoring
+spec:
+  domains:
+    - grafana.leosete-sre-devops.com
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: gke-lb-ext-leosete-monitoring
+    networking.gke.io/managed-certificates: grafana-cert
+  labels: {}
+  # labels:
+  #   app.kubernetes.io/component: grafana
+  #   app.kubernetes.io/name: grafana
+  #   app.kubernetes.io/part-of: kube-prometheus
+  #   app.kubernetes.io/version: 9.5.3
+  name: grafana-ext
+  namespace: monitoring
+spec:
+  rules:
+  - host: grafana.leosete-sre-devops.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: grafana
+            port:
+              number: 80
+        path: /
+        pathType: Prefix

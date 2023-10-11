@@ -1,0 +1,110 @@
+# prometheus:
+#   enabled: true
+#   agentMode: false
+#   annotations: {}
+#   networkPolicy:
+#     enabled: false
+#     flavor: kubernetes
+#   serviceAccount:
+#     create: true
+#     name: ""
+#     annotations: {}
+#   serviceMonitor:
+#     interval: ""
+#     selfMonitor: true
+#     sampleLimit: 0
+#     targetLimit: 0
+#     labelLimit: 0
+#     labelNameLengthLimit: 0
+#     labelValueLengthLimit: 0
+#     scheme: ""
+#     tlsConfig: {}
+#     bearerTokenFile:
+#     metricRelabelings: []
+#     relabelings: []
+#   prometheusSpec:
+#     disableCompaction: false
+#     enableRemoteWriteReceiver: false
+#     replicaExternalLabelName: ""
+#     replicaExternalLabelNameClear: false
+#     prometheusExternalLabelName: ""
+#     prometheusExternalLabelNameClear: false
+#     externalUrl: ""
+#     nodeSelector: {}
+#     secrets: []
+#     configMaps: []
+#     query: {}
+#     ruleNamespaceSelector: {}
+#     ruleSelectorNilUsesHelmValues: true
+#     ruleSelector: {}
+#     serviceMonitorSelectorNilUsesHelmValues: true
+#     serviceMonitorSelector: {}
+#     serviceMonitorNamespaceSelector: {}
+#     podMonitorSelectorNilUsesHelmValues: true
+#     podMonitorSelector: {}
+#     podMonitorNamespaceSelector: {}
+#     probeSelectorNilUsesHelmValues: true
+#     probeSelector: {}
+#     probeNamespaceSelector: {}
+#     scrapeConfigSelectorNilUsesHelmValues: true
+#     scrapeConfigSelector: {}
+#     scrapeConfigNamespaceSelector: {}
+#     retention: 10d
+#     retentionSize: ""
+#     tsdb:
+#       outOfOrderTimeWindow: 0s
+#     walCompression: true
+#     paused: false
+#     replicas: 1
+#     shards: 1
+#     logLevel: info
+#     logFormat: logfmt
+#     routePrefix: /
+#     podMetadata: {}
+#     podAntiAffinity: ""
+#     podAntiAffinityTopologyKey: kubernetes.io/hostname
+#     affinity: {}
+#     remoteRead: []
+#     additionalRemoteRead: []
+#     remoteWrite: []
+#     additionalRemoteWrite: []
+#     remoteWriteDashboards: false
+#     resources: {}
+#     storageSpec: {}
+#     volumes: []
+#     volumeMounts: []
+#     additionalScrapeConfigs: []
+#     additionalScrapeConfigsSecret: {}
+#     additionalPrometheusSecretsAnnotations: {}
+#     additionalAlertManagerConfigs: []
+#     additionalAlertManagerConfigsSecret: {}
+#     additionalAlertRelabelConfigs: []
+#     additionalAlertRelabelConfigsSecret: {}
+#     arbitraryFSAccessThroughSMs: false
+#     overrideHonorLabels: false
+#     overrideHonorTimestamps: false
+#     ignoreNamespaceSelectors: false
+#     enforcedNamespaceLabel: ""
+#     prometheusRulesExcludedFromEnforce: []
+#     excludedFromEnforcement: []
+#     queryLogFile: false
+#     enforcedSampleLimit: false
+#     enforcedTargetLimit: false
+#     enforcedLabelLimit: false
+#     enforcedLabelNameLengthLimit: false
+#     enforcedLabelValueLengthLimit: false
+#     allowOverlappingBlocks: false
+#     minReadySeconds: 0
+#     hostNetwork: false
+#     hostAliases: []
+#     tracingConfig: {}
+#   grafana:
+#     defaultDashboardsTimezone: America/Sao_Paulo
+#     adminPassword: admin
+#   additionalDataSources:
+#     - name: Loki
+#       type: loki
+#       url: http://loki-loki-distributed-gateway.monitoring.svc.cluster.local
+#       access: proxy
+
+

@@ -75,7 +75,7 @@ jobs:
           GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
           TZ: America/Sao_Paulo
         run: |
-          helm upgrade --install -f ./monitoring-values/promtail.yaml promtail grafana/promtail -n monitoring --set adminPassword=${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser=${{ env.GRAFANA_ADMIN_USER }} --set TZ=${{ env.TZ }}
+          helm upgrade --install -f ./monitoring-values/promtail.yaml promtail grafana/promtail -n monitoring
         shell: bash
 
       # - name: INSTALL NGINX "HELLO WORLD"
