@@ -39,69 +39,68 @@ jobs:
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
         shell: bash
 
+      - name: CREATE MONITORING NAMESPACE
+        run: |
+          kubectl create namespace monitoring
+        shell: bash
+
       - name: ADD HELM REPOSITORY
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
         shell: bash
+      
+      - name:  CUSTOM PROMETHEUS VALUES
+        run: |
+          helm upgrade --install -f ../../helm-values/values.yaml kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
+        shell: bash
 
-      # - name: INSTALL KUBE-PROMETHEUS
-      #   env:
-      #     GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
-      #     GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
+      - name:  CONFIGURE SERVICE MONITOR
+        run: |
+          kubectl apply -f ../../helm-values/serviceMonitor.yaml -n monitoring
+        shell: bash
+
+      - name:  CONFIGURE GRAFANA LOKI
+        run: |
+          helm upgrade --install loki grafana/loki-distributed -n monitoring
+        shell: bash
+
+      - name:  CONFIGURE PROMTAIL
+        run: |
+          helm upgrade --install -f ../../helm-values/promtail.yaml promtail grafana/promtail -n monitoring
+        shell: bash
+
+  
+      # - name: INSTALL NGINX "HELLO WORLD"
       #   run: |
-      #     helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
-      #     helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
-      #     helm install grafana bitnami/grafana --namespace monitoring --set adminPassword= ${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser= ${{ $GRAFANA_ADMIN_USER }}
+      #     helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
       #   shell: bash
 
-      - name: INSTALL KUBE-PROMETHEUS
-        env:
-          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
-          GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
-        run: |
-          helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --wait
-          helm upgrade kube-prometheus-stack prometheus-community/kube-prometheus-stack --set grafana.enabled=true --namespace monitoring
-          helm install grafana bitnami/grafana --namespace monitoring --set adminPassword=${{ env.GRAFANA_ADMIN_PASSWORD }} --set adminUser=${{ env.GRAFANA_ADMIN_USER }}
-        shell: bash
-
-
-      - name: INSTALL NGINX "HELLO WORLD"
-        run: |
-          helm install hello-world bitnami/nginx --namespace hello-world-app --create-namespace --wait
-        shell: bash
-
-      - name: EXPOSE GRAFANA
-        run: |
-          kubectl -n monitoring expose service grafana --type=LoadBalancer
-          kubectl -n monitoring patch service grafana -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"grafana.leosete-sre-devops.com"}}'
-
-      - name: EXPOSE PROMETHEUS
-        run: |
-          kubectl -n monitoring expose service prometheus --type=LoadBalancer
-          kubectl -n monitoring patch service prometheus -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"prometheus.leosete-sre-devops.com"}}'
-
-      - name: EXPOSE HELLO WORLD
-        run: |
-          kubectl -n hello-world-app expose service hello-world --type=LoadBalancer
-          kubectl -n hello-world-app patch service hello-world -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"hello-world-app.leosete-sre-devops.com"}}'
-
-      - name: REGISTER DNS
-        run: |
-          # Get the IPs of the load balancers
-          load_balancer_ips=$(kubectl get service -n monitoring -o jsonpath="{.items[*].status.loadBalancer.ingress[0].ip}")
-
-          # Create the DNS records
-          for ip in $load_balancer_ips; do
-            gcloud dns record-set create leosete-sre-devops.com A "$ip"
-          done
-        shell: bash
-
-    
-      # - name: 5-KUBE PROMETHEUS - FORK LEO SETE ## https://github.com/prometheus-operator/kube-prometheus
+      # - name: EXPOSE GRAFANA
       #   run: |
-      #     git clone https://github.com/leonardosete/kube-prometheus
-      #     cd kube-prometheus
-      #     kubectl create -f manifests/setup
-      #     kubectl apply -f manifests
+      #     kubectl -n monitoring expose service grafana --type=LoadBalancer
+      #     kubectl -n monitoring patch service grafana -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"grafana.leosete-sre-devops.com"}}'
+
+      # - name: EXPOSE PROMETHEUS
+      #   run: |
+      #     kubectl -n monitoring expose service prometheus --type=LoadBalancer
+      #     kubectl -n monitoring patch service prometheus -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"prometheus.leosete-sre-devops.com"}}'
+
+      # - name: EXPOSE HELLO WORLD
+      #   run: |
+      #     kubectl -n hello-world-app expose service hello-world --type=LoadBalancer
+      #     kubectl -n hello-world-app patch service hello-world -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/do-loadbalancer-hostname":"hello-world-app.leosete-sre-devops.com"}}'
+
+      # - name: REGISTER DNS
+      #   run: |
+      #     # Get the IPs of the load balancers
+      #     load_balancer_ips=$(kubectl get service -n monitoring -o jsonpath="{.items[*].status.loadBalancer.ingress[0].ip}")
+
+      #     # Create the DNS records
+      #     for ip in $load_balancer_ips; do
+      #       gcloud dns record-set create leosete-sre-devops.com A "$ip"
+      #     done
+      #   shell: bash
+
