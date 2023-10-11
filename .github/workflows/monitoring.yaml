@@ -54,12 +54,13 @@ jobs:
       
       - name:  CUSTOM PROMETHEUS VALUES
         run: |
-          helm upgrade --install -f ../../helm-values/values.yaml kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
+          helm upgrade --install -f ./helm-values/values.yaml kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
         shell: bash
 
       - name:  CONFIGURE SERVICE MONITOR
         run: |
-          kubectl apply -f ../../helm-values/serviceMonitor.yaml -n monitoring
+          kubectl apply -f ./helm-values/serviceMonitor.yaml -n monitoring
+          
         shell: bash
 
       - name:  CONFIGURE GRAFANA LOKI
@@ -69,7 +70,7 @@ jobs:
 
       - name:  CONFIGURE PROMTAIL
         run: |
-          helm upgrade --install -f ../../helm-values/promtail.yaml promtail grafana/promtail -n monitoring
+          helm upgrade --install -f ./helm-values/promtail.yaml promtail grafana/promtail -n monitoring
         shell: bash
 
   
