@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo Gerencial: Automação de Análise de Alertas</title>
+    <style>
+        body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; line-height: 1.7; color: #333; margin: 0; padding: 0; background-color: #f8f9fa; }
+        .container { max-width: 900px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e9ecef; }
+        h1, h2 { color: #212529; font-weight: 600; }
+        h1 { text-align: center; margin-bottom: 20px; font-size: 2em; color: #004a99; border-bottom: 1px solid #dee2e6; padding-bottom: 20px; }
+        h2 { font-size: 1.6em; margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #0056b3; }
+        p, li { color: #495057; margin-bottom: 10px; }
+        ul { padding-left: 25px; margin-bottom: 15px; }
+        .highlight { background-color: #eef7ff; border-left: 5px solid #007bff; padding: 15px 20px; margin: 25px 0; border-radius: 5px; }
+        .highlight strong { color: #004a99; }
+        .code-block { background-color: #e9ecef; color: #212529; padding: 5px 10px; border-radius: 4px; font-family: 'Consolas', 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resumo Gerencial: Automação de Análise de Alertas</h1>
+
+        <div class="highlight">
+            <p><strong>O Essencial:</strong> Esta ferramenta transforma planilhas de alertas (CSVs) em dashboards interativos (HTML) com um único comando. Ela mostra os problemas mais importantes, as equipes mais impactadas e se estamos melhorando ou piorando com o tempo.</p>
+        </div>
+
+        <h2>O Problema que Resolvemos</h2>
+        <p>Analisar manualmente planilhas de alertas é um processo lento, repetitivo e que dificulta a visualização de tendências. Era difícil responder rapidamente a perguntas como:</p>
+        <ul>
+            <li>Quais são os problemas mais críticos e recorrentes?</li>
+            <li>As ações que tomamos na semana passada surtiram efeito?</li>
+            <li>Qual equipe precisa de mais apoio?</li>
+        </ul>
+
+        <h2>Nossa Solução Automatizada</h2>
+        <p>Este projeto automatiza todo o processo, entregando respostas claras e visuais para essas perguntas. A automação realiza três funções principais:</p>
+        <ol>
+            <li><strong>Análise de Impacto:</strong> Identifica e classifica o Top 10 de problemas e equipes, mostrando onde devemos focar nossos esforços.</li>
+            <li><strong>Análise de Tendência:</strong> Compara o cenário atual com o período anterior, indicando com ícones (📉 <strong>Piora</strong>, 📈 <strong>Melhora</strong>) a evolução de cada problema.</li>
+            <li><strong>Geração de Dashboards:</strong> Cria relatórios em HTML, limpos e profissionais, prontos para serem compartilhados e discutidos.</li>
+        </ol>
+
+        <h2>Dashboards Gerados: Navegação e Análise</h2>
+<p>A ferramenta gera um conjunto de dashboards interativos em HTML, projetados para facilitar a análise em diferentes níveis.</p>
+<h3>1. Dashboard Geral (resumo_geral.html)</h3>
+<ul>
+    <li><strong>Visão Macro:</strong> Apresenta os KPIs principais, como a taxa de sucesso da automação e o total de problemas que precisam de ação.</li>
+    <li><strong>Downloads Diretos:</strong> Cada KPI possui um ícone que permite baixar os dados brutos (.csv ou .json) com um único clique, facilitando auditorias e análises mais profundas.</li>
+    <li><strong>Foco no Essencial:</strong> Mostra o "Top 10" de times e problemas, direcionando a atenção para os maiores pontos de impacto. Para os times, um botão "Mais Times" permite ver todos os outros ofensores.</li>
+</ul>
+<h3>2. Plano de Ação por Time (plano-de-acao-[TIME].html)</h3>
+<ul>
+    <li><strong>Visão do Time:</strong> Cada time com problemas recebe seu próprio dashboard, que começa com um resumo de suas métricas e um gráfico dos seus problemas mais recorrentes.</li>
+    <li><strong>Análise Drill-Down:</strong> A lista de problemas é agrupada por descrição. O gestor pode expandir um problema para ver todas as instâncias (recursos afetados) e, se necessário, expandir uma instância específica para ver detalhes técnicos como a cronologia de status e os alertas envolvidos.</li>
+</ul>
+<div class="highlight">
+    <p><strong>Benefício Chave:</strong> Esse design permite que um gestor comece com uma visão de 30.000 pés (Dashboard Geral) e mergulhe nos detalhes de um problema específico de um time em poucos cliques, sem sair do navegador.</p>
+</div>
+
+        <h2>Como Funciona na Prática (Processo Simplificado)</h2>
+        <p>O fluxo de trabalho foi desenhado para ser o mais simples possível:</p>
+        <ol>
+            <li>O usuário simplesmente <strong>adiciona o arquivo <code class="code-block">.csv</code></strong> de alertas da semana/período no diretório.</li>
+            <li>Executa <strong>um único comando</strong> no terminal.</li>
+        </ol>
+        <p>A ferramenta cuida do resto, gerando uma pasta com todos os dashboards prontos para visualização em qualquer navegador.</p>
+        
+        <h2>Principais Benefícios</h2>
+        <ul>
+            <li><strong>Tomada de Decisão Rápida:</strong> Dashboards visuais permitem identificar prioridades em minutos, não em horas.</li>
+            <li><strong>Visão de Longo Prazo:</strong> A análise de tendência mostra o resultado real das nossas estratégias de correção.</li>
+            <li><strong>Redução de Esforço Operacional:</strong> Elimina horas de trabalho manual, liberando a equipe para atuar na resolução dos problemas.</li>
+            <li><strong>Comunicação Eficiente:</strong> Relatórios padronizados e fáceis de entender melhoram a comunicação entre equipes técnicas e gestão.</li>
+        </ul>
+    </div>
+</body>
+</html>

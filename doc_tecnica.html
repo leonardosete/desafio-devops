@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação Técnica: Automação de Análise de Alertas</title>
+    <style>
+        body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; line-height: 1.7; color: #333; margin: 0; padding: 0; background-color: #f8f9fa; }
+        .container { max-width: 950px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border: 1px solid #e9ecef; }
+        h1, h2, h3 { color: #212529; font-weight: 600; }
+        h1 { text-align: center; margin-bottom: 20px; font-size: 2.2em; color: #004a99; border-bottom: 1px solid #dee2e6; padding-bottom: 20px; }
+        h2 { font-size: 1.8em; margin-top: 40px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #0056b3; }
+        h3 { font-size: 1.4em; color: #0056b3; margin-top: 30px; }
+        p, li { color: #495057; margin-bottom: 10px; }
+        ul, ol { padding-left: 25px; margin-bottom: 15px; }
+        code { background-color: #e9ecef; color: #c7254e; padding: 3px 6px; border-radius: 4px; font-family: 'Consolas', 'Courier New', monospace; }
+        .code-block { background-color: #212529; color: #f8f9fa; padding: 15px; border-radius: 5px; font-family: 'Consolas', 'Courier New', monospace; overflow-x: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.95em; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background-color: #f8f9fa; font-weight: 600; color: #343a40; border-top: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Documentação Técnica: Análise de Alertas</h1>
+
+        <h2>1. Arquitetura Geral</h2>
+        <p>O projeto é um pipeline de dados automatizado, orquestrado por um script Shell (<code>gerar_relatorio_completo.sh</code>) que executa scripts Python para processamento e geração de relatórios. A arquitetura foi desenhada para ser modular e robusta.</p>
+        
+        <h3>Componentes Principais</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Componente</th>
+                    <th>Linguagem</th>
+                    <th>Responsabilidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>gerar_relatorio_completo.sh</code></td>
+                    <td>Bash</td>
+                    <td><strong>Orquestração do pipeline.</strong> Ponto de entrada que gerencia todo o fluxo, desde a detecção de arquivos até a consolidação final dos relatórios.</td>
+                </tr>
+                <tr>
+                    <td><code>analisar_alertas.py</code></td>
+                    <td>Python</td>
+                    <td><strong>Motor de Análise.</strong> Processa um único CSV, agrupa alertas, analisa a cronologia de status e gera os relatórios HTML e CSV para um período.</td>
+                </tr>
+                <tr>
+                    <td><code>analise_tendencia.py</code></td>
+                    <td>Python</td>
+                    <td><strong>Motor de Tendência.</strong> Compara dois relatórios <code>resumo_geral.html</code> para gerar o dashboard de tendência.</td>
+                </tr>
+                <tr>
+                    <td><code>get_max_date.py</code></td>
+                    <td>Python</td>
+                    <td><strong>Script Auxiliar.</strong> Extrai a data mais recente de um CSV para garantir a ordenação cronológica correta dos arquivos de entrada.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>2. Fluxo de Execução Detalhado</h2>
+        <p>O processo é iniciado pela execução de <code>./gerar_relatorio_completo.sh</code>, que segue a seguinte lógica:</p>
+        <ol>
+            <li><strong>Detecção de Arquivos:</strong> O script procura por arquivos <code>.csv</code> no diretório, ignorando saídas de execuções anteriores (<code>atuar.csv</code>, <code>tudo-ok.csv</code>).</li>
+            <li><strong>Criação de Ambiente:</strong> Verifica a existência de um ambiente virtual <code>.venv</code> e o cria se necessário, instalando as dependências (<code>pandas</code>).</li>
+            <li><strong>Decisão de Fluxo:</strong>
+                <ul>
+                    <li><strong>Se 1 CSV é encontrado:</strong> Executa o modo de "Análise Simples".</li>
+                    <li><strong>Se 2 ou mais CSVs são encontrados:</strong> Executa o modo de "Análise Comparativa".</li>
+                </ul>
+            </li>
+            <li><strong>Modo de Análise Comparativa (Fluxo Principal):</strong>
+                <ol>
+                    <li>Os dois arquivos modificados mais recentemente são selecionados como candidatos.</li>
+                    <li>O script <code>get_max_date.py</code> é chamado para cada candidato. Ele lê a coluna <code>sys_created_on</code> e retorna a data máxima.</li>
+                    <li>As datas retornadas são comparadas para determinar qual arquivo é o <code>FILE_ATUAL</code> e qual é o <code>FILE_ANTERIOR</code>, garantindo a precisão cronológica.</li>
+                    <li>A função <code>run_single_analysis</code> é chamada para o <code>FILE_ANTERIOR</code>, gerando seu conjunto de relatórios em um diretório <code>resultados-&lt;nome_anterior&gt;</code>.</li>
+                    <li>A mesma função é chamada para o <code>FILE_ATUAL</code>, gerando seus relatórios em <code>resultados-&lt;nome_atual&gt;</code>.</li>
+                    <li>O script <code>analise_tendencia.py</code> é executado, recebendo como entrada os caminhos para os dois arquivos <code>resumo_geral.html</code> gerados.</li>
+                    <li>Finalmente, todos os artefatos (<code>resumo_tendencia.html</code> e os dois diretórios de resultados) são movidos para uma pasta consolidada: <code>analise-comparativa-&lt;timestamp&gt;</code>.</li>
+                </ol>
+            </li>
+        </ol>
+
+        <h2>3. Lógica Interna dos Scripts Python</h2>
+        <h3><code>analisar_alertas.py</code></h3>
+        <ul>
+            <li><strong>Agrupamento:</strong> Utiliza <code>pandas.DataFrame.groupby()</code> na coluna <code>problem_key</code> para criar grupos de alertas idênticos.</li>
+            <li><strong>Análise Cronológica de Status:</strong> Dentro de cada grupo, os alertas são ordenados por data (<code>first_date</code>). A sequência de valores da coluna <code>self_healing_status</code> é analisada para definir a <code>acao_sugerida</code>:
+                <ul>
+                    <li><code>REM_NOT_OK</code> seguido de <code>REM_OK</code> -> <code>✅ Remediação estabilizada</code></li>
+                    <li><code>REM_OK</code> seguido de <code>REM_NOT_OK</code> -> <code>⚠️ Analisar falha na remediação/intermitência</code></li>
+                    <li>Apenas <code>REM_NOT_OK</code> -> <code>❌ Desenvolver/Corrigir remediação</code></li>
+                </ul>
+            </li>
+            <li><strong>Geração de HTML:</strong> O script contém uma string de template HTML com placeholders. Os dados processados (Top 10, métricas, etc.) são inseridos nesse template para gerar os arquivos <code>.html</code> finais.</li>
+        </ul>
+
+        <h3><code>analise_tendencia.py</code></h3>
+        <ul>
+            <li><strong>Parsing de HTML:</strong> O script utiliza <code>pandas.read_html()</code> para extrair as tabelas de Top 10 diretamente dos arquivos <code>resumo_geral.html</code>.</li>
+            <li><strong>Comparação de Dados:</strong> Compara os dataframes dos dois períodos para identificar quais problemas subiram ou desceram no ranking, quais são novos e quais foram resolvidos.</li>
+            <li><strong>Geração de HTML de Tendência:</strong> Assim como o script anterior, preenche um template HTML com os dados comparativos e os ícones de tendência (📈, 📉, ⚠️, ✅).</li>
+        </ul>
+
+        <h3>Geração de Relatórios HTML Interativos</h3>
+        <p>A geração dos relatórios HTML no script <code>analisar_alertas.py</code> foi aprimorada para criar dashboards interativos, utilizando uma combinação de HTML, CSS e JavaScript contidos no template.</p>
+
+        <h4>Dashboard Geral (resumo_geral.html)</h4>
+        <ul>
+            <li><strong>Ícones de Download:</strong> Os cards de KPI no topo da página incluem um link <code>&lt;a&gt;</code> com um ícone SVG e o atributo <code>download</code>, apontando para os arquivos de dados correspondentes (<code>atuar.csv</code>, <code>tudo-ok.csv</code>, <code>resumo_problemas.json</code>).</li>
+            <li><strong>Botão "Mais Times":</strong> A lista de "Top 10 Times" é seguida por um botão <code>&lt;button&gt;</code> da classe <code>collapsible</code>. A lógica em Python separa os times que não estão no Top 10 e os renderiza dentro de um <code>&lt;div class="content"&gt;</code>, que é controlado pelo script de "sanfona" já existente no template.</li>
+        </ul>
+
+        <h4>Plano de Ação por Time (plano-de-acao-[TIME].html)</h4>
+        <p>O relatório de time foi transformado em um mini-dashboard completo com múltiplos níveis de detalhe (drill-down).</p>
+        <ol>
+            <li><strong>KPIs e Gráfico:</strong> A função <code>gerar_planos_por_time</code> primeiro calcula e exibe KPIs (Total de Instâncias, Total de Alertas) e um gráfico de barras com os principais problemas daquele time.</li>
+            <li><strong>Agrupamento por Problema:</strong> A função itera sobre os problemas agrupados por <code>short_description</code>. Para cada descrição, ela cria um botão <code>collapsible</code> principal.</li>
+            <li><strong>Tabela de Instâncias:</strong> Dentro de cada grupo de problema, é gerada uma tabela onde cada linha (<code>&lt;tr class="expandable-row"&gt;</code>) representa uma instância única do problema (um recurso/CI específico).</li>
+            <li><strong>Detalhes Ocultos por Instância:</strong> Para cada linha de instância, uma segunda linha (<code>&lt;tr class="details-row"&gt;</code>) é criada com um ID único. Esta linha contém os detalhes técnicos (IDs de alerta, cronologia) e é controlada por um novo script no template, que a exibe ou oculta ao clicar na linha principal.</li>
+        </ol>
+
+        <h2>4. Como Executar</h2>
+        <p>Para rodar o projeto, siga os passos:</p>
+        <ol>
+            <li>Clone ou baixe os arquivos para um diretório.</li>
+            <li>Adicione pelo menos um arquivo de dados <code>.csv</code> no mesmo diretório.</li>
+            <li>Abra o terminal, navegue até o diretório e execute o comando:</li>
+        </ol>
+        <div class="code-block">./gerar_relatorio_completo.sh</div>
+        <p>O script cuidará da criação do ambiente virtual, instalação de dependências e execução de todo o pipeline.</p>
+
+    </div>
+</body>
+</html>
