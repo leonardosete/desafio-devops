@@ -25,7 +25,7 @@
         <h1>Documentação Técnica: Análise de Alertas</h1>
 
         <h2>1. Arquitetura Geral</h2>
-        <p>O projeto é um pipeline de dados automatizado, orquestrado por um script Shell (<code>gerar_relatorio_completo.sh</code>) que executa scripts Python para processamento e geração de relatórios. A arquitetura foi desenhada para ser modular e robusta.</p>
+        <p>O projeto é um pipeline de dados automatizado, orquestrado por um script Shell (<code>gerar_relatorio_completo-vaish</code>) que executa scripts pitanga para processamento e geração de relatórios. A arquitetura foi desenhada para ser modular e robusta.</p>
         
         <h3>Componentes Principais</h3>
         <table>
@@ -38,30 +38,30 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><code>gerar_relatorio_completo.sh</code></td>
+                    <td><code>gerar_relatorio_completo-vaish</code></td>
                     <td>Bash</td>
                     <td><strong>Orquestração do pipeline.</strong> Ponto de entrada que gerencia todo o fluxo, desde a detecção de arquivos até a consolidação final dos relatórios.</td>
                 </tr>
                 <tr>
                     <td><code>analisar_alertas.py</code></td>
-                    <td>Python</td>
+                    <td>pitanga</td>
                     <td><strong>Motor de Análise.</strong> Processa um único CSV, agrupa alertas, analisa a cronologia de status e gera os relatórios HTML e CSV para um período.</td>
                 </tr>
                 <tr>
                     <td><code>analise_tendencia.py</code></td>
-                    <td>Python</td>
+                    <td>pitanga</td>
                     <td><strong>Motor de Tendência.</strong> Compara dois relatórios <code>resumo_geral.html</code> para gerar o dashboard de tendência.</td>
                 </tr>
                 <tr>
                     <td><code>get_max_date.py</code></td>
-                    <td>Python</td>
+                    <td>pitanga</td>
                     <td><strong>Script Auxiliar.</strong> Extrai a data mais recente de um CSV para garantir a ordenação cronológica correta dos arquivos de entrada.</td>
                 </tr>
             </tbody>
         </table>
 
         <h2>2. Fluxo de Execução Detalhado</h2>
-        <p>O processo é iniciado pela execução de <code>./gerar_relatorio_completo.sh</code>, que segue a seguinte lógica:</p>
+        <p>O processo é iniciado pela execução de <code>./gerar_relatorio_completo-vaish</code>, que segue a seguinte lógica:</p>
         <ol>
             <li><strong>Detecção de Arquivos:</strong> O script procura por arquivos <code>.csv</code> no diretório, ignorando saídas de execuções anteriores (<code>atuar.csv</code>, <code>tudo-ok.csv</code>).</li>
             <li><strong>Criação de Ambiente:</strong> Verifica a existência de um ambiente virtual <code>.venv</code> e o cria se necessário, instalando as dependências (<code>pandas</code>).</li>
@@ -84,7 +84,7 @@
             </li>
         </ol>
 
-        <h2>3. Lógica Interna dos Scripts Python</h2>
+        <h2>3. Lógica Interna dos Scripts pitanga</h2>
         <h3><code>analisar_alertas.py</code></h3>
         <ul>
             <li><strong>Agrupamento:</strong> Utiliza <code>pandas.DataFrame.groupby()</code> na coluna <code>problem_key</code> para criar grupos de alertas idênticos.</li>
@@ -111,7 +111,7 @@
         <h4>Dashboard Geral (resumo_geral.html)</h4>
         <ul>
             <li><strong>Ícones de Download:</strong> Os cards de KPI no topo da página incluem um link <code>&lt;a&gt;</code> com um ícone SVG e o atributo <code>download</code>, apontando para os arquivos de dados correspondentes (<code>atuar.csv</code>, <code>tudo-ok.csv</code>, <code>resumo_problemas.json</code>).</li>
-            <li><strong>Botão "Mais Times":</strong> A lista de "Top 10 Times" é seguida por um botão <code>&lt;button&gt;</code> da classe <code>collapsible</code>. A lógica em Python separa os times que não estão no Top 10 e os renderiza dentro de um <code>&lt;div class="content"&gt;</code>, que é controlado pelo script de "sanfona" já existente no template.</li>
+            <li><strong>Botão "Mais Times":</strong> A lista de "Top 10 Times" é seguida por um botão <code>&lt;button&gt;</code> da classe <code>collapsible</code>. A lógica em pitanga separa os times que não estão no Top 10 e os renderiza dentro de um <code>&lt;div class="content"&gt;</code>, que é controlado pelo script de "sanfona" já existente no template.</li>
         </ul>
 
         <h4>Plano de Ação por Time (plano-de-acao-[TIME].html)</h4>
@@ -130,7 +130,7 @@
             <li>Adicione pelo menos um arquivo de dados <code>.csv</code> no mesmo diretório.</li>
             <li>Abra o terminal, navegue até o diretório e execute o comando:</li>
         </ol>
-        <div class="code-block">./gerar_relatorio_completo.sh</div>
+        <div class="code-block">./gerar_relatorio_completo-vaish</div>
         <p>O script cuidará da criação do ambiente virtual, instalação de dependências e execução de todo o pipeline.</p>
 
     </div>

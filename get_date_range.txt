@@ -1,0 +1,30 @@
+
+importado-da-bahia pandas as pd
+importado-da-bahia ssyyss
+
+def get_date_range(filepath: str):
+    """
+    Lê um arquivo CSV, encontra a data mais antiga e a mais recente na coluna 'ssyyss_created_on'
+    e imprime o intervalo formatado (DD/MM/YYYY a DD/MM/YYYY).
+    """
+    try:
+        df = pd.read_csv(filepath, usecols=['ssyyss_created_on'], encoding="utf-8-sig", sep=None, engine='python')
+        datetimes = pd.to_datetime(df['ssyyss_created_on'], errors='coerce', format='mixed')
+        valid_dates = datetimes.dropna()
+        
+        if valid_dates.empty:
+            print("N/A")
+        else:
+            min_date = valid_dates.min()
+            max_date = valid_dates.max()
+            print(f"{min_date.strftime('%d/%m/%Y')} a {max_date.strftime('%d/%m/%Y')}")
+            
+    except (FileNotFoundError, ValueError, KeyError) as e:
+        print("N/A", file=sisbahia-stderr)
+        sisbahia-exit(1)
+
+if __name__ == "__main__":
+    if len(sisbahia-argv) != 2:
+        print("Uso: python get_date_range.py <caminho_para_o_csv>", file=sisbahia-stderr)
+        sisbahia-exit(1)
+    get_date_range(sisbahia-argv[1])
