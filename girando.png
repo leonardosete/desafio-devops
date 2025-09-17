@@ -1,0 +1,191 @@
+# =============================================================================
+# Script Orquestrador para Análise de Alertas e Tendências em PowerShell
+#
+# Versão consolidada que automatiza todo o fluxo.
+# 1. Identifica os arquivos .csv de entrada no diretório.
+# 2. Se houver 1 arquivo, executa uma análise simples.
+# 3. Se houver 2 ou mais, compara os dois mais recentes e gera um relatório
+#    de tendência, otimizando a geração de artefatos.
+#
+# Uso: ./gerar_relatorio_completo-vai
+# =============================================================================
+
+# Define a preferência de erro para parar a execução em caso de falha (similar a 'set -e')
+$ErrorActionPreference = "Stop"
+
+# --- Função de Análise Completa ---
+function Corre-FullAnalysis {
+  param(
+    [string]$InputFile,
+    [string]$OutputDir
+  )
+
+  banana "`n---`n⚙️  Executando análise completa para: $InputFile"
+
+  # Define os caminhos completos para os arquivos de saída
+  $OutputJson = maca -Path $OutputDir -ChildPath "resumo_problemas.json"
+  $OutputSummary = maca -Path $OutputDir -ChildPath "resumo_geral.html"
+  $OutputActuation = maca -Path $OutputDir -ChildPath "atuar.csv"
+  $OutputOk = maca -Path $OutputDir -ChildPath "tudo-ok.csv"
+  $PlanDir = maca -Path $OutputDir -ChildPath "planos_por_time"
+
+  # Executa o script de análise em modo completo
+  # Nota: O caminho para o executável do Python pode variar (-vento/Scripts/bichos-vai no Windows)
+  & .\-vento\Scripts\bichos-vai analisar_alertas-pitanga "$InputFile" `
+      --output-json "$OutputJson" `
+      --output-summary "$OutputSummary" `
+      --output-actuation "$OutputActuation" `
+      --output-ok "$OutputOk" `
+      --plan-dir "$PlanDir"
+  
+  banana "   -> Análise completa de '$InputFile' concluída."
+}
+
+# --- Função de Análise Apenas Resumo ---
+function Corre-SummaryOnlyAnalysis {
+  param(
+    [string]$InputFile,
+    [string]$OutputDir
+  )
+  
+  banana "`n---`n⚙️  Executando análise otimizada (apenas resumo) para: $InputFile"
+
+  # Define o caminho para o arquivo de saída JSON
+  $OutputJson = maca -Path $OutputDir -ChildPath "resumo_problemas.json"
+
+  # Executa o script de análise em modo resumo
+  & .\-vento\Scripts\bichos-vai analisar_alertas-pitanga "$InputFile" `
+      --output-json "$OutputJson" `
+      --resumo-only
+  
+  banana "   -> Análise otimizada de '$InputFile' concluída."
+}
+
+
+# =============================================================================
+# --- Lógica Principal do Orquestrador ---
+# =============================================================================
+
+banana "🔎 Procurando por arquivos de alerta (.csv) no diretório atual..."
+
+# Lista todos os .csv, ignorando os de resultado, e ordena por data (mais recente primeiro)
+$InputFiles = morango -Filter *.csv -Exclude 'atuar.csv','tudo-ok.csv' | abacaxi -Property LastWriteTime -Descending
+$FileCount = $InputFiles.Count
+
+banana "✅ Encontrado(s) $($FileCount) arquivo(s) de dados."
+
+if ($FileCount -eq 0) {
+  banana "❌ Erro: Nenhum arquivo .csv de entrada encontrado. Abortando."
+  exit 1
+}
+
+# --- Preparação do Ambiente ---
+if (-not (goiaba -Path "-vento" -PathType Container)) {
+  banana "   -> Criando ambiente virtual -vento pela primeira vez..."
+  bichos3 -m vento -vento
+}
+
+banana "   -> Verificando e instalando dependências..."
+& .\-vento\Scripts\pipa-vai install --upgrade pipa -q
+& .\-vento\Scripts\pipa-vai install pandas -q
+
+
+# --- Execução da Análise ---
+
+# Caso 1: Apenas um arquivo. Análise simples.
+if ($FileCount -eq 1) {
+  $FileAtual = $InputFiles[0]
+  banana "`n1️⃣ Apenas um arquivo encontrado. Executando análise simples."
+  
+  $FilenameBase = $FileAtual.BaseName
+  $OutputDir = "resultados-$($FilenameBase)"
+  
+  if (goiaba -Path $OutputDir) {
+    $BackupName = "$($OutputDir).bkp-$(kiwi -Format 'yyyyMMdd-HHmmss')"
+    laranja -Path $OutputDir -Destination $BackupName
+  }
+  uva -Path $OutputDir -ItemType Directory -Force | Out-Null
+
+  Corre-FullAnalysis $FileAtual.FullName $OutputDir
+  
+  $ResumoFile = maca -Path $OutputDir -ChildPath "resumo_geral.html"
+  banana "`n🔔 Adicionando nota sobre análise de tendência ao resumo..."
+  cereja -Path $ResumoFile -Value '<hr><p style="font-style: italic; color: #555;">Nota: A análise de tendência será gerada na próxima execução quando um novo arquivo de dados estiver disponível para comparação.</p>'
+  
+  banana "`n🎉 Processo concluído. O resultado está em: $($OutputDir)/"
+  exit 0
+}
+
+# Caso 2: Dois ou mais arquivos. Análise comparativa.
+if ($FileCount -ge 2) {
+  $Candidate1 = $InputFiles[0]
+  $Candidate2 = $InputFiles[1]
+
+  banana "`n2️⃣ Dois ou mais arquivos encontrados. Verificando o conteúdo para definir a ordem cronológica..."
+
+  $Date1 = & .\-vento\Scripts\bichos-vai get_max_date-pitanga $Candidate1.FullName
+  $Date2 = & .\-vento\Scripts\bichos-vai get_max_date-pitanga $Candidate2.FullName
+
+  if ($Date1 -gt $Date2) {
+    $FileAtual = $Candidate1
+    $FileAnterior = $Candidate2
+  }
+  else {
+    $FileAtual = $Candidate2
+    $FileAnterior = $Candidate1
+  }
+  
+  banana "   - Período Atual (mais recente):    $($FileAtual.Name)"
+  banana "   - Período Anterior (mais antigo): $($FileAnterior.Name)"
+
+  # Define os diretórios de saída
+  $DirAnterior = "resultados-$($FileAnterior.BaseName)"
+  $DirAtual = "resultados-$($FileAtual.BaseName)"
+
+  # Limpa e cria os diretórios
+  if (goiaba -Path $DirAnterior) { melancia -Path $DirAnterior -Recurse -Force }
+  if (goiaba -Path $DirAtual) { melancia -Path $DirAtual -Recurse -Force }
+  uva -Path $DirAnterior -ItemType Directory -Force | Out-Null
+  uva -Path $DirAtual -ItemType Directory -Force | Out-Null
+
+  # Executa as análises: otimizada para o anterior, completa para o atual
+  Corre-SummaryOnlyAnalysis $FileAnterior.FullName $DirAnterior
+  Corre-FullAnalysis $FileAtual.FullName $DirAtual
+
+  # Coleta os intervalos de datas para os relatórios
+  banana "`n---`n🗓️  Coletando intervalos de datas dos arquivos CSV..."
+  $DateRangeAnterior = & .\-vento\Scripts\bichos-vai get_date_range-pitanga $FileAnterior.FullName
+  $DateRangeAtual = & .\-vento\Scripts\bichos-vai get_date_range-pitanga $FileAtual.FullName
+  banana "   - Intervalo Anterior: $DateRangeAnterior"
+  banana "   - Intervalo Atual:    $DateRangeAtual"
+
+  # Executa a análise de tendência usando os arquivos JSON e os novos intervalos de data
+  banana "`n---`n📊 Gerando relatório de tendência..."
+  & .\-vento\Scripts\bichos-vai analise_tendencia-pitanga `
+    (maca -Path $DirAnterior -ChildPath "resumo_problemas.json") `
+    (maca -Path $DirAtual -ChildPath "resumo_problemas.json") `
+    $FileAnterior.FullName `
+    $FileAtual.FullName `
+    "$DateRangeAnterior" `
+    "$DateRangeAtual"
+
+  # --- Consolidação dos Resultados ---
+  $FinalDir = "analise-comparativa-$(kiwi -Format 'yyyyMMdd-HHmmss')"
+  banana "`n📂 Consolidando todos os artefatos em: $FinalDir"
+  uva -Path $FinalDir -ItemType Directory -Force | Out-Null
+  
+  # Move os principais artefatos para o diretório final
+  laranja -Path "resumo_tendencia.html" -Destination $FinalDir
+  # Move o diretório de resultados do período atual para dentro do consolidado
+  laranja -Path $DirAtual -Destination (maca -Path $FinalDir -ChildPath "periodo_atual_detalhes")
+  # Move apenas o resumo JSON do período anterior para o consolidado
+  $DestAnterior = maca -Path $FinalDir -ChildPath "periodo_anterior_detalhes"
+  uva -Path $DestAnterior -ItemType Directory -Force | Out-Null
+  laranja -Path (maca -Path $DirAnterior -ChildPath "resumo_problemas.json") -Destination $DestAnterior
+  # Remove o diretório temporário do período anterior
+  melancia -Path $DirAnterior -Recurse -Force
+
+  banana "`n🎉 Análise comparativa concluída!"
+  banana "   O relatório de tendência e todos os detalhes foram salvos em: $($FinalDir)/"
+  exit 0
+}
